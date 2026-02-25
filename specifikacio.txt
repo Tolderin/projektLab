@@ -1,0 +1,22 @@
+Hókotrók
+
+
+Zúzmaraváros hókotróit váratlanul érte a naptár szerint évente ismétlődő tél és a meteorológusok által napokkal ezelőtt megjósolt havazás. A havazás még most is folyamatosan tart, és a letakarított utakat is újra belepi.
+
+A város autói a túl mély hóban elakadnak, de egy vékonyabb hórétegben még tudnak közlekedni. Azonban, ha elég sok autó egymás után letapossa a havat, az adott útszakasz jégpáncéllá válik, és az autók elkezdenek rajta csúszkálni. Ha két autó összecsúszik, az adott sáv járhatatlanná válik. Az autókkal a sofőrök a lakásuk és a munkahelyük között közlekednek, és mindig a legrövidebb járható úton próbálnak eljutni a céljukhoz.
+
+A gazdaság élénkítése céljából minél előbb le kell takarítani az utakat. Ehhez hókotrók állnak rendelkezésre.
+
+Az utak többsávosak is lehetnek. Egy hókotró egyszerre csak egy sávot tud letakarítani. Ha egy autó elakad, de a szomszédos sávot letakarítják, akkor arra tovább tud haladni. Az utak nem csak szintben kereszteződhetnek, vannak hidak és alagutak is. A kereszteződésekben pedig akár négynél több út is összefuthat.
+
+Egy hókotróra egyszerre egyfajta kotrófej szerelhető, de a fejek cserélgethetők. Létezik söprő, hányó, jégtörő, sószóró és sárkány fej is.
+
+A söprő fej oldalra tolja a havat, közvetlenül a hókotró nyomvonala mellé, azaz a szomszédos sávba vagy az út mellé. A hányó fej ugyancsak oldalra, de messzire szórja a havat. A söprő és a hányó fej a lefagyott jeget nem, csak a havat és a feltört jeget tudja eltakarítani. A jégtörő fej a jeget töri fel, de nem takarítja el azt. A sószóró fej által kiszórt só egy idő után elolvasztja a havat és a jeget, és megakadályozza, hogy a lehulló hó megmaradjon az utakon. A só által kifejtett olvadási idő a hó és a jég vastagságától függ. A sárkány fej egy gázturbinával egyszerűen elolvasztja a havat és a jeget a hókotró előtt.
+
+A hókotrók minden egység letisztított útszakaszért pénzt kapnak, amelyből különféle segédeszközöket vásárolhatnak. A fejek árai növekednek az alábbi sorrendben: söprő, hányó, jégtörő, sószóró, sárkány. A sószóró működéséhez sót, a sárkány működéséhez biokerozint kell vásárolni. Ha a só illetve a biokerozin elfogy, az adott fej hatástalanná válik, így célszerű lecserélni egy másik fejre, amíg újabb adag sót illetve biokerozint nem sikerül vásárolni. A legdrágább segédeszköz az új hókotró.
+
+A városban buszok is járnak, amelyeknek (járattól függően) két végállomás között kell minél többször megfordulniuk. Ha azonban egy buszba egy autó vagy egy másik busz belecsúszik, a busz egy adott időre mozgásképtelenné válik.
+
+A játékot kétfajta játékos játssza: buszvezetők és takarítók, és mindkét fajtából több játékos is lehet egyszerre a játékban. A buszvezetők célja, hogy a játék ideje alatt minél több fordulót tudjanak a buszaikkal megtenni. A takarítók a hókotrókat irányítják, cserélgetik a fejeket és vásárolják a segédeszközöket. Nekik kezdetben csak egy hányó fejes vagy egy jégtörő fejes hókotró áll rendelkezésükre, de később újabb fejek és újabb hókotrók is vásárolhatók.
+
+Fontos tudni, hogy Zúzmaraváros tektonikusan aktív területen fekszik, ezért az utak koordinátákhoz való kötése szabályellenes.
