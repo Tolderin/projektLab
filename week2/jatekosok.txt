@@ -1,0 +1,63 @@
+@startuml Jarmuvek_Es_Jatekosok_Diagram
+skinparam classAttributeIconSize 0
+
+interface Mezo <<interface>> {
+}
+
+abstract class Jarmu {
+  + aktualisMezo: Mezo
+  + lep(cel: Mezo)
+  + elakad()
+  + utkozik(masik: Jarmu)
+}
+
+class Auto {
+  + lep(cel: Mezo)
+}
+
+class Busz {
+  + akadalyoztatva: int
+  + utkozik(masik: Jarmu)
+  + fordulotBefejez()
+}
+
+class Hokotro {
+  + felszereltFej: HokotroFej
+  + lep(cel: Mezo)
+  + ujFejetFelszerel(f: HokotroFej)
+}
+
+Jarmu <|-- Auto
+Jarmu <|-- Busz
+Jarmu <|-- Hokotro
+
+Jarmu "*" --> "1" Mezo : tartozkodik
+
+abstract class Jatekos {
+  + nev: String
+}
+
+class Takarito {
+  + penz: int
+  + flotta: List<Hokotro>
+  + beveteltKap(osszeg: int)
+  + vasarolFelszerelest(b: Bolt, tipus: String)
+}
+
+class Buszvezeto {
+  + teljesitettFordulok: int
+  + pontotSzerez()
+}
+
+class Bolt {
+  + ujMunkagepEladasa(): Hokotro
+  + ujFejEladasa(tipus: String): HokotroFej
+}
+
+Jatekos <|-- Takarito
+Jatekos <|-- Buszvezeto
+
+Takarito "1" *-- "*" Hokotro : iranyit
+Buszvezeto "1" *-- "*" Busz : iranyit
+Takarito --> Bolt : vasarol
+@enduml
