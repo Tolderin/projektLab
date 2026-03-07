@@ -1,0 +1,43 @@
+@startuml SD14_Hokotro_Vasarlas
+
+title SD-14: Hókotró vásárlása
+
+actor "Takarító" as cl_actor
+
+participant "cl : Cleaner" as cl
+participant "market : IntegratedMarket" as market
+participant "hb : HomeBase" as hb
+participant "sp : SnowPlow" as sp
+
+cl_actor -> cl : buyItem(sp)
+activate cl
+
+cl -> market : buyItem(cl, sp)
+activate market
+
+alt cl.money >= sp.getPrice()
+    market -> sp : new SnowPlow()
+    activate sp
+    sp --> market
+    deactivate sp
+
+    market -> market : cl.money -= sp.getPrice()
+    market -> cl : ownedSnowPlows.add(sp)
+    activate cl
+    cl --> market
+    deactivate cl
+
+    market -> hb : acceptSnowPlow(sp)
+    activate hb
+    hb --> market
+    deactivate hb
+
+    market --> cl : true
+else cl.money < sp.getPrice()
+    market --> cl : false
+end
+
+deactivate market
+deactivate cl
+
+@enduml

@@ -1,0 +1,59 @@
+@startuml SD15_Auto_Elakadas
+
+title SD-15: Autó elakadása és átsorolás
+
+participant "gl : GameLogic" as gl
+participant "car : Car" as car
+participant "l1 : Lane" as l1
+participant "l2 : Lane" as l2
+participant "neighbor : Lane" as neighbor
+
+gl -> car : move()
+activate car
+
+car -> car : calculatePath()
+activate car
+car --> car : nextField = l2
+deactivate car
+
+car -> l2 : isBlocked()
+activate l2
+l2 --> car : true
+deactivate l2
+
+car -> car : changeLane()
+activate car
+
+car -> l1 : getNeighbors()
+activate l1
+l1 --> car : [neighbor, ...]
+deactivate l1
+
+car -> neighbor : isBlocked()
+activate neighbor
+neighbor --> car : false
+deactivate neighbor
+
+car -> l1 : remove(car)
+activate l1
+l1 --> car
+deactivate l1
+
+car -> neighbor : accept(car)
+activate neighbor
+neighbor --> car
+deactivate neighbor
+
+car -> neighbor : applyCompaction()
+activate neighbor
+neighbor -> neighbor : compactionCount++
+neighbor -> neighbor : checkFreeze()
+neighbor --> car
+deactivate neighbor
+
+deactivate car
+
+car --> gl
+deactivate car
+
+@enduml

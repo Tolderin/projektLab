@@ -1,0 +1,33 @@
+@startuml SD02_Havazas
+
+title SD-02: Havazás szimuláció (körönként)
+
+participant "gl : GameLogic" as gl
+participant "m : Map" as m
+participant "l1 : Lane" as l1
+participant "l2 : Lane" as l2
+
+gl -> gl : advanceTurn()
+activate gl
+
+gl -> m : snow()
+activate m
+
+m -> l1 : addSnow(amount)
+activate l1
+l1 --> m
+deactivate l1
+
+m -> l2 : addSnow(amount)
+activate l2
+l2 --> m
+deactivate l2
+
+note over m : csak Lane típusú Field-eken\nhív addSnow()-t,\nCross és Building-en nem
+
+m --> gl
+deactivate m
+
+deactivate gl
+
+@enduml

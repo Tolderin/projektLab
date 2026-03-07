@@ -1,0 +1,92 @@
+@startuml SD01_Inicializalas
+
+title SD-01: Játék inicializálása
+
+actor Rendszer as sys
+
+participant "gl : GameLogic" as gl
+participant "m : Map" as m
+participant "c1 : Cross" as c1
+participant "l1 : Lane" as l1
+participant "l2 : Lane" as l2
+participant "hb : HomeBase" as hb
+participant "t1 : Terminal" as t1
+participant "gb : GeneralBuilding" as gb
+participant "sp : SnowPlow" as sp
+participant "b : Bus" as b
+participant "car : Car" as car
+
+sys -> gl : startGame()
+activate gl
+
+gl -> m : new Map()
+activate m
+
+m -> c1 : new Cross()
+activate c1
+c1 --> m
+deactivate c1
+
+m -> l1 : new Lane()
+activate l1
+l1 --> m
+deactivate l1
+
+m -> l2 : new Lane()
+activate l2
+l2 --> m
+deactivate l2
+
+m -> hb : new HomeBase()
+activate hb
+hb --> m
+deactivate hb
+
+m -> t1 : new Terminal()
+activate t1
+t1 --> m
+deactivate t1
+
+m -> gb : new GeneralBuilding()
+activate gb
+gb --> m
+deactivate gb
+
+note over m : szomszédsági kapcsolatok beállítása\n(pl. l1 <-> c1 <-> l2 <-> t1)
+
+m --> gl
+deactivate m
+
+gl -> sp : new SnowPlow()
+activate sp
+sp --> gl
+deactivate sp
+
+gl -> hb : acceptSnowPlow(sp)
+activate hb
+hb --> gl
+deactivate hb
+
+gl -> b : new Bus()
+activate b
+b --> gl
+deactivate b
+
+gl -> l1 : accept(b)
+activate l1
+l1 --> gl
+deactivate l1
+
+gl -> car : new Car()
+activate car
+car --> gl
+deactivate car
+
+gl -> l2 : accept(car)
+activate l2
+l2 --> gl
+deactivate l2
+
+deactivate gl
+
+@enduml
