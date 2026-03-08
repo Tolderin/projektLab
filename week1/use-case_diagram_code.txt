@@ -1,0 +1,40 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Buszvezető" as Buszvezeto
+actor "Takarító" as Takarito
+
+rectangle "Zúzmaraváros Szimuláció (Rendszer)" {
+  
+  ' Buszvezető funkciói
+  usecase "Busz vezetése (legrövidebb úton)" as UC_Vezetes
+  usecase "Forduló teljesítése" as UC_Fordulo
+  
+  ' Takarító funkciói
+  usecase "Hókotró irányítása" as UC_Hokotro
+  usecase "Út letakarítása" as UC_Takaritas
+  usecase "Bevétel gyűjtése" as UC_Bevetel
+  usecase "Fej cseréje" as UC_Fejcsera
+  usecase "Segédeszköz vásárlása" as UC_Vasarlas
+  
+  ' Vásárlás részletezése (include/extend)
+  usecase "Új hókotró vásárlása" as UC_UjHokotro
+  usecase "Só/Biokerozin vásárlása" as UC_Nyersanyag
+  
+  ' Kapcsolatok a Buszvezetőhöz
+  Buszvezeto --> UC_Vezetes
+  UC_Vezetes .> UC_Fordulo : <<include>>
+  
+  ' Kapcsolatok a Takarítóhoz
+  Takarito --> UC_Hokotro
+  Takarito --> UC_Fejcser
+  Takarito --> UC_Vasarlas
+  
+  UC_Hokotro .> UC_Takaritas : <<include>>
+  UC_Takaritas .> UC_Bevetel : <<include>>
+  
+  UC_Vasarlas <.. UC_UjHokotro : <<extend>>
+  UC_Vasarlas <.. UC_Nyersanyag : <<extend>>
+}
+@enduml

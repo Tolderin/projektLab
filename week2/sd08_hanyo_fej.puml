@@ -1,0 +1,22 @@
+@startuml SD08_Hanyo_Fej
+
+title SD-08: Hányó fej takarítása
+
+participant "sp : SnowPlow" as sp
+participant "head : ThrowerHead" as head
+participant "l : Lane" as l
+
+sp -> head : clean(l)
+activate head
+
+head -> l : removeSnow(amount)
+activate l
+l --> head
+deactivate l
+
+note over head : a hó a throwDistance értéknek\nmegfelelően messzire kerül\n(járdára), szomszéd sávot\nnem módosít
+
+head --> sp
+deactivate head
+
+@enduml

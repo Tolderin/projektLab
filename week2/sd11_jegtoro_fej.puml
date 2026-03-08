@@ -1,0 +1,28 @@
+@startuml SD11_Jegtoro_Fej
+
+title SD-11: Jégtörő fej takarítása
+
+participant "sp : SnowPlow" as sp
+participant "head : IcebreakerHead" as head
+participant "l : Lane" as l
+
+sp -> head : clean(l)
+activate head
+
+alt l.isFrozen == true
+    head -> l : breakIce()
+    activate l
+    l -> l : isFrozen = false
+    l -> l : addSnow(iceThickness * faktor)
+    l --> head
+    deactivate l
+
+    note over l : jégpáncél megszűnt,\nde hó keletkezett helyette
+else l.isFrozen == false
+    note over head : nincs jég, clean() nem hat
+end
+
+head --> sp
+deactivate head
+
+@enduml

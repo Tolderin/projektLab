@@ -1,0 +1,54 @@
+@startuml SD06_Hokotro_Mozgas
+
+title SD-06: Hókotró mozgása és takarítás
+
+actor "Takarító" as cl_actor
+
+participant "gl : GameLogic" as gl
+participant "cl : Cleaner" as cl
+participant "sp : SnowPlow" as sp
+participant "l1 : Lane" as l1
+participant "l2 : Lane" as l2
+participant "head : CleanerHead" as head
+
+gl -> cl : startTurn()
+activate cl
+
+cl --> cl_actor : célmező kiválasztása
+cl_actor --> cl : driveSnowPlow(l2)
+
+cl -> sp : nextField = l2
+activate sp
+sp --> cl
+deactivate sp
+
+cl --> gl
+deactivate cl
+
+gl -> sp : move()
+activate sp
+
+sp -> l1 : remove(sp)
+activate l1
+l1 --> sp
+deactivate l1
+
+sp -> l2 : accept(sp)
+activate l2
+l2 --> sp
+deactivate l2
+
+sp -> sp : cleanCurrentLane()
+activate sp
+
+sp -> head : clean(l2)
+activate head
+head --> sp
+deactivate head
+
+deactivate sp
+
+sp --> gl
+deactivate sp
+
+@enduml

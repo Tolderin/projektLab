@@ -1,0 +1,45 @@
+@startuml SD16_Jatek_Vege
+
+title SD-16: Játék vége és eredményhirdetés
+
+participant "gl : GameLogic" as gl
+participant "bd1 : BusDriver" as bd1
+participant "bd2 : BusDriver" as bd2
+participant "cl1 : Cleaner" as cl1
+participant "cl2 : Cleaner" as cl2
+
+gl -> gl : advanceTurn()
+activate gl
+
+gl -> gl : turnCount++
+note over gl : turnCount >= maxTurns\njáték vége
+
+gl -> gl : endGame()
+activate gl
+
+gl -> bd1 : endTurn()
+activate bd1
+bd1 --> gl : completedRounds
+deactivate bd1
+
+gl -> bd2 : endTurn()
+activate bd2
+bd2 --> gl : completedRounds
+deactivate bd2
+
+gl -> cl1 : endTurn()
+activate cl1
+cl1 --> gl : money
+deactivate cl1
+
+gl -> cl2 : endTurn()
+activate cl2
+cl2 --> gl : money
+deactivate cl2
+
+note over gl : eredmények összesítése:\n- legtöbb forduló = buszvezető győztes\n- legtöbb pénz = takarító győztes
+
+deactivate gl
+deactivate gl
+
+@enduml

@@ -1,0 +1,46 @@
+@startuml SD13_Uzemanyag_Vasarlas
+
+title SD-13: Üzemanyag vásárlás és töltés
+
+actor "Takarító" as cl_actor
+
+participant "cl : Cleaner" as cl
+participant "market : IntegratedMarket" as market
+participant "hb : HomeBase" as hb
+participant "sp : SnowPlow" as sp
+participant "head : SaltHead" as head
+participant "fuel : Salt" as fuel
+
+cl_actor -> cl : buyItem(fuel)
+activate cl
+
+cl -> market : buyItem(cl, fuel)
+activate market
+
+alt cl.money >= fuel.getPrice()
+    market -> market : cl.money -= fuel.getPrice()
+    market --> cl : true
+else cl.money < fuel.getPrice()
+    market --> cl : false
+end
+
+deactivate market
+
+note over cl : hókotró a telephelyre megy\n(SD-06 alapján)
+
+cl_actor -> cl : refuelSnowPlow(sp, fuel)
+cl -> hb : refuelSnowPlow(sp, fuel)
+activate hb
+
+hb -> head : refillFuel(fuel.fuelAmount)
+activate head
+head -> head : fuelAmount += fuel.fuelAmount
+head --> hb
+deactivate head
+
+hb --> cl
+deactivate hb
+
+deactivate cl
+
+@enduml
