@@ -11,5 +11,7 @@
 - SD6 nincs objektum törzse
 
 - Road- új osztály, uml-be rakni
+- field interface getneighbours törölni
+
 
 
