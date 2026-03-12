@@ -2,12 +2,12 @@
 
 # Gonoszonosz team's (#48) projlab task.
 ## https://www.iit.bme.hu/targyak/BMEVIIIAB02
-### week1:
- Next meeting: csütörtök 02.25 13.00 DC
-- Bálint: 2.2.2
-- Patrik: (2.2.1-2.2.5)\2.2.2
-- Gergő: 2.3.1
-- Beni: 2.3.2-2.3.4
-- Laci: 2.4.1
-
+### week3:
+- fuel - class törölni, beolvasztani a fejekbe attribútumként vagys metódusként
+- player törölni amblokk
+- szétszedni részekre az uml-t
+- SD2 - nincs aktor
+- SD12-13 buy item-nél nem kell visszatérni true-val
+- SD6 nincs objektum törzse
+- 
 
