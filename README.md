@@ -9,5 +9,7 @@
 - SD2 - nincs aktor
 - SD12-13 buy item-nél nem kell visszatérni true-val
 - SD6 nincs objektum törzse
-- 
+
+- Road- új osztály, uml-be rakni
+
 
