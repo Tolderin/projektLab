@@ -1,0 +1,29 @@
+@startuml SD09_Soszoro_Fej
+
+title SD-09: Sószóró fej takarítása
+
+participant "sp : SnowPlow" as sp
+participant "head : SaltHead" as head
+participant "l : Lane" as l
+
+sp -> head : clean(l)
+activate head
+
+alt head.fuelAmount > 0
+    head -> l : applySaltEffect(activeTime)
+    activate l
+    l -> l : saltEffect = activeTime
+    l --> head
+    deactivate l
+
+    head -> head : fuelAmount -= szükséges_mennyiség
+
+    note over l : a saltEffect körönként csökken,\nközben olvasztja a havat/jeget\nés megakadályozza új hó megmaradását
+else head.fuelAmount <= 0
+    note over head : nincs só, clean() nem hat
+end
+
+head --> sp
+deactivate head
+
+@enduml

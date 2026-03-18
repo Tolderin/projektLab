@@ -1,0 +1,49 @@
+@startuml Topologia_Diagram
+skinparam classAttributeIconSize 0
+
+class JatekLogika {
+  + mezoLista: List<Mezo>
+  + jarmuLista: List<Jarmu>
+  + jatekosok: List<Jatekos>
+  + havazik()
+}
+
+interface Mezo <<interface>> {
+  + elfogad(j: Jarmu)
+  + eltavolit(j: Jarmu)
+  + szomszedokatLekerdez(): List<Mezo>
+}
+
+class Sav {
+  + hoVastagsag: int
+  + jeges: boolean
+  + taposasokSzama: int
+  + hoNovekszik()
+  + havatEltakarit()
+  + jegetFeltor()
+  + soz(hatoido: int)
+  + jarmuAthalad()
+}
+
+class Keresztezodes {
+}
+
+class Telephely {
+  + jarmuvetFeltolt(h: Hokotro)
+  + fejetCserel(h: Hokotro, ujFej: HokotroFej)
+}
+
+class Vegpont {
+  + tipus: String
+  + jarmuvetIndit()
+  + jarmuvetFogad(j: Jarmu)
+}
+
+Mezo <|.. Sav
+Mezo <|.. Keresztezodes
+Mezo <|.. Telephely
+Mezo <|.. Vegpont
+
+Sav "1" --> "*" Mezo : szomszedok
+JatekLogika "1" *-- "*" Mezo : kezeli
+@enduml

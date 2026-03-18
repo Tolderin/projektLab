@@ -1,0 +1,53 @@
+@startuml SD04_Auto_Csuszas
+
+title SD-04: Autó csúszása jégen
+
+participant "gl : GameLogic" as gl
+participant "car : Car" as car
+participant "l1 : Lane" as l1
+participant "l2 : Lane" as l2
+participant "other : Vehicle" as other
+
+gl -> car : move()
+activate car
+
+car -> car : calculatePath()
+activate car
+car --> car : nextField = l2
+deactivate car
+
+car -> l1 : remove(car)
+activate l1
+l1 --> car
+deactivate l1
+
+car -> l2 : accept(car)
+activate l2
+l2 --> car
+deactivate l2
+
+alt l2.isFrozen == true
+    car -> car : slip()
+    activate car
+
+    alt van jármű a sávon
+        car -> other : collideWith(car)
+        activate other
+        other --> car
+        deactivate other
+
+        car -> l2 : isBlocked()
+        activate l2
+        l2 --> car : true
+        deactivate l2
+
+        note over l2 : sáv lezárva\nmeghatározott körökre
+    end
+
+    deactivate car
+end
+
+car --> gl
+deactivate car
+
+@enduml

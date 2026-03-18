@@ -1,0 +1,153 @@
+@startuml Zuzmaravaros_OsztalyDiagram
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 60
+
+' --- JÁTÉKOSOK ÉS LOGIKA ---
+
+class JatekLogika {
+  + mezoLista: List<Mezo>
+  + jarmuLista: List<Jarmu>
+  + jatekosok: List<Jatekos>
+  + havazik()
+}
+
+abstract class Jatekos {
+  + nev: String
+}
+
+class Takarito {
+  + penz: int
+  + flotta: List<Hokotro>
+  + beveteltKap(osszeg: int)
+  + vasarolFelszerelest(o: Onkormanyzat, tipus: String)
+}
+
+class Buszvezeto {
+  + pontszam: int
+  + pontotSzerez()
+}
+
+class Onkormanyzat {
+  + hokotrotElad(): Hokotro
+  + fejetElad(tipus: String): HokotroFej
+}
+
+Jatekos <|-- Takarito
+Jatekos <|-- Buszvezeto
+Takarito --> Onkormanyzat : vasarol
+
+' --- JÁRMŰVEK ---
+
+abstract class Jarmu {
+  + aktualisMezo: Mezo
+  + lep(cel: Mezo)
+  + elakad()
+  + utkozik(masik: Jarmu)
+}
+
+class Auto {
+  + lep(cel: Mezo)
+}
+
+class Busz {
+  + varakozasiIdo: int
+  + utkozik(masik: Jarmu)
+  + fordulotBefejez()
+}
+
+class Hokotro {
+  + felszereltFej: HokotroFej
+  + lep(cel: Mezo)
+  + ujFejetFelszerel(f: HokotroFej)
+}
+
+Jarmu <|-- Auto
+Jarmu <|-- Busz
+Jarmu <|-- Hokotro
+
+Jarmu "*" --> "1" Mezo : tartozkodik
+JatekLogika "1" *-- "*" Jarmu : frissiti
+Takarito "1" *-- "*" Hokotro : iranyit
+Buszvezeto "1" *-- "*" Busz : iranyit
+
+' --- TOPOLÓGIA (HÁLÓZAT) ---
+
+interface Mezo <<interface>> {
+  + elfogad(j: Jarmu)
+  + eltavolit(j: Jarmu)
+  + szomszedokatLekerdez(): List<Mezo>
+}
+
+class Sav {
+  + hoVastagsag: int
+  + jeges: boolean
+  + taposasokSzama: int
+  + hoNovekszik()
+  + havatEltakarit()
+  + jegetFeltor()
+  + soz(hatoido: int)
+  + jarmuAthalad()
+}
+
+class Keresztezodes {
+}
+
+class Telephely {
+  + jarmuvetFeltolt(h: Hokotro)
+  + fejetCserel(h: Hokotro, ujFej: HokotroFej)
+}
+
+class Vegpont {
+  + tipus: String
+  + jarmuvetIndit()
+  + jarmuvetFogad(j: Jarmu)
+}
+
+Mezo <|.. Sav
+Mezo <|.. Keresztezodes
+Mezo <|.. Telephely
+Mezo <|.. Vegpont
+
+Sav "1" --> "*" Mezo : szomszedok
+JatekLogika "1" *-- "*" Mezo : kezeli
+
+' --- HÓKOTRÓ FEJEK (STRATEGY MINTA) ---
+
+abstract class HokotroFej {
+  + tisztit(m: Mezo)
+}
+
+class SoproFej {
+  + tisztit(m: Mezo)
+}
+
+class HanyoFej {
+  + tisztit(m: Mezo)
+}
+
+class JegtoroFej {
+  + tisztit(m: Mezo)
+}
+
+class SoszoroFej {
+  + soKeszlet: int
+  + tisztit(m: Mezo)
+}
+
+class SarkanyFej {
+  + kerozinKeszlet: int
+  + tisztit(m: Mezo)
+}
+
+HokotroFej <|-- SoproFej
+HokotroFej <|-- HanyoFej
+HokotroFej <|-- JegtoroFej
+HokotroFej <|-- SoszoroFej
+HokotroFej <|-- SarkanyFej
+
+Hokotro "1" o-- "1" HokotroFej : hasznal
+HokotroFej --> Mezo : hatassal van
+
+@enduml

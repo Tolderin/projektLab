@@ -1,0 +1,31 @@
+@startuml SD07_Sopro_Fej
+
+title SD-07: Söprő fej takarítása
+
+participant "sp : SnowPlow" as sp
+participant "head : SweepHead" as head
+participant "l : Lane" as l
+participant "neighbor : Lane" as neighbor
+
+sp -> head : clean(l)
+activate head
+
+head -> l : removeSnow(amount)
+activate l
+l --> head
+deactivate l
+
+head -> l : getNeighbors()
+activate l
+l --> head : [neighbor, ...]
+deactivate l
+
+head -> neighbor : addSnow(amount)
+activate neighbor
+neighbor --> head
+deactivate neighbor
+
+head --> sp
+deactivate head
+
+@enduml

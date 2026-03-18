@@ -1,0 +1,57 @@
+@startuml
+!theme plain
+skinparam componentStyle uml2
+
+actor "Buszvezető" as Buszvezeto
+actor "Takarító" as Takarito
+
+package "Kliens réteg" {
+  [Grafikus felhasználói felület] as GUI
+  [Játékos interakciók kezelése] as InputHandler
+  [Valós idejű állapotmegjelenítés] as Renderer
+}
+
+package "Alkalmazáslogikai réteg (Szerver)" {
+  interface "Alkalmazásprogramozási interfész (API)" as API
+  
+  [Multiplayer alrendszer] as Multiplayer
+  [Közlekedési alrendszer] as Kozlekedes
+  [Időjárás- és állapotkezelő] as Idojaras
+  [Hókotró alrendszer] as Hokotro
+  [Buszjárat alrendszer] as Buszjarat
+  [Gazdasági alrendszer] as Gazdasag
+  
+  API -down- Multiplayer
+  
+  Multiplayer --> Kozlekedes : Szinkronizáció
+  Multiplayer --> Buszjarat : Szinkronizáció
+  Multiplayer --> Hokotro : Szinkronizáció
+  
+  Hokotro --> Idojaras : Hó és jég eltakarítása
+  Hokotro --> Gazdasag : Fejek, só, kerozin vásárlása
+  Idojaras --> Kozlekedes : Havazás, jégképződés (csúszás)
+  Buszjarat --> Kozlekedes : Útvonalhasználat, ütközések
+  Kozlekedes --> Gazdasag : Bevételszámítás tisztítás után
+}
+
+package "Adatkezelési réteg" {
+  database "Játékállapot tárolása" as GameState
+  database "Játékosadatok kezelése" as UserData
+  database "Úthálózat (Gráf topológia)" as GraphDB
+}
+
+' Kapcsolatok a felhasználók és a kliens között
+Buszvezeto --> GUI
+Takarito --> GUI
+
+GUI --> InputHandler
+InputHandler --> API : Játékos akciók küldése
+API --> Renderer : Valós idejű frissítések
+
+' Kapcsolatok a logika és az adatbázis között
+Kozlekedes --> GraphDB : Topológia és legrövidebb út
+Multiplayer --> GameState : Konzisztens mentés/visszatöltés
+Gazdasag --> UserData : Erőforrások és egyenleg
+Idojaras --> GameState : Pálya állapotának frissítése
+
+@enduml

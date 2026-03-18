@@ -1,0 +1,40 @@
+@startuml Hokotro_Fejek_Diagram
+skinparam classAttributeIconSize 0
+
+interface Mezo <<interface>> {
+}
+
+abstract class HokotroFej {
+  + tisztit(m: Mezo)
+}
+
+class SoproFej {
+  + tisztit(m: Mezo)
+}
+
+class HanyoFej {
+  + tisztit(m: Mezo)
+}
+
+class JegtoroFej {
+  + tisztit(m: Mezo)
+}
+
+class SoszoroFej {
+  + soKeszlet: int
+  + tisztit(m: Mezo)
+}
+
+class SarkanyFej {
+  + kerozinKeszlet: int
+  + tisztit(m: Mezo)
+}
+
+HokotroFej <|-- SoproFej
+HokotroFej <|-- HanyoFej
+HokotroFej <|-- JegtoroFej
+HokotroFej <|-- SoszoroFej
+HokotroFej <|-- SarkanyFej
+
+HokotroFej --> Mezo : hatassal van
+@enduml

@@ -1,0 +1,50 @@
+@startuml SD03_Auto_Mozgas
+
+title SD-03: Autó mozgása és letaposás
+
+participant "gl : GameLogic" as gl
+participant "car : Car" as car
+participant "m : Map" as m
+participant "l1 : Lane" as l1
+participant "l2 : Lane" as l2
+
+gl -> car : move()
+activate car
+
+car -> car : calculatePath()
+activate car
+car -> m : findShortestPath(l1, target)
+activate m
+m --> car : [l1, l2, ...]
+deactivate m
+car --> car : nextField = l2
+deactivate car
+
+car -> l1 : remove(car)
+activate l1
+l1 --> car
+deactivate l1
+
+car -> l2 : accept(car)
+activate l2
+l2 --> car
+deactivate l2
+
+car -> l2 : applyCompaction()
+activate l2
+l2 -> l2 : compactionCount++
+l2 -> l2 : checkFreeze()
+activate l2
+
+alt compactionCount >= küszöb && snowDepth > 0
+    l2 -> l2 : isFrozen = true
+end
+
+deactivate l2
+l2 --> car
+deactivate l2
+
+car --> gl
+deactivate car
+
+@enduml

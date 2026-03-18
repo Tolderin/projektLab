@@ -1,0 +1,32 @@
+@startuml SD10_Sarkany_Fej
+
+title SD-10: Sárkány fej takarítása
+
+participant "sp : SnowPlow" as sp
+participant "head : DragonHead" as head
+participant "l : Lane" as l
+
+sp -> head : clean(l)
+activate head
+
+alt head.fuelAmount > 0
+    head -> l : removeSnow(l.snowDepth)
+    activate l
+    l --> head
+    deactivate l
+
+    head -> l : removeIce()
+    activate l
+    l -> l : isFrozen = false\niceThickness = 0
+    l --> head
+    deactivate l
+
+    head -> head : fuelAmount -= szükséges_mennyiség
+else head.fuelAmount <= 0
+    note over head : nincs biokerozin, clean() nem hat
+end
+
+head --> sp
+deactivate head
+
+@enduml

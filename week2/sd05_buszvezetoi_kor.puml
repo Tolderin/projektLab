@@ -1,0 +1,59 @@
+@startuml SD05_Buszvezetoi_Kor
+
+title SD-05: Buszvezető kör – navigáció és forduló
+
+actor "Buszvezető" as bd_actor
+
+participant "gl : GameLogic" as gl
+participant "bd : BusDriver" as bd
+participant "b : Bus" as b
+participant "l1 : Lane" as l1
+participant "t : Terminal" as t
+
+gl -> bd : startTurn()
+activate bd
+
+bd --> bd_actor : célmező kiválasztása
+bd_actor --> bd : driveBus(t)
+
+bd -> b : move()
+activate b
+
+b -> l1 : remove(b)
+activate l1
+l1 --> b
+deactivate l1
+
+b -> t : accept(b)
+activate t
+t --> b
+deactivate t
+
+b --> bd
+deactivate b
+
+bd -> gl : endTurn()
+deactivate bd
+activate gl
+
+gl -> bd : endTurn()
+activate bd
+
+bd -> b : move() [célmező ellenőrzés]
+activate b
+b --> bd : currentLane
+deactivate b
+
+alt currentField == Terminal
+    bd -> t : registerArrival(b)
+    activate t
+    t --> bd : forduló rögzítve
+    deactivate t
+    bd -> bd : completedRounds++
+end
+
+bd --> gl
+deactivate bd
+deactivate gl
+
+@enduml

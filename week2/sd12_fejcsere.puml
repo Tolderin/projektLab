@@ -1,0 +1,53 @@
+@startuml SD12_Fejcsere
+
+title SD-12: Fejcsere a telephelyen
+
+actor "Takarító" as cl_actor
+
+participant "cl : Cleaner" as cl
+participant "market : IntegratedMarket" as market
+participant "hb : HomeBase" as hb
+participant "sp : SnowPlow" as sp
+participant "newHead : CleanerHead" as newHead
+
+cl_actor -> cl : buyItem(newHead)
+activate cl
+
+cl -> market : buyItem(cl, newHead)
+activate market
+
+alt cl.money >= newHead.getPrice()
+    market -> market : cl.money -= newHead.getPrice()
+    market -> sp : attachments.add(newHead)
+    activate sp
+    sp --> market
+    deactivate sp
+    market --> cl : true
+else cl.money < newHead.getPrice()
+    market --> cl : false
+end
+
+deactivate market
+
+cl_actor -> cl : selectVehicle(sp)
+cl -> cl : selectedSnowPlow = sp
+
+cl_actor -> cl : driveSnowPlow(hb)
+note over cl : hókotró a telephelyre megy\n(SD-06 alapján)
+
+cl_actor -> cl : swapHead(sp, newHead)
+cl -> hb : swapHead(sp, newHead)
+activate hb
+
+hb -> sp : changeHead(newHead)
+activate sp
+sp -> sp : activeHead = newHead
+sp --> hb
+deactivate sp
+
+hb --> cl
+deactivate hb
+
+deactivate cl
+
+@enduml
