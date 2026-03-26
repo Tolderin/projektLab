@@ -17,23 +17,15 @@ public class DragonHead extends CleanerHead {
     /**
      * Feltöri a jeget a sávon, ha van elegendő üzemanyag a tartályban.
      */
+    // DragonHead.java javítása
     @Override
     public void clean(Lane l) {
         Skeleton.enter("snowPlow", "dragonHead", "clean(l)");
-
-        // Állapotgép ellenőrzése a felhasználón keresztül
-        boolean isFueled = Skeleton.askQuestion("Van elegendő gáz a tartályban (fuelAmount > 0)?");
-
-        if (isFueled) {
-            Skeleton.enter("dragonHead", "l", "removeIce()");
+        if (this.fuelAmount > 0) {
+            l.removeSnow(1.0);
             l.removeIce();
-            Skeleton.exit("void");
-            this.fuelAmount -= 20.0; // Fogyasztás (magasabb, mint a sónál)
-        } else {
-            Skeleton.enter("dragonHead", "Skeleton", "A fej Empty állapotban van, nem csinál semmit.");
-            Skeleton.exit("");
+            this.fuelAmount -= 20.0;
         }
-
         Skeleton.exit("void");
     }
 

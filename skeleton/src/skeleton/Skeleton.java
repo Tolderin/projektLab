@@ -3,25 +3,25 @@ package skeleton;
 import java.util.Scanner;
 
 /**
- * A szkeleton program központi naplózó és beolvasó osztálya.
- * Célja a tervezett analízis modell belső üzenetváltásainak (metódushívásainak)
- * ellenőrzése interaktív teszteseteken keresztül.
+ * A szkeleton program kozponti naplozo es beolvaso osztalya.
+ * Celja a tervezett analizis modell belso uzenetvaltasainak (metodushivasainak)
+ * ellenorzese interaktiv teszteseteken keresztul.
  */
 public class Skeleton {
 
-    /** A hívási verem mélysége, a megfelelő tabulátoros behúzáshoz. */
+    /** A hivasi verem melysege, a megfelelo vizualis behuzashoz. */
     private static int depth = 0;
 
-    /** A szabványos bemenetet olvasó Scanner objektum. */
+    /** A szabvanyos bemenetet olvaso Scanner objektum. */
     private static Scanner scanner = new Scanner(System.in);
 
     /**
-     * Naplózza egy metódushívás kezdetét a megfelelő behúzással.
-     * Formátum: [Hívó_Objektum] -> [Hívott_Objektum].metódusNév(paraméterek)
+     * Naplozza egy metodushivas kezdetet a megfelelo behuzassal.
+     * Formatum: [Hivo_Objektum] -> [Hivott_Objektum].metodusNev(parameterek)
      *
-     * @param caller A hívó objektum neve.
-     * @param callee A hívott objektum neve.
-     * @param method A meghívott metódus neve és paraméterei.
+     * @param caller A hivo objektum neve.
+     * @param callee A hivott objektum neve.
+     * @param method A meghivott metodus neve es parameterei.
      */
     public static void enter(String caller, String callee, String method) {
         printIndent();
@@ -30,10 +30,10 @@ public class Skeleton {
     }
 
     /**
-     * Naplózza a visszatérést egy metódusból.
-     * Formátum: <-- visszatérési érték
+     * Naplozza a visszaterest egy metodusbol.
+     * Formatum: <-- visszateresi ertek
      *
-     * @param returnValue A metódus visszatérési értéke (vagy "void").
+     * @param returnValue A metodus visszateresi erteke (vagy "void").
      */
     public static void exit(String returnValue) {
         depth--;
@@ -42,12 +42,13 @@ public class Skeleton {
     }
 
     /**
-     * Feltesz egy Igen/Nem kérdést a tesztelőnek (felhasználónak), és visszaadja a
-     * választ.
-     * Formátum: ? [Kérdés szövege] (I/N):
+     * Feltesz egy Igen/Nem kerdest a tesztelonek (felhasznalonak), es visszaadja a
+     * valaszt.
+     * A konzolos kiiratas ekezetmentes a Windows CMD kompatibilitas miatt.
+     * Formatum: ? [Kerdes szovege] (I/N):
      *
-     * @param question A felteendő kérdés szövege.
-     * @return true, ha a válasz 'I', false, ha 'N' (vagy bármi más).
+     * @param question A felteendo kerdes szovege (lehetoleg ekezet nelkul).
+     * @return true, ha a valasz 'I', false, ha 'N' (vagy barmi mas).
      */
     public static boolean askQuestion(String question) {
         System.out.print("? " + question + " (I/N): ");
@@ -56,11 +57,13 @@ public class Skeleton {
     }
 
     /**
-     * Segédmetódus a behúzások (tabulátorok) kiíratásához a konzolra.
+     * Segedmetodus a behuzasok kiiratasahoz a konzolra.
+     * Tabulator (\t) helyett "| " (cso es szokozok) hasznalata,
+     * igy sokkal atlathatobb es hasonlit az UML Szekvenciadiagramok eletvonalaira.
      */
     private static void printIndent() {
         for (int i = 0; i < depth; i++) {
-            System.out.print("\t");
+            System.out.print("|  ");
         }
     }
 }

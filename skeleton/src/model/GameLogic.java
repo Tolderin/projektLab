@@ -38,7 +38,7 @@ public class GameLogic {
         Skeleton.enter("Skeleton", "gameLogic", "advanceTurn()");
 
         turnCount++;
-        boolean isGameOver = Skeleton.askQuestion("Elérte a körök száma a maximumot?");
+        boolean isGameOver = Skeleton.askQuestion("Elerte a korok szama a maximumot?");
 
         if (isGameOver) {
             endGame();

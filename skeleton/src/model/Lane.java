@@ -72,8 +72,10 @@ public class Lane implements Field {
     /** Ellenőrzi, hogy kell-e jégpáncél képződjön[cite: 1408]. */
     public void checkFreeze() {
         Skeleton.enter("lane", "lane", "checkFreeze()");
-        boolean makeFrozen = Skeleton.askQuestion("Elérte a letaposások száma a küszöböt, és van hó a sávon?");
-        if (makeFrozen) {
+        // A specifikáció alapján: compactionCount >= küszöb ÉS snowDepth > 0 [cite:
+        // 511, 722]
+        boolean thresholdReached = Skeleton.askQuestion("CompactionCount >= kuszob es snowDepth > 0?");
+        if (thresholdReached && !isFrozen) {
             this.isFrozen = true;
             Skeleton.enter("lane", "lane", "isFrozen = true");
             Skeleton.exit("void");

@@ -7,7 +7,8 @@ import skeleton.Skeleton;
 /**
  * A szkeleton alkalmazas belepesi pontja.
  * Felelossege a fomenu megjelenitese es a tesztesetek (Use-case-ek) inditasa.
- * (A terminalos megjelenites miatt ekezetmentesitve!)
+ * (A terminalos megjelenites miatt ekezetmentesitve, inicializalas a CD-k
+ * alapjan!)
  */
 public class Main {
 
@@ -99,91 +100,165 @@ public class Main {
 
     private static void runTestCase1() {
         System.out.println("\n--- [Fut] SD-01: Jatek inicializalasa ---");
+        // Inicializalas CD-01 alapjan
         GameLogic gl = new GameLogic();
+        Map m = new Map();
+        Road r = new Road();
+        Lane l1 = new Lane();
+        Lane l2 = new Lane();
+        HomeBase hb = new HomeBase();
+        Terminal t = new Terminal();
+        GeneralBuilding gb = new GeneralBuilding();
+        SnowPlow sp = new SnowPlow();
+        Bus bus = new Bus();
+        Car car = new Car();
+
+        // Futtatas
         gl.startGame();
     }
 
     private static void runTestCase2() {
         System.out.println("\n--- [Fut] SD-02: Havazas szimulacio (koronkent) ---");
+        // Inicializalas CD-02 alapjan
         GameLogic gl = new GameLogic();
-        // A szimulaciohoz az advanceTurn() hivodik, ami belul a Map.snow()-t hivja
+        Map m = new Map();
+        Lane l1 = new Lane();
+        Lane l2 = new Lane();
+
+        // Futtatas
         gl.advanceTurn();
     }
 
     private static void runTestCase3() {
         System.out.println("\n--- [Fut] SD-03: Auto mozgasa es letaposas ---");
+        // Inicializalas CD-03 alapjan
+        GameLogic gl = new GameLogic();
         Car car = new Car();
-        // A belso interakciokat (jeges-e, stb.) a Car osztaly kerdezi meg futas kozben
+        Map m = new Map();
+        Lane l1 = new Lane();
+        Lane l2 = new Lane();
+
+        // Futtatas
         car.move();
     }
 
     private static void runTestCase4() {
         System.out.println("\n--- [Fut] SD-04: Auto csuszasa jegen ---");
+        // Inicializalas CD-04 alapjan
+        GameLogic gl = new GameLogic();
         Car car = new Car();
-        // A slip() hivast akkor naplozza, ha az elagazasnal "Igen"-nel valaszolunk a
-        // jegessegre
+        Lane l1 = new Lane();
+        Lane l2 = new Lane();
+        // other:Vehicle (szimulalva Car-ral)
+        Car otherVehicle = new Car();
+
+        // Futtatas
         car.move();
     }
 
     private static void runTestCase5() {
         System.out.println("\n--- [Fut] SD-05: Buszvezeto kor - navigacio es fordulo ---");
+        // Inicializalas CD-05 alapjan
+        GameLogic gl = new GameLogic();
         Bus bus = new Bus();
+        Lane l1 = new Lane();
+        Terminal t = new Terminal();
+
+        // Futtatas (a Skeleton-ban hivjuk meg a megfelelo logolassal a dokumentacio
+        // alapjan)
+        Skeleton.enter("Buszvezeto", "bus", "move()");
         bus.move();
+        Skeleton.exit("void");
     }
 
     private static void runTestCase6() {
         System.out.println("\n--- [Fut] SD-06: Hokotro mozgasa es takaritas ---");
+        // Inicializalas CD-06 alapjan
+        GameLogic gl = new GameLogic();
         SnowPlow sp = new SnowPlow();
+        Lane l1 = new Lane();
+        Lane l2 = new Lane();
+        SweepHead head = new SweepHead();
+
+        // Futtatas
         sp.move();
     }
 
     private static void runTestCase7() {
         System.out.println("\n--- [Fut] SD-07: Sopro fej takaritasa ---");
+        // Inicializalas CD-07 alapjan
         SnowPlow sp = new SnowPlow();
-        SweepHead sh = new SweepHead();
-        sp.changeHead(sh);
+        SweepHead head = new SweepHead();
+        Lane l = new Lane();
+        Lane neighbor = new Lane();
+
+        sp.changeHead(head);
+
+        // Futtatas
         sp.cleanCurrentLane();
     }
 
     private static void runTestCase8() {
         System.out.println("\n--- [Fut] SD-08: Hanyo fej takaritasa ---");
+        // Inicializalas CD-08 alapjan
         SnowPlow sp = new SnowPlow();
-        ThrowerHead th = new ThrowerHead();
-        sp.changeHead(th);
+        ThrowerHead head = new ThrowerHead();
+        Lane l = new Lane();
+
+        sp.changeHead(head);
+
+        // Futtatas
         sp.cleanCurrentLane();
     }
 
     private static void runTestCase9() {
         System.out.println("\n--- [Fut] SD-09: Soszoro fej takaritasa ---");
+        // Inicializalas CD-09 alapjan
         SnowPlow sp = new SnowPlow();
-        SaltHead salt = new SaltHead();
-        sp.changeHead(salt);
+        SaltHead head = new SaltHead();
+        Lane l = new Lane();
+
+        sp.changeHead(head);
+
+        // Futtatas
         sp.cleanCurrentLane();
     }
 
     private static void runTestCase10() {
         System.out.println("\n--- [Fut] SD-10: Sarkany fej takaritasa ---");
+        // Inicializalas CD-10 alapjan
         SnowPlow sp = new SnowPlow();
-        DragonHead dh = new DragonHead();
-        sp.changeHead(dh);
+        DragonHead head = new DragonHead();
+        Lane l = new Lane();
+
+        sp.changeHead(head);
+
+        // Futtatas
         sp.cleanCurrentLane();
     }
 
     private static void runTestCase11() {
         System.out.println("\n--- [Fut] SD-11: Jegtoro fej takaritasa ---");
+        // Inicializalas CD-11 alapjan
         SnowPlow sp = new SnowPlow();
-        IcebreakerHead ih = new IcebreakerHead();
-        sp.changeHead(ih);
+        IcebreakerHead head = new IcebreakerHead();
+        Lane l = new Lane();
+
+        sp.changeHead(head);
+
+        // Futtatas
         sp.cleanCurrentLane();
     }
 
     private static void runTestCase12() {
         System.out.println("\n--- [Fut] SD-12: Fejcsere a telephelyen ---");
+        // Inicializalas CD-12 alapjan
         IntegratedMarket market = new IntegratedMarket();
+        HomeBase hb = new HomeBase();
         SnowPlow sp = new SnowPlow();
         SweepHead newHead = new SweepHead();
-        HomeBase hb = new HomeBase();
 
+        // Futtatas
         boolean success = market.buyItem(sp, newHead);
         if (success) {
             hb.swapHead(sp, newHead);
@@ -192,13 +267,14 @@ public class Main {
 
     private static void runTestCase13() {
         System.out.println("\n--- [Fut] SD-13: Uzemanyag vasarlas es toltes ---");
+        // Inicializalas CD-13 alapjan
         IntegratedMarket market = new IntegratedMarket();
+        HomeBase hb = new HomeBase();
         SnowPlow sp = new SnowPlow();
         SaltHead head = new SaltHead();
         sp.changeHead(head);
-        HomeBase hb = new HomeBase();
 
-        // Szimulaljuk a vasarlast, utana az utantoltest
+        // Futtatas
         boolean success = market.buyItem(sp, head);
         if (success) {
             hb.refuelSnowPlow(sp, 50.0);
@@ -207,11 +283,13 @@ public class Main {
 
     private static void runTestCase14() {
         System.out.println("\n--- [Fut] SD-14: Hokotro vasarlasa ---");
+        // Inicializalas CD-14 alapjan
         IntegratedMarket market = new IntegratedMarket();
+        HomeBase hb = new HomeBase();
         SnowPlow existingSp = new SnowPlow();
         SnowPlow newSp = new SnowPlow();
-        HomeBase hb = new HomeBase();
 
+        // Futtatas
         boolean success = market.buyItem(existingSp, newSp);
         if (success) {
             hb.acceptSnowPlow(newSp);
@@ -220,17 +298,27 @@ public class Main {
 
     private static void runTestCase15() {
         System.out.println("\n--- [Fut] SD-15: Auto elakadasa es atsorolas ---");
+        // Inicializalas CD-15 alapjan
+        GameLogic gl = new GameLogic();
         Car car = new Car();
-        // A move() belsejeben fognak lefutni az isBlocked() elagazasok a Skeleton
-        // kerdessel
+        Lane l1 = new Lane();
+        Lane l2 = new Lane();
+        Lane neighbor = new Lane();
+
+        // Futtatas
         car.move();
     }
 
     private static void runTestCase16() {
         System.out.println("\n--- [Fut] SD-16: Jatek vege es eredmenyhirdetes ---");
+        // Inicializalas CD-16 alapjan
         GameLogic gl = new GameLogic();
-        // Ha az advanceTurn()-nel "I"-t nyomunk a max kor kerdesre, meghivja az
-        // endGame()-t
+        Bus bus1 = new Bus();
+        Bus bus2 = new Bus();
+        SnowPlow sp1 = new SnowPlow();
+        SnowPlow sp2 = new SnowPlow();
+
+        // Futtatas
         gl.advanceTurn();
     }
 }
