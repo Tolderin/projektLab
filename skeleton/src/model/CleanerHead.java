@@ -1,34 +1,23 @@
 package model;
 
-import skeleton.Skeleton;
-
 /**
- * A hókotróra (SnowPlow) szerelhető különböző fejek absztrakt ősosztálya.
- * Implementálja az IPurchasable interfészt, így megvásárolható az áruházban.
- * Felelőssége a sávok takarítási logikájának (clean) előírása, valamint
- * az üzemanyag/töltet utántöltésének alapértelmezett kezelése.
+ * A hokotrora (SnowPlow) szerelheto kulonbozo fejek absztrakt ososztalya.
+ * Implementalja az IPurchasable interfeszt, igy megvasarolhato az aruhazban.
+ * Felelossege a savok takaritasi logikajanak (clean) eloirasa.
+ * Minden konkret fejnek implementalnia kell a clean(Lane) metodust.
  */
 public abstract class CleanerHead implements IPurchasable {
 
-    /** A fejben lévő üzemanyag/töltet mennyisége. */
-    protected double fuelAmount = 0.0;
+    /** A fej ara a boltban. */
+    protected int price;
+
+    /** Hasznal-e uzemanyagot (so vagy biokerozin). */
+    protected boolean usesFuel;
 
     /**
-     * A sáv megtisztítása. A leszármazottaknak kell megvalósítaniuk.
-     * 
-     * @param l A takarítandó sáv (Lane).
+     * A sav megtisztitasa. A leszarmazottaknak kell megvalositaniuk.
+     *
+     * @param l A takaritando sav (Lane).
      */
     public abstract void clean(Lane l);
-
-    /**
-     * Utántölti a fej tartályát a megadott mennyiséggel.
-     * Alapértelmezés szerint csak logol, a leszármazottak felüldefiniálhatják.
-     * 
-     * @param amount A betöltendő üzemanyag mennyisége.
-     */
-    public void refillFuel(double amount) {
-        Skeleton.enter("homeBase", "cleanerHead", "refillFuel(" + amount + ")");
-        this.fuelAmount += amount;
-        Skeleton.exit("void");
-    }
 }

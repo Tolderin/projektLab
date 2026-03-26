@@ -5,46 +5,46 @@ import java.util.List;
 import skeleton.Skeleton;
 
 /**
- * A telephelyen lévő bolt, amelyből a takarítók eszközöket és üzemanyagot
- * vásárolhatnak.
- * Felelőssége az eladható termékek nyilvántartása és a vásárlási tranzakciók
- * lebonyolítása.
+ * A telephelyen levo bolt, amelybol a takaritok eszkozoket
+ * es uzemanyagot vasarolhatnak.
+ * Felelossege az eladhato termekek nyilvantartasa es a vasarlasi
+ * tranzakciok lebonyolitasa.
  */
 public class IntegratedMarket {
 
-    /** A boltban kapható termékek listája[cite: 1375]. */
+    /** A boltban kaphato termekek listaja. */
     private List<IPurchasable> availableItems = new ArrayList<>();
 
     /**
-     * Megvásárol egy terméket ha van elég pénz; igazzal tér vissza ha sikeres[cite:
-     * 1377].
+     * Megvasarol egy termeket ha van eleg penz.
+     * SD-12/13/14 alapjan: I/N kerdes a jatekos penzerol.
+     * Igazzal ter vissza ha sikeres, hamissal ha nem.
+     *
+     * @param buyer A vasarlo hokotro (a jatekos neven).
+     * @param item A megvasarolando termek.
+     * @return true ha sikeres a vasarlas, false ha nem.
      */
     public boolean buyItem(SnowPlow buyer, IPurchasable item) {
-        Skeleton.enter("takarító", "market", "buyItem(sp, item)");
+        Skeleton.enter("takarito", "market", "buyItem(sp, item)");
 
-        // A dokumentáció alapján a vásárláskor meg kell kérdezni a felhasználót[cite:
-        // 273, 274].
-        boolean hasEnoughMoney = Skeleton.askQuestion("Van elegendő pénze a játékosnak a vásárláshoz?");
+        boolean hasEnoughMoney = Skeleton.askQuestion(
+                "Van elegendo penze a jatekosnak a vasarlashoz?");
 
         if (hasEnoughMoney) {
-            Skeleton.enter("market", "Skeleton", "success");
-            Skeleton.exit("");
             Skeleton.exit("true");
             return true;
         } else {
-            Skeleton.enter("market", "Skeleton", "false");
-            Skeleton.exit("");
             Skeleton.exit("false");
             return false;
         }
     }
 
     /**
-     * Visszaadja a megvásárolható termékek listáját[cite: 1378].
+     * Visszaadja a megvasarolhato termekek listajat.
+     *
+     * @return A kaphato termekek listaja.
      */
     public List<IPurchasable> getAvailableItems() {
-        Skeleton.enter("Hívó", "market", "getAvailableItems()");
-        Skeleton.exit("List<IPurchasable>");
         return availableItems;
     }
 }

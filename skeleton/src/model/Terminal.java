@@ -3,36 +3,26 @@ package model;
 import skeleton.Skeleton;
 
 /**
- * A buszjáratok végpontja, egyben Field a gráfban (Building leszármazott)[cite:
- * 1502, 1503].
- * Felelőssége a fordulók regisztrálása: amikor egy busz megérkezik,
- * jelzi a buszvezetőnek a forduló teljesítését[cite: 1503].
+ * A buszjaratok vegpontja, egyben Field a grafban (Building leszarmazott).
+ * Felelossege a fordulok regisztralasa: amikor egy busz megerkezik,
+ * jelzi a buszvezetonek a fordulo teljesiteset.
  */
 public class Terminal extends Building {
 
     /**
-     * Regisztrálja a busz érkezését és jelzi a fordulót a buszvezetőnek[cite:
-     * 1507].
+     * Letrehoz egy vegallomast.
+     */
+    public Terminal() {
+    }
+
+    /**
+     * Regisztralja a busz erkezeset es jelzi a fordulot a buszvezetonek.
+     * SD-05 alapjan: a fordulo rogzitesre kerul.
+     *
+     * @param bus Az erkezo busz.
      */
     public void registerArrival(Bus bus) {
-        Skeleton.enter("bus/buszvezető", "terminal", "registerArrival(bus)");
-
-        // Itt elvileg a buszvezető completedRounds változóját kéne növelni
-        Skeleton.enter("terminal", "Skeleton", "A célmező végállomás (Terminal)? (I/N) -> I -> completedRounds++");
-        Skeleton.exit("");
-
-        Skeleton.exit("void");
-    }
-
-    @Override
-    public void accept(Vehicle v) {
-        Skeleton.enter("Hívó", "terminal", "accept(v)");
-        Skeleton.exit("void");
-    }
-
-    @Override
-    public void remove(Vehicle v) {
-        Skeleton.enter("Hívó", "terminal", "remove(v)");
-        Skeleton.exit("void");
+        Skeleton.enter("bus", "terminal", "registerArrival(bus)");
+        Skeleton.exit("fordulo rogzitve");
     }
 }

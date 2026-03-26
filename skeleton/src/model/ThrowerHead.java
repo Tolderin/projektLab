@@ -3,50 +3,64 @@ package model;
 import skeleton.Skeleton;
 
 /**
- * A hómaró fej (ThrowerHead) nagyobb mennyiségű hó hatékony eltávolítására
- * szolgál.
- * Működéséhez üzemanyag szükséges. Ha kifogy az üzemanyag (Empty állapot),
- * nem végzi el a takarítást.
+ * A hanyo fej (ThrowerHead) a havat messzire szorja az uttestrol,
+ * jellemzoen a jardara. A szomszedos savot nem modositja.
+ * Jeget nem tud eltavolitani. Uzemanyagot nem igenyel.
+ *
+ * SD-08: ThrowerHead.clean(lane) meghivja a lane.removeSnow(amount)-t.
+ * A throwDistance ertekenek megfeleloen a ho messzire kerul,
+ * szomszedos Lane-en nem tortenik addSnow() hivas.
  */
 public class ThrowerHead extends CleanerHead {
 
+    /** Az a tavolsag, ameddig a hanyo fej a havat elhajitja. */
+    private double throwDistance;
+
+    /**
+     * Letrehozza a hanyo fejet.
+     * Ar: 2000 (masodik legolcsobb).
+     * Nem hasznal uzemanyagot.
+     */
     public ThrowerHead() {
-        this.fuelAmount = 100.0; // Kezdeti üzemanyag
+        this.price = 2000;
+        this.usesFuel = false;
+        this.throwDistance = 10.0;
     }
 
     /**
-     * Eltávolítja a havat a sávközepekről, ha van elegendő üzemanyag.
+     * A sav letakaritasa: a havat messzire szorja, szomszedos savot nem modosit.
+     * SD-08 alapjan: csak removeSnow hivas, semmi mas.
+     *
+     * @param l A takaritando sav.
      */
     @Override
     public void clean(Lane l) {
         Skeleton.enter("snowPlow", "throwerHead", "clean(l)");
 
-        boolean isFueled = Skeleton.askQuestion("Van elegendő üzemanyag a hómaróban (fuelAmount > 0)?");
-
-        if (isFueled) {
-            Skeleton.enter("throwerHead", "l", "removeSnow(amount)");
-            l.removeSnow(3.0); // Nagyobb mennyiségű havat távolít el, mint a sima seprű
-            Skeleton.exit("void");
-            this.fuelAmount -= 15.0; // Fogyasztás
-        } else {
-            Skeleton.enter("throwerHead", "Skeleton", "A fej Empty állapotban van, nem csinál semmit.");
-            Skeleton.exit("");
-        }
+        Skeleton.enter("throwerHead", "l", "removeSnow(amount)");
+        l.removeSnow(3.0);
+        Skeleton.exit("void");
 
         Skeleton.exit("void");
     }
 
+    /**
+     * Visszaadja a hanyo fej arat.
+     *
+     * @return 2000
+     */
     @Override
     public int getPrice() {
-        Skeleton.enter("Hívó", "throwerHead", "getPrice()");
-        Skeleton.exit("3000");
-        return 3000;
+        return price;
     }
 
+    /**
+     * Visszaadja a fej nevet.
+     *
+     * @return "ThrowerHead"
+     */
     @Override
     public String getName() {
-        Skeleton.enter("Hívó", "throwerHead", "getName()");
-        Skeleton.exit("Hómaró");
-        return "Hómaró";
+        return "ThrowerHead";
     }
 }

@@ -5,27 +5,31 @@ import java.util.List;
 import skeleton.Skeleton;
 
 /**
- * A takarító játékos által irányított munkagép. [cite: 1476]
- * A rászerelt fej segítségével takarítja a sávokat, pénzt termel a takarítónak.
- * [cite: 1476]
- * Hóláncai miatt jégen sem csúszik. A telephelyen tud fejet cserélni és
- * utántölteni. [cite: 1477]
+ * A takarito jatekos altal iranyitott munkagep.
+ * A raszerelt fej segitsegevel takaritja a savokat, penzt termel a takaritonak.
+ * Holancai miatt jegen sem csuszik. A telephelyen tud fejet cserelni
+ * es utantolteni.
+ *
+ * SD-06: SnowPlow.move() — mozgatas es takaritas.
  */
 public class SnowPlow extends Vehicle implements IPurchasable {
 
-    /** a jelenleg birtokolt hókotró fejek listája [cite: 1486] */
+    /** A jelenleg birtokolt hokotro fejek listaja. */
     private List<CleanerHead> attachments = new ArrayList<>();
 
-    /** a jelenleg felszerelt hókotró fej [cite: 1486] */
+    /** A jelenleg felszerelt hokotro fej. */
     private CleanerHead activeHead;
 
+    /** A hokotro altal termelt penz (a jatekos szamlajan). */
+    private int money = 0;
+
     /**
-     * mozgatja a hókotrót a tervezett útvonal szerint (Vehicle-ből
-     * felüldefiniálva). [cite: 1488]
+     * Mozgatja a hokotrot a tervezett utvonal szerint.
+     * SD-06 alapjan: remove(sp) -> accept(sp) -> cleanCurrentLane()
      */
     @Override
     public void move() {
-        Skeleton.enter("takarító", "snowPlow", "move()");
+        Skeleton.enter("gameLogic", "snowPlow", "move()");
 
         Skeleton.enter("snowPlow", "l1", "remove(sp)");
         Skeleton.exit("void");
@@ -33,13 +37,17 @@ public class SnowPlow extends Vehicle implements IPurchasable {
         Skeleton.enter("snowPlow", "l2", "accept(sp)");
         Skeleton.exit("void");
 
+        // Takaritas — tenylegesen meghivja cleanCurrentLane()-t
         cleanCurrentLane();
 
         Skeleton.exit("void");
     }
 
     /**
-     * kicseréli az aktív fejet a megadottra (csak telephelyen). [cite: 1488, 1489]
+     * Kicsereli az aktiv fejet a megadottra (csak telephelyen).
+     * SD-12 alapjan: activeHead = newHead.
+     *
+     * @param newHead Az uj fej.
      */
     public void changeHead(CleanerHead newHead) {
         Skeleton.enter("homeBase", "snowPlow", "changeHead(newHead)");
@@ -52,42 +60,67 @@ public class SnowPlow extends Vehicle implements IPurchasable {
     }
 
     /**
-     * a jelenlegi sávon végrehajtja az aktív fejre jellemző takarítást. [cite:
-     * 1489]
+     * A jelenlegi savon vegrehajtja az aktiv fejre jellemzo takaritast.
+     * SD-06 alapjan: meghivja activeHead.clean(currentLane) metodust.
+     * Tenylegesen delegalja a hivast a felszerelt fejnek.
      */
     public void cleanCurrentLane() {
         Skeleton.enter("snowPlow", "snowPlow", "cleanCurrentLane()");
 
         if (activeHead != null) {
-            Skeleton.enter("snowPlow", "activeHead", "clean(l2)");
-            Skeleton.exit("void");
-        } else {
-            // A tesztelhetőség kedvéért szimuláljuk az aktív fejet, ha a dokumentáció
-            // szerint haladunk
-            Skeleton.enter("snowPlow", "head:CleanerHead", "clean(l2)");
-            Skeleton.exit("void");
+            // Tenylegesen meghivja a fej clean() metodusat
+            activeHead.clean(currentLane != null ? currentLane : new Lane());
         }
 
         Skeleton.exit("void");
     }
 
     /**
-     * visszaadja a hókotró árát (IPurchasable-ből). [cite: 1489]
+     * Az aktiv fej uzemanyag-utantoltese.
+     * SD-13 alapjan: HomeBase -> sp -> activeHead.refillFuel(amount)
+     *
+     * @param amount A betoltendo mennyiseg.
      */
-    @Override
-    public int getPrice() {
-        Skeleton.enter("Hívó", "snowPlow", "getPrice()");
-        Skeleton.exit("5000"); // Példa érték
-        return 5000;
+    public void refuelActiveHead(double amount) {
+        if (activeHead instanceof SaltHead) {
+            ((SaltHead) activeHead).refillFuel(amount);
+        } else if (activeHead instanceof DragonHead) {
+            ((DragonHead) activeHead).refillFuel(amount);
+        }
     }
 
     /**
-     * visszaadja a termék nevét (IPurchasable-ből). [cite: 1490]
+     * Visszaadja a hokotro arat.
+     * A legdragabb segedeszkoz.
+     *
+     * @return 10000
+     */
+    @Override
+    public int getPrice() {
+        return 10000;
+    }
+
+    /**
+     * Visszaadja a termek nevet.
+     *
+     * @return "SnowPlow"
      */
     @Override
     public String getName() {
-        Skeleton.enter("Hívó", "snowPlow", "getName()");
-        Skeleton.exit("Hókotró");
-        return "Hókotró";
+        Skeleton.enter("gameLogic", "snowPlow", "getName()");
+        Skeleton.exit("SnowPlow");
+        return "SnowPlow";
+    }
+
+    /**
+     * Visszaadja a hokotro altal termelt penzt.
+     * SD-16-ban hasznalt a jatek vegi eredmeny osszealitasahoz.
+     *
+     * @return A termelt penz osszege.
+     */
+    public int getMoney() {
+        Skeleton.enter("gameLogic", "snowPlow", "getMoney()");
+        Skeleton.exit(String.valueOf(money));
+        return money;
     }
 }

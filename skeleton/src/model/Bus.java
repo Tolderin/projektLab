@@ -3,63 +3,95 @@ package model;
 import skeleton.Skeleton;
 
 /**
- * A buszvezető játékos által irányított jármű, amely két végállomás között
- * közlekedik. [cite: 1237]
- * Fordulókat teljesít; ütközés vagy csúszás esetén meghatározott ideig
- * mozgásképtelenné válik és elzárja a sávot. [cite: 1238]
+ * A buszvezeto jatekos altal iranyitott jarmu, amely ket vegallomas
+ * kozott kozlekedik. Forduokat teljesit; utkozes vagy csuszas eseten
+ * meghatarozot ideig mozgaskeptelenne valik es elzarja a savot.
+ *
+ * SD-05: Bus.move() — a buszt a celmezore mozgatja,
+ * ellenorzi hogy Terminal-ra erkezett-e, ha igen: registerArrival().
  */
 public class Bus extends Vehicle {
 
-    /** hamis értéke esetén a busz ütközés miatt mozgásképtelen [cite: 1242] */
+    /** Hamis erteke eseten a busz utkozes miatt mozgaskeptelen. */
     private boolean isFunctioning = true;
 
-    /** hány körig marad még mozgásképtelen [cite: 1243] */
+    /** Hany korig marad meg mozgaskeptelen. */
     private int disabledTurnsLeft = 0;
 
+    /** A teljesitett fordulok szama. */
+    private int completedRounds = 0;
+
     /**
-     * mozgatja a buszt a tervezett következő mező felé (Vehicle-ből
-     * felüldefiniálva). [cite: 1245]
+     * Mozgatja a buszt a tervezett kovetkezo mezo fele.
+     * SD-05 alapjan: remove(bus) az elozo savrol, accept(bus) a celmezon,
+     * majd I/N kerdes hogy a celmezo vegallomas-e.
+     * Ha igen: terminal.registerArrival(bus) es completedRounds++.
      */
     @Override
     public void move() {
-        Skeleton.enter("buszvezető", "bus", "move()");
+        Skeleton.enter("buszvezeto", "bus", "move()");
 
+        // Elozo savrol eltavolitas
         Skeleton.enter("bus", "l1", "remove(bus)");
         Skeleton.exit("void");
 
+        // Celmezon elfogadas
         Skeleton.enter("bus", "target", "accept(bus)");
         Skeleton.exit("void");
 
+        // SD-05: Vegallomas ellenorzes
+        boolean isTerminal = Skeleton.askQuestion(
+                "A celmezo vegallomas (Terminal)?");
+        if (isTerminal) {
+            // Terminal hivja a registerArrival-t (sajat enter/exit-tel)
+            Terminal t = new Terminal();
+            t.registerArrival(this);
+            completedRounds++;
+        }
+
         Skeleton.exit("void");
     }
 
     /**
-     * ütközést kezel egy másik járművel, beállítja a mozgásképtelen állapotot.
-     * [cite: 1246]
+     * Utkozest kezel egy masik jarmuvel, beallitja a mozgaskeptelen allapotot.
+     *
+     * @param v A masik jarmu amivel az utkozes tortent.
      */
     public void collideWith(Vehicle v) {
-        Skeleton.enter("Hívó", "bus", "collideWith(v)");
+        Skeleton.enter("car", "bus", "collideWith(v)");
         this.isFunctioning = false;
         Skeleton.exit("void");
     }
 
     /**
-     * jégpáncélon történő megcsúszást kezel. [cite: 1247]
+     * Jegpancelon torteno megcsuszast kezel.
      */
     public void slip() {
-        Skeleton.enter("Hívó", "bus", "slip()");
+        Skeleton.enter("bus", "bus", "slip()");
         this.isFunctioning = false;
         Skeleton.exit("void");
     }
 
     /**
-     * Visszaadja a busz nevét.
-     * 
-     * @return a busz azonosítója.
+     * Visszaadja a busz nevet.
+     *
+     * @return A busz azonositoja.
      */
     public String getName() {
-        Skeleton.enter("Hívó", "bus", "getName()");
+        Skeleton.enter("gameLogic", "bus", "getName()");
         Skeleton.exit("BusName");
         return "BusName";
+    }
+
+    /**
+     * Visszaadja a teljesitett fordulok szamat.
+     * SD-16-ban hasznalt a jatek vegi eredmeny osszeallitasahoz.
+     *
+     * @return A teljesitett fordulok szama.
+     */
+    public int getCompletedRounds() {
+        Skeleton.enter("gameLogic", "bus", "getCompletedRounds()");
+        Skeleton.exit(String.valueOf(completedRounds));
+        return completedRounds;
     }
 }

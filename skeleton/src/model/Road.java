@@ -2,54 +2,67 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
-import skeleton.Skeleton;
 
 /**
- * Az úthálózat egy útját reprezentálja[cite: 1438, 1439].
- * Felelőssége az utak végpontjainak és szomszédainak számontartása,
- * valamint összefogja a sávokat, és épületeket[cite: 1440].
+ * Az uthalozat egy utjat reprezentalja.
+ * Felelossege az utak vegpontjainak es szomszedainak szamontartasa,
+ * valamint osszefogja a savokat es epuleteket.
+ * A Road nem implementalja a Field interfeszt — kontenerkent
+ * fogja ossze a Lane-eket es Building-eket.
  */
 public class Road {
+
+    /** A szomszedos utak listaja a kezdoponti oldalon. */
     private List<Road> startPoint = new ArrayList<>();
+
+    /** A szomszedos utak listaja a vegponti oldalon. */
     private List<Road> endPoint = new ArrayList<>();
+
+    /** A startbol endbe halado savok listaja. */
     private List<Lane> forwardLanes = new ArrayList<>();
+
+    /** Az endbol startba halado savok listaja. */
     private List<Lane> backwardLanes = new ArrayList<>();
+
+    /** Az utcahoz csatlakozo epuletek. */
     private List<Building> buildings = new ArrayList<>();
+
+    /** Az ut hossza. */
     private Double length = 0.0;
 
     /**
-     * Visszaadja az út elején a szomszédos utak listáját[cite: 1456, 1457].
+     * Visszaadja az ut elejen a szomszedos utak listajat.
+     *
+     * @return A kezdoponti szomszedos utak.
      */
     public List<Road> getStartConnections() {
-        Skeleton.enter("Hívó", "road", "getStartConnections()");
-        Skeleton.exit("List<Road>");
         return startPoint;
     }
 
     /**
-     * Visszaadja az út végén a szomszédos utak listáját[cite: 1457].
+     * Visszaadja az ut vegen a szomszedos utak listajat.
+     *
+     * @return A vegponti szomszedos utak.
      */
     public List<Road> getEndConnections() {
-        Skeleton.enter("Hívó", "road", "getEndConnections()");
-        Skeleton.exit("List<Road>");
         return endPoint;
     }
 
     /**
-     * Visszaadja a startból endbe haladó sávok listáját[cite: 1458].
+     * Visszaadja a startbol endbe halado savok listajat.
+     *
+     * @return Az elore halado savok.
      */
     public List<Lane> getForwardLanes() {
-        Skeleton.enter("Hívó", "road", "getForwardLanes()");
-        Skeleton.exit("List<Lane>");
         return forwardLanes;
     }
 
     /**
-     * Visszaadja az endből startba haladó sávok listáját[cite: 1459].
+     * Visszaadja az endbol startba halado savok listajat.
+     *
+     * @return A hatra halado savok.
      */
     public List<Lane> getBackwardLanes() {
-        Skeleton.enter("Hívó", "road", "getBackwardLanes()");
-        Skeleton.exit("List<Lane>");
         return backwardLanes;
     }
 }

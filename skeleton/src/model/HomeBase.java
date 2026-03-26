@@ -4,75 +4,64 @@ import java.util.List;
 import skeleton.Skeleton;
 
 /**
- * A hókotrók bázisa, amely maga is Field a gráfban (Building leszármazott).
- * Felelőssége a hókotrók fogadása, a fejcserék és az üzemanyag-utántöltések
- * koordinálása.
- * A beépített áruháznak is helyet ad.
+ * A hokotrok bazisa, amely maga is Field a grafban (Building leszarmazott).
+ * Felelossege a hokotrok fogadasa, a fejcserek es az uzemanyag-utantoltesek
+ * koordinalasa. A beepitett aruhaznak is helyet ad.
  */
 public class HomeBase extends Building {
 
-    /** A telephelyen lévő bolt[cite: 1346]. */
+    /** A telephelyen levo bolt. */
     private IntegratedMarket market;
 
-    /** A telephely maximális befogadóképessége[cite: 1347]. */
+    /** A telephely maximalis befogadokepessege. */
     private int capacity;
 
+    /**
+     * Letrehozza a telephelyet a beepitett aruhazzal.
+     */
     public HomeBase() {
         this.market = new IntegratedMarket();
     }
 
     /**
-     * Fogadja a visszatérő hókotrót, belső kapacitáskezeléssel[cite: 1349].
+     * Fogadja a visszatero hokotrot, belso kapacitaskezelessel.
+     *
+     * @param sp A visszatero hokotro.
      */
     public void acceptSnowPlow(SnowPlow sp) {
-        Skeleton.enter("Hívó", "homeBase", "acceptSnowPlow(sp)");
-        // Belső logika helyett csak kilépünk a szkeleton miatt
+        Skeleton.enter("market", "homeBase", "acceptSnowPlow(sp)");
         Skeleton.exit("void");
     }
 
     /**
-     * Utántölti a megadott hókotró üzemanyag-tartályát[cite: 1350].
+     * Utantolti a megadott hokotro uzemanyag-tartalyat.
+     * SD-13 alapjan: sp-n keresztul keri az aktiv fejet,
+     * azon hivja refillFuel(amount)-ot.
+     *
+     * @param sp A hokotro amelynek a fejet feltoltjuk.
+     * @param amount A betoltendo mennyiseg.
      */
     public void refuelSnowPlow(SnowPlow sp, double amount) {
-        Skeleton.enter("takarító", "homeBase", "refuelSnowPlow(sp, amount)");
+        Skeleton.enter("takarito", "homeBase", "refuelSnowPlow(sp, amount)");
 
-        Skeleton.enter("homeBase", "sp", "getActiveHead()");
-        Skeleton.exit("HEAD");
-
-        Skeleton.enter("homeBase", "HEAD", "refillFuel(amount)");
-        Skeleton.exit("void");
+        // SD-13: HomeBase -> sp.activeHead -> refillFuel(amount)
+        sp.refuelActiveHead(amount);
 
         Skeleton.exit("void");
     }
 
     /**
-     * Fejcserét hajt végre a megadott hókotróra[cite: 1351].
+     * Fejcseret hajt vegre a megadott hokotron.
+     * SD-12 alapjan: meghivja a SnowPlow.changeHead(newHead)-et.
+     *
+     * @param sp A hokotro amelyen a fejcsere tortenik.
+     * @param newHead Az uj fej.
      */
     public void swapHead(SnowPlow sp, CleanerHead newHead) {
-        Skeleton.enter("takarító", "homeBase", "swapHead(sp, newHead)");
+        Skeleton.enter("takarito", "homeBase", "swapHead(sp, newHead)");
 
-        Skeleton.enter("homeBase", "sp", "changeHead(newHead)");
+        sp.changeHead(newHead);
+
         Skeleton.exit("void");
-
-        Skeleton.exit("void");
-    }
-
-    @Override
-    public void accept(Vehicle v) {
-        Skeleton.enter("Hívó", "homeBase", "accept(v)");
-        Skeleton.exit("void");
-    }
-
-    @Override
-    public void remove(Vehicle v) {
-        Skeleton.enter("Hívó", "homeBase", "remove(v)");
-        Skeleton.exit("void");
-    }
-
-    @Override
-    public List<Field> getNeighbors() {
-        Skeleton.enter("Hívó", "homeBase", "getNeighbors()");
-        Skeleton.exit("List<Field>");
-        return neighbors;
     }
 }

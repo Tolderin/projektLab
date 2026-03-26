@@ -2,45 +2,47 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
-import skeleton.Skeleton;
 
 /**
- * Az összes épülettípus (GeneralBuilding, HomeBase, Terminal) közös absztrakt
- * ősosztálya[cite: 1225, 1227].
- * Implementálja a Field interfészt[cite: 1227].
- * Felelőssége, hogy egységes alapot biztosítson az épületeknek a szomszédossági
- * kapcsolatok kezeléséhez[cite: 1228].
+ * Az osszes epulettipus (GeneralBuilding, HomeBase, Terminal) kozos absztrakt
+ * ososztalya. Implementalja a Field interfeszt.
+ * Felelossege, hogy egyseges alapot biztositson az epuleteknek
+ * a szomszedossagi kapcsolatok kezelesehez.
  */
 public abstract class Building implements Field {
 
-    /** A szomszédos mezők listája (Field interfészből)[cite: 1232]. */
+    /** A szomszedos mezok listaja. */
     protected List<Field> neighbors = new ArrayList<>();
 
     /**
-     * Fogadja az érkező járművet (Field-ből felüldefiniálva)[cite: 1234].
+     * Fogadja az erkezo jarmuvet.
+     * A Lane-ektol elteroen az epuletek nem logolnak enter/exit-et,
+     * a hivo felel a naplozasert.
+     *
+     * @param v Az erkezo jarmu.
      */
     @Override
     public void accept(Vehicle v) {
-        Skeleton.enter("Hívó", "building", "accept(v)");
-        Skeleton.exit("void");
+        // Skeleton: a hivo oldal logol
     }
 
     /**
-     * Eltávolítja a távozó járművet (Field-ből felüldefiniálva)[cite: 1234].
+     * Eltavolitja a tavozo jarmuvet.
+     *
+     * @param v A tavozo jarmu.
      */
     @Override
     public void remove(Vehicle v) {
-        Skeleton.enter("Hívó", "building", "remove(v)");
-        Skeleton.exit("void");
+        // Skeleton: a hivo oldal logol
     }
 
     /**
-     * Visszaadja a szomszédos mezőket (Field-ből)[cite: 1234].
+     * Visszaadja a szomszedos mezok listajat.
+     *
+     * @return A szomszedos Field objektumok listaja.
      */
     @Override
     public List<Field> getNeighbors() {
-        Skeleton.enter("Hívó", "building", "getNeighbors()");
-        Skeleton.exit("List<Field>");
         return neighbors;
     }
 }

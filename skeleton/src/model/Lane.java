@@ -5,102 +5,146 @@ import java.util.List;
 import skeleton.Skeleton;
 
 /**
- * Az út egyetlen forgalmi sávja és egyben Field a gráfban[cite: 1394].
- * Felelőssége nyilvántartani a hóréteg vastagságát, a jégpáncél állapotát
- * és a rajta tartózkodó járműveket[cite: 1395].
- * Kezeli a letaposás miatti jégképződési mechanizmust[cite: 1395].
+ * Az ut egyetlen forgalmi savja es egyben Field a grafban.
+ * Felelossege nyilvantartani a horeteg vastagsagat, a jegpancel allapotat
+ * es a rajta tartozkodo jarmuveket.
+ * Kezeli a letaposas miatti jegkepzodesi mechanizmust.
+ *
+ * A Lane "level" metodusai (accept, remove, addSnow, removeSnow, breakIce,
+ * removeIce, applyCompaction, applySaltEffect, getNeighbors) NEM logolnak
+ * sajat enter/exit-et — a HIVO fel felel a naplozasert, mivel o tudja
+ * a caller nevet. Kivetel: checkFreeze() es isBlocked(), amelyekben
+ * I/N kerdes van.
  */
 public class Lane implements Field {
+
+    /** A savon levo horeteg vastagsaga. */
     private double snowDepth = 0.0;
+
+    /** Igaz, ha a savon jegpancel van. */
     private boolean isFrozen = false;
+
+    /** A jegpancel vastagsaga. */
     private double iceThickness = 0.0;
+
+    /** Hanyszor hajtottak at jarmuvek — kuszob felett jegpancel kepzodik. */
     private int compactionCount = 0;
+
+    /** A savon tartozkodo jarmuvek listaja. */
     private List<Vehicle> vehicles = new ArrayList<>();
+
+    /** A sohatas fennmaradasanak ideje. */
     private double saltEffect = 0.0;
+
+    /** A szomszedos mezok listaja. */
     private List<Field> neighbors = new ArrayList<>();
 
+    /**
+     * Fogadja az erkezo jarmuvet. Nem logol — a hivo fel naploz.
+     *
+     * @param v Az erkezo jarmu.
+     */
     @Override
     public void accept(Vehicle v) {
-        Skeleton.enter("Hívó", "lane", "accept(car/bus/sp)");
         vehicles.add(v);
-        Skeleton.exit("void");
     }
 
+    /**
+     * Eltavolitja a tavozo jarmuvet. Nem logol — a hivo fel naploz.
+     *
+     * @param v A tavozo jarmu.
+     */
     @Override
     public void remove(Vehicle v) {
-        Skeleton.enter("Hívó", "lane", "remove(car/bus/sp)");
         vehicles.remove(v);
-        Skeleton.exit("void");
     }
 
+    /**
+     * Visszaadja a szomszedos mezok listajat. Nem logol — a hivo fel naploz.
+     *
+     * @return A szomszedos Field objektumok listaja.
+     */
     @Override
     public List<Field> getNeighbors() {
-        Skeleton.enter("Hívó", "lane", "getNeighbors()");
-        Skeleton.exit("List<Field>");
         return neighbors;
     }
 
-    /** Növeli a hóréteg vastagságát[cite: 1406]. */
+    /**
+     * Noveli a horeteg vastagsagat. Nem logol — a hivo fel naploz.
+     *
+     * @param amount A hozzaadando ho mennyisege.
+     */
     public void addSnow(double amount) {
-        Skeleton.enter("Hívó", "lane", "addSnow(" + amount + ")");
         snowDepth += amount;
-        Skeleton.exit("void");
     }
 
-    /** Csökkenti a hóréteg vastagságát[cite: 1406]. */
+    /**
+     * Csokkenti a horeteg vastagsagat. Nem logol — a hivo fel naploz.
+     *
+     * @param amount Az eltavolitando ho mennyisege.
+     */
     public void removeSnow(double amount) {
-        Skeleton.enter("Hívó", "lane", "removeSnow(" + amount + ")");
         snowDepth = Math.max(0, snowDepth - amount);
-        Skeleton.exit("void");
     }
 
-    /** A jégpáncélt feltöri és havává alakítja[cite: 1406]. */
+    /**
+     * A jegpancelt feltori es havava alakitja. Nem logol — a hivo fel naploz.
+     */
     public void breakIce() {
-        Skeleton.enter("Hívó", "lane", "breakIce()");
         this.isFrozen = false;
-        Skeleton.exit("void");
     }
 
-    /** Eltávolítja a jégpáncélt[cite: 1407]. */
+    /**
+     * Eltavolitja a jegpancelt teljesen. Nem logol — a hivo fel naploz.
+     */
     public void removeIce() {
-        Skeleton.enter("Hívó", "lane", "removeIce()");
         this.isFrozen = false;
         this.iceThickness = 0;
-        Skeleton.exit("void");
     }
 
-    /** Ellenőrzi, hogy kell-e jégpáncél képződjön[cite: 1408]. */
+    /**
+     * Ellenorzi, hogy kell-e jegpancel kepzodjon.
+     * SAJAT enter/exit-et logol, mert I/N kerdest tartalmaz.
+     * SD-03: "Elerte a letaposasok szama a kuszobot, es van ho a savon?"
+     */
     public void checkFreeze() {
-        Skeleton.enter("lane", "lane", "checkFreeze()");
-        // A specifikáció alapján: compactionCount >= küszöb ÉS snowDepth > 0 [cite:
-        // 511, 722]
-        boolean thresholdReached = Skeleton.askQuestion("CompactionCount >= kuszob es snowDepth > 0?");
-        if (thresholdReached && !isFrozen) {
+        Skeleton.enter("l2", "l2", "checkFreeze()");
+        boolean thresholdReached = Skeleton.askQuestion(
+                "Elerte a letaposasok szama a kuszobot, es van ho a savon?");
+        if (thresholdReached) {
             this.isFrozen = true;
-            Skeleton.enter("lane", "lane", "isFrozen = true");
+            Skeleton.enter("l2", "l2", "isFrozen = true");
             Skeleton.exit("void");
         }
         Skeleton.exit("void");
     }
 
-    /** Növeli a compactionCount-ot járműáthaladáskor[cite: 1409]. */
+    /**
+     * Noveli a compactionCount-ot jarmuathaladaskor.
+     * Nem logol — a hivo fel naploz.
+     */
     public void applyCompaction() {
-        Skeleton.enter("Hívó", "lane", "applyCompaction()");
         compactionCount++;
-        Skeleton.exit("void");
     }
 
-    /** Beállítja a sóhatást a sávon[cite: 1409]. */
+    /**
+     * Beallitja a sohatast a savon. Nem logol — a hivo fel naploz.
+     *
+     * @param duration A sohatas idotartama korokban.
+     */
     public void applySaltEffect(double duration) {
-        Skeleton.enter("Hívó", "lane", "applySaltEffect(" + duration + ")");
         this.saltEffect = duration;
-        Skeleton.exit("void");
     }
 
-    /** Igaz, ha a sáv járhatatlan[cite: 1410]. */
+    /**
+     * Igaz, ha a sav jarhatatlan (lezart).
+     * SAJAT enter/exit-et logol, mert I/N kerdest tartalmaz.
+     *
+     * @return true ha a sav le van zarva.
+     */
     public boolean isBlocked() {
-        Skeleton.enter("Hívó", "lane", "isBlocked()");
-        boolean blocked = Skeleton.askQuestion("Le van zárva ez a sáv?");
+        Skeleton.enter("car", "l2", "isBlocked()");
+        boolean blocked = Skeleton.askQuestion("Le van zarva ez a sav?");
         Skeleton.exit(String.valueOf(blocked));
         return blocked;
     }

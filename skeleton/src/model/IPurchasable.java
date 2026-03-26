@@ -1,23 +1,23 @@
 package model;
 
 /**
- * A boltban megvásárolható termékeket összefogó interfész.
- * Minden vásárolható terméknek (hókotró fej, üzemanyag, hókotró) meg kell
- * valósítania.
+ * A boltban megvasarolhato termekeket osszefogo interfesz.
+ * Minden vasarolhato termeknek (hokotro fej, hokotro)
+ * meg kell valositania.
  */
 public interface IPurchasable {
 
     /**
-     * Visszaadja a termék árát.
-     * 
-     * @return A termék ára.
+     * Visszaadja a termek arat.
+     *
+     * @return A termek ara egesz szamkent.
      */
     int getPrice();
 
     /**
-     * Visszaadja a termék nevét.
-     * 
-     * @return A termék neve mint String.
+     * Visszaadja a termek nevet.
+     *
+     * @return A termek neve mint String.
      */
     String getName();
 }
