@@ -1,0 +1,413 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class GameLogic {
+    +Map gameMap
+    +List<Field> fields
+    +int turnCount
+    +int maxTurns
+    +List<Vehicle> vehicles
+    +void startGame()
+    +void advanceTurn()
+    +void manageTurn()
+    +void endGame()
+}
+
+class Map {
+    +List<Field> fields
+    +List<Field> findShortestPath(Field from, Field to)
+    +void snow()
+}
+
+class Vehicle {
+}
+
+interface Field {
+    +void accept(Vehicle v)
+    +void remove(Vehicle v)
+    +List<Field> getNeighbors()
+}
+
+class Road {
+    +List<Road> startPoint
+    +List<Road> endPoint
+    +List<Lane> forwardLanes
+    +List<Lane> backwardLanes
+    +List<Building> buildings
+    +Double length
+    +List<Road> getStartConnections()
+    +List<Road> getEndConnections()
+    +List<Lane> getForwardLanes()
+    +List<Lane> getBackwardLanes()
+}
+
+class Lane {
+    +double snowDepth
+    +bool isFrozen
+    +double iceThickness
+    +int compactionCount
+    +List<Vehicle> vehicles
+    +double saltEffect
+    +List<Field> neighbors
+    +double gravelDepth
+    --
+    +void accept(Vehicle v)
+    +void remove(Vehicle v)
+    +List<Field> getNeighbors()
+    +void addSnow(double amount)
+    +void removeSnow(double amount)
+    +void breakIce()
+    +void removeIce()
+    +void checkFreeze()
+    +void applyCompaction()
+    +void applySaltEffect(double duration)
+    +boolean isBlocked()
+    +void addGravel(double amount)
+    +void removeGravel(double amount)
+}
+
+' Kapcsolatok a diagram alapján
+GameLogic "1" --> "1" Map
+GameLogic "1" --> "many" Vehicle
+Map "1" o-- "many" Field
+Field <|.. Lane
+Road "1" *-- "many" Lane : forwardLanes / backwardLanes >
+@enduml
+
+
+2. 
+@startuml
+skinparam classAttributeIconSize 0
+
+interface Field {
+    +void accept(Vehicle v)
+    +void remove(Vehicle v)
+    +List<Field> getNeighbors()
+}
+
+class Road {
+    +List<Road> startPoint
+    +List<Road> endPoint
+    +List<Lane> forwardLanes
+    +List<Lane> backwardLanes
+    +List<Building> buildings
+    +Double length
+    +List<Road> getStartConnections()
+    +List<Road> getEndConnections()
+    +List<Lane> getForwardLanes()
+    +List<Lane> getBackwardLanes()
+}
+
+abstract class Building {
+    +List<Field> neighbors
+    +void accept(Vehicle v)
+    +void remove(Vehicle v)
+    +List<Field> getNeighbors()
+}
+
+class GeneralBuilding {
+    +void accept(Vehicle v)
+    +void remove(Vehicle v)
+    +List<Field> getNeighbors()
+}
+
+class Terminal {
+    +void registerArrival(Bus bus)
+    +void accept(Vehicle v)
+    +void remove(Vehicle v)
+    +List<Field> getNeighbors()
+}
+
+class HomeBase {
+    +IntegratedMarket market
+    +int capacity
+    +void acceptSnowPlow(SnowPlow sp)
+    +void refuelSnowPlow(SnowPlow sp, double amount)
+    +void swapHead(SnowPlow sp, CleanerHead newHead)
+    +void accept(Vehicle v)
+    +void remove(Vehicle v)
+    +List<Field> getNeighbors()
+}
+
+class IntegratedMarket {
+    +List<IPurchasable> availableItems
+    +boolean buyItem(SnowPlow buyer, IPurchasable item)
+    +List<IPurchasable> getAvailableItems()
+}
+
+interface IPurchasable {
+    +int getPrice()
+    +String getName()
+}
+
+' Kapcsolatok
+Field <|.. Building
+Building <|-- GeneralBuilding
+Building <|-- Terminal
+Building <|-- HomeBase
+
+Road "1" *-- "many" Building : buildings >
+HomeBase "1" *-- "1" IntegratedMarket
+IntegratedMarket --> IPurchasable
+
+@enduml
+
+3.
+@startuml
+skinparam classAttributeIconSize 0
+
+interface Field {
+    +void accept(Vehicle v)
+    +void remove(Vehicle v)
+    +List<Field> getNeighbors()
+}
+
+interface IPurchasable {
+    +int getPrice()
+    +String getName()
+}
+
+class Lane {
+    +double snowDepth
+    +bool isFrozen
+    +List<Field> neighbors
+    +double gravelDepth
+    --
+    +void accept(Vehicle v)
+    +void remove(Vehicle v)
+    +List<Field> getNeighbors()
+    +boolean isBlocked()
+    +void addGravel(double amount)
+    +void removeGravel(double amount)
+}
+
+abstract class Vehicle {
+    +Lane currentLane
+    +Field nextField
+    +void move()
+}
+
+class Bus {
+    +bool isFunctioning
+    +int disabledTurnsLeft
+    +void move()
+    +void collideWith(Vehicle v)
+    +void slip()
+    +String getName()
+}
+
+class Car {
+    +Building homeBuilding
+    +Building workBuilding
+    +Map gameMap
+    +void move()
+    +void calculatePath()
+    +void collideWith(Vehicle v)
+    +void slip()
+    +void changeLane()
+}
+
+class SnowPlow {
+    +List<CleanerHead> attachments
+    +CleanerHead activeHead
+    +void move()
+    +void changeHead(CleanerHead newHead)
+    +void cleanCurrentLane()
+    +int getPrice()
+    +String getName()
+}
+
+' Kapcsolatok
+Field <|.. Lane
+
+Vehicle <|-- Bus
+Vehicle <|-- Car
+Vehicle <|-- SnowPlow
+
+IPurchasable <|.. SnowPlow
+
+Vehicle "many" --> "1" Lane : currentLane >
+
+@enduml
+
+4. 
+@startuml
+skinparam classAttributeIconSize 0
+
+interface IPurchasable {
+    +int getPrice()
+    +String getName()
+}
+
+abstract class CleanerHead {
+    +int price
+    +bool usesFuel
+    +void clean(Lane lane)
+    +int getPrice()
+    +String getName()
+}
+
+class SweepHead {
+    +void clean(Lane lane)
+}
+
+class ThrowerHead {
+    +double throwDistance
+    +void clean(Lane lane)
+}
+
+class IcebreakerHead {
+    +void clean(Lane lane)
+}
+
+class SaltHead {
+    +double fuelAmount
+    +double fuelPrice
+    +void clean(Lane lane)
+    +void refillFuel(double amount)
+}
+
+class DragonHead {
+    +double fuelAmount
+    +double fuelPrice
+    +void clean(Lane lane)
+    +void refillFuel(double amount)
+}
+
+' --- Új zúzalékszóró fej, az üzemanyag (zúzalék) attribútumként kezelve ---
+class GravelHead {
+    +double fuelAmount
+    +double fuelPrice
+    +void clean(Lane lane)
+    +void refillFuel(double amount)
+}
+
+' Megvalósítási kapcsolat
+IPurchasable <|.. CleanerHead
+
+' Öröklési kapcsolatok
+CleanerHead <|-- SweepHead
+CleanerHead <|-- ThrowerHead
+CleanerHead <|-- IcebreakerHead
+CleanerHead <|-- SaltHead
+CleanerHead <|-- DragonHead
+CleanerHead <|-- GravelHead
+
+@enduml
+SD-7
+@startuml
+title SD-07: Söprő fej takarítása
+hide footbox
+skinparam maxMessageSize 150
+
+participant "sp : SnowPlow" as sp
+participant "head : SweepHead" as head
+participant "l : Lane" as l
+participant "neighbor : Lane" as neighbor
+
+sp -> head : clean(l)
+activate head
+
+head -> l : removeSnow(amount)
+activate l
+l --> head
+deactivate l
+
+' Új hívás a zúzalék eltávolítására
+head -> l : removeGravel(amount)
+activate l
+l --> head
+deactivate l
+
+head -> l : getNeighbors()
+activate l
+l --> head : [neighbor, ...]
+deactivate l
+
+head -> neighbor : addSnow(amount)
+activate neighbor
+neighbor --> head
+deactivate neighbor
+
+' Új hívás a zúzalék szomszédos sávra tolására
+head -> neighbor : addGravel(amount)
+activate neighbor
+neighbor --> head
+deactivate neighbor
+
+head --> sp
+deactivate head
+@enduml
+SD-8
+@startuml
+title SD-08: Hányó fej takarítása
+hide footbox
+skinparam maxMessageSize 200
+
+participant "sp : SnowPlow" as sp
+participant "head : ThrowerHead" as head
+participant "l : Lane" as l
+
+sp -> head : clean(l)
+activate head
+
+head -> l : removeSnow(amount)
+activate l
+l --> head
+deactivate l
+
+' Új hívás a zúzalék eltávolítására
+head -> l : removeGravel(amount)
+activate l
+l --> head
+deactivate l
+
+note over head, l
+  a hó és a zúzalék a throwDistance értéknek
+  megfelelően messzire kerül (járdára),
+  szomszéd sávot nem módosít
+end note
+
+head --> sp
+deactivate head
+@enduml
+new SD gravel
+
+@startuml
+title SD-17: Zúzalékszóró fej takarítása
+hide footbox
+skinparam maxMessageSize 250
+
+participant "sp : SnowPlow" as sp
+participant "head : GravelHead" as head
+participant "l : Lane" as l
+
+sp -> head : clean(l)
+activate head
+
+alt [ Van elég zúzalék a tartályban ]
+    head -> l : addGravel(amount)
+    activate l
+    
+    l -> l : gravelDepth += amount
+    
+    note right of l
+        a zúzalék megszünteti a jég csúszósságát,
+        amíg a később ráhulló hó be nem fedi
+    end note
+    
+    l --> head
+    deactivate l
+    
+    head -> head : fuelAmount -= szükséges_mennyiség
+    
+else [ Nincs elég zúzalék ]
+    note over head, l
+        nincs zúzalék, clean() nem hat
+    end note
+end
+
+head --> sp
+deactivate head
+
+@enduml
