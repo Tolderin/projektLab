@@ -1,0 +1,13 @@
+[SUCCESS] random mode set to off
+[SUCCESS] lane l1 created
+[SUCCESS] lane l1 state set
+[SUCCESS] salt effect set to 2.0 for l1
+[EVENT] Map snowed. Global depth increased.
+[EVENT] Map snowed. Global depth increased.
+[STATE] l1 (Lane)
+ snowDepth: 0.0
+ isFrozen: false
+ gravelDepth: 0.0
+ saltEffect: 0.0
+ isBlocked: false
+ vehicles: []

@@ -1,0 +1,18 @@
+# Test 01: Palya betoltese es teljes memoriakep ellenorzese
+create road r1
+create lane l1
+create lane l2
+add_to_road r1 lane l1 forward
+add_to_road r1 lane l2 forward
+connect_fields l1 l2
+set_road_length r1 100.0
+create homebase hb1
+create terminal t1
+connect_fields l2 t1
+connect_fields l1 hb1
+create cleaner c1
+spawn snowplow sp1 hb1 c1
+list lanes
+list vehicles
+stat l1
+stat sp1

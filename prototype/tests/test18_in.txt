@@ -1,0 +1,8 @@
+# Test 18: Felszereles vasarlasa a telephelyen
+random off
+create homebase hb1
+create cleaner c1
+spawn snowplow sp1 hb1 c1
+set_money c1 100
+buy c1 sp1 salthead
+stat c1

@@ -1,0 +1,11 @@
+[SUCCESS] lane l1 created
+[SUCCESS] terminal t1 created
+[SUCCESS] l1 connected to t1
+[SUCCESS] busdriver bd1 created
+[SUCCESS] bus1 spawned at l1
+[SUCCESS] bus1 moved to t1
+[EVENT] bus1 completed a round at t1
+[STATE] bd1 (BusDriver)
+ name: bd1
+ score: 0
+ completedRounds: 1

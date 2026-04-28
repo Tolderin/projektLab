@@ -1,0 +1,12 @@
+# Test 04: Ervenytelen mozgas nem szomszedos mezore
+create lane l1
+create lane l2
+create lane l3
+connect_fields l1 l2
+create homebase hb1
+connect_fields l1 hb1
+create cleaner c1
+spawn snowplow sp1 hb1 c1
+move_plow sp1 l1
+move_plow sp1 l3
+stat sp1

@@ -1,0 +1,13 @@
+# Test 08: Megcsuszas elkerulese (force_slip false)
+random off
+create lane l_1
+create lane l_2
+connect_fields l_1 l_2
+set_lane_state l_2 0.0 true 5.0 0.0
+create building b1
+create building b2
+create car car_1
+spawn car car_1 l_1 b1 b2
+force_slip car_1 false
+next_turn
+stat l_2

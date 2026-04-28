@@ -1,0 +1,27 @@
+[SUCCESS] road r1 created
+[SUCCESS] lane l1 created
+[SUCCESS] lane l2 created
+[SUCCESS] lane l1 added to road r1 as forward
+[SUCCESS] lane l2 added to road r1 as forward
+[SUCCESS] l1 connected to l2
+[SUCCESS] road r1 length set to 100.0
+[SUCCESS] homebase hb1 created
+[SUCCESS] terminal t1 created
+[SUCCESS] l2 connected to t1
+[SUCCESS] l1 connected to hb1
+[SUCCESS] cleaner c1 created
+[SUCCESS] sp1 spawned at hb1
+[LIST] lanes: l1, l2
+[LIST] vehicles: sp1
+[STATE] l1 (Lane)
+ snowDepth: 0.0
+ isFrozen: false
+ gravelDepth: 0.0
+ saltEffect: 0.0
+ isBlocked: false
+ vehicles: []
+[STATE] sp1 (SnowPlow)
+ currentField: hb1
+ activeHead: sweephead
+ fuelAmount: 0.0
+ attachments: []

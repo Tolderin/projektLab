@@ -1,0 +1,19 @@
+[SUCCESS] random mode set to off
+[SUCCESS] lane l_1 created
+[SUCCESS] lane l_2 created
+[SUCCESS] l_1 connected to l_2
+[SUCCESS] lane l_2 state set
+[SUCCESS] building b1 created
+[SUCCESS] building b2 created
+[SUCCESS] car car_1 created
+[SUCCESS] car_1 spawned at l_1
+[SUCCESS] force_slip car_1 set to false
+[EVENT] Map snowed. Global depth increased.
+[EVENT] car_1 moved to l_2
+[STATE] l_2 (Lane)
+ snowDepth: 1.0
+ isFrozen: true
+ gravelDepth: 0.0
+ saltEffect: 0.0
+ isBlocked: false
+ vehicles: [car_1]

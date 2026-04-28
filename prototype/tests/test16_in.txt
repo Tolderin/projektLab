@@ -1,0 +1,11 @@
+# Test 16: Korok mulasa es havazas szimulacioja
+random off
+create lane l1
+create lane l2
+connect_fields l1 l2
+set_lane_state l1 0.0 false 0.0 0.0
+set_lane_state l2 0.0 false 0.0 0.0
+next_turn
+next_turn
+next_turn
+stat l1

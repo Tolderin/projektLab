@@ -1,0 +1,17 @@
+[SUCCESS] lane l1 created
+[SUCCESS] lane l2 created
+[SUCCESS] l1 connected to l2
+[SUCCESS] lane l2 state set
+[SUCCESS] busdriver bd1 created
+[SUCCESS] bus1 spawned at l1
+[SUCCESS] random mode set to off
+[SUCCESS] force_slip bus1 set to true
+[SUCCESS] bus1 moved to l2
+[EVENT] bus1 slipped on l2. Field is now blocked.
+[STATE] l2 (Lane)
+ snowDepth: 0.0
+ isFrozen: true
+ gravelDepth: 0.0
+ saltEffect: 0.0
+ isBlocked: true
+ vehicles: [bus1]

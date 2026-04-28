@@ -1,0 +1,22 @@
+[SUCCESS] random mode set to off
+[SUCCESS] lane l_1 created
+[SUCCESS] lane l_2 created
+[SUCCESS] l_1 connected to l_2
+[SUCCESS] lane l_2 state set
+[SUCCESS] building b_home created
+[SUCCESS] building b_work created
+[SUCCESS] b_home connected to l_1
+[SUCCESS] b_work connected to l_2
+[SUCCESS] car dummy_car created
+[SUCCESS] dummy_car spawned at l_2
+[SUCCESS] force_slip dummy_car set to true
+[SUCCESS] car car_1 created
+[SUCCESS] car_1 spawned at l_1
+[EVENT] dummy_car slipped on l_2. Field is now blocked.
+[EVENT] Map snowed. Global depth increased.
+[STATE] car_1 (Car)
+ currentField: l_1
+ homeBuilding: b_home
+ workBuilding: b_work
+ isGoingToWork: true
+ waitTurns: 0

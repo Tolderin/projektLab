@@ -1,0 +1,16 @@
+# Test 09: Hokotro takaritas sopro fejjel (ho athelyezese)
+create lane l1
+create lane l2
+create lane l3
+connect_fields l1 l2
+connect_fields l2 l3
+set_lane_state l2 20.0 false 0.0 0.0
+create homebase hb1
+connect_fields l1 hb1
+create cleaner c1
+spawn snowplow sp1 hb1 c1
+move_plow sp1 l1
+move_plow sp1 l2
+stat l2
+stat l1
+stat l3

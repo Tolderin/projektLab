@@ -1,0 +1,8 @@
+# Test 17: Sohatas idejenek lejarta
+random off
+create lane l1
+set_lane_state l1 0.0 false 0.0 0.0
+set_salt_effect l1 2.0
+next_turn
+next_turn
+stat l1

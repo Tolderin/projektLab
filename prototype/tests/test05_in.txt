@@ -1,0 +1,13 @@
+# Test 05: NPC auto utvonaltervezese
+random off
+create lane l_1
+create lane l_2
+connect_fields l_1 l_2
+create building b_home
+create building b_work
+connect_fields b_home l_1
+connect_fields b_work l_2
+create car car_1
+spawn car car_1 b_home b_home b_work
+next_turn
+stat car_1

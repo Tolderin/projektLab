@@ -1,0 +1,17 @@
+# Test 14: Komplex takaritas sarkany fejjel
+random off
+create lane l1
+create lane l2
+connect_fields l1 l2
+set_lane_state l2 6.0 true 5.0 0.0
+create homebase hb1
+connect_fields hb1 l1
+create cleaner c1
+spawn snowplow sp1 hb1 c1
+set_money c1 2000
+buy c1 sp1 dragonhead
+buy c1 sp1 kerosine 5
+equip sp1 dragonhead
+move_plow sp1 l1
+move_plow sp1 l2
+stat l2

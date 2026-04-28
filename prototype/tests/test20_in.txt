@@ -1,0 +1,13 @@
+# Test 20: Felszerelescsere megkiserlese az utcan
+random off
+create lane l1
+create homebase hb1
+connect_fields hb1 l1
+create cleaner c1
+spawn snowplow sp1 hb1 c1
+set_money c1 1000
+buy c1 sp1 sweephead
+buy c1 sp1 salthead
+equip sp1 sweephead
+move_plow sp1 l1
+equip sp1 salthead

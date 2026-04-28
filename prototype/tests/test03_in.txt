@@ -1,0 +1,8 @@
+# Test 03: Busz vegallomasra erese
+create lane l1
+create terminal t1
+connect_fields l1 t1
+create busdriver bd1
+spawn bus bus1 l1
+move_bus bus1 t1
+stat bd1

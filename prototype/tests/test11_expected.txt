@@ -1,0 +1,21 @@
+[SUCCESS] random mode set to off
+[SUCCESS] lane l1 created
+[SUCCESS] lane l2 created
+[SUCCESS] l1 connected to l2
+[SUCCESS] lane l2 state set
+[SUCCESS] homebase hb1 created
+[SUCCESS] hb1 connected to l1
+[SUCCESS] cleaner c1 created
+[SUCCESS] sp1 spawned at hb1
+[SUCCESS] money set to 1000.0 for c1
+[SUCCESS] c1 bought icebreakerhead for sp1
+[SUCCESS] sp1 equipped with icebreakerhead
+[SUCCESS] sp1 moved to l1
+[SUCCESS] sp1 moved to l2
+[STATE] l2 (Lane)
+ snowDepth: 1.0
+ isFrozen: false
+ gravelDepth: 0.0
+ saltEffect: 0.0
+ isBlocked: false
+ vehicles: [sp1]

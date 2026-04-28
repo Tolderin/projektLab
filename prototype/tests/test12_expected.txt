@@ -1,0 +1,27 @@
+[SUCCESS] random mode set to off
+[SUCCESS] lane l1 created
+[SUCCESS] lane l2 created
+[SUCCESS] l1 connected to l2
+[SUCCESS] lane l2 state set
+[SUCCESS] homebase hb1 created
+[SUCCESS] hb1 connected to l1
+[SUCCESS] cleaner c1 created
+[SUCCESS] sp1 spawned at hb1
+[SUCCESS] money set to 1000.0 for c1
+[SUCCESS] c1 bought salthead for sp1
+[SUCCESS] c1 bought 5.0 salt for sp1
+[SUCCESS] sp1 equipped with salthead
+[SUCCESS] sp1 moved to l1
+[SUCCESS] sp1 moved to l2
+[STATE] l2 (Lane)
+ snowDepth: 0.0
+ isFrozen: true
+ gravelDepth: 0.0
+ saltEffect: 3.0
+ isBlocked: false
+ vehicles: [sp1]
+[STATE] sp1 (SnowPlow)
+ currentField: l2
+ activeHead: salthead
+ fuelAmount: 3.0
+ attachments: []

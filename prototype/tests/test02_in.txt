@@ -1,0 +1,4 @@
+# Test 02: Mentes es visszatoltes (Save/Load)
+create lane l1
+set_lane_state l1 15.0 false 0.0 5.0
+save

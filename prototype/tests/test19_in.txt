@@ -1,0 +1,8 @@
+# Test 19: Vasarlasi kiserlet fedezet nelkul
+random off
+create homebase hb1
+create cleaner c1
+spawn snowplow sp1 hb1 c1
+set_money c1 10
+buy c1 sp1 dragonhead
+stat c1

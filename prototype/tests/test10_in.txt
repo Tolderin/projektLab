@@ -1,0 +1,17 @@
+# Test 10: Hokotro takaritas hanyo fejjel
+random off
+create lane l_1
+create lane l_2
+connect_fields l_1 l_2
+set_lane_state l_1 15.0 false 0.0 5.0
+set_lane_state l_2 0.0 false 0.0 0.0
+create homebase hb_1
+connect_fields hb_1 l_1
+create cleaner c_1
+set_money c_1 2000
+spawn snowplow sp_1 hb_1 c_1
+buy c_1 sp_1 throwerhead
+equip sp_1 throwerhead
+move_plow sp_1 l_1
+stat l_1
+stat l_2

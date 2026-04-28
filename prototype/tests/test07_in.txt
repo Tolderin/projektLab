@@ -1,0 +1,11 @@
+# Test 07: Determinisztikus megcsuszas jegen
+create lane l1
+create lane l2
+connect_fields l1 l2
+set_lane_state l2 0.0 true 5.0 0.0
+create busdriver bd1
+spawn bus bus1 l1
+random off
+force_slip bus1 true
+move_bus bus1 l2
+stat l2

@@ -1,0 +1,15 @@
+[SUCCESS] lane l1 created
+[SUCCESS] lane l2 created
+[SUCCESS] lane l3 created
+[SUCCESS] l1 connected to l2
+[SUCCESS] homebase hb1 created
+[SUCCESS] l1 connected to hb1
+[SUCCESS] cleaner c1 created
+[SUCCESS] sp1 spawned at hb1
+[SUCCESS] sp1 moved to l1
+[ERROR] l3 is not a neighbor of l1
+[STATE] sp1 (SnowPlow)
+ currentField: l1
+ activeHead: sweephead
+ fuelAmount: 0.0
+ attachments: []

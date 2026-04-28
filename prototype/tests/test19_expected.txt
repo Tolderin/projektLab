@@ -1,0 +1,10 @@
+[SUCCESS] random mode set to off
+[SUCCESS] homebase hb1 created
+[SUCCESS] cleaner c1 created
+[SUCCESS] sp1 spawned at hb1
+[SUCCESS] money set to 10.0 for c1
+[ERROR] c1 has insufficient funds for dragonhead
+[STATE] c1 (Cleaner)
+ name: c1
+ money: 10.0
+ score: 0

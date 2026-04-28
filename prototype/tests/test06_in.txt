@@ -1,0 +1,17 @@
+# Test 06: NPC auto reakcioja lezart savra
+random off
+create lane l_1
+create lane l_2
+connect_fields l_1 l_2
+set_lane_state l_2 0.0 true 5.0 0.0
+create building b_home
+create building b_work
+connect_fields b_home l_1
+connect_fields b_work l_2
+create car dummy_car
+spawn car dummy_car l_2 b_home b_work
+force_slip dummy_car true
+create car car_1
+spawn car car_1 l_1 b_home b_work
+next_turn
+stat car_1

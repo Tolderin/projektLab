@@ -1,0 +1,16 @@
+# Test 15: Takaritasi kiserlet kifogyott uzemanyaggal
+random off
+create lane l1
+create lane l2
+connect_fields l1 l2
+set_lane_state l2 0.0 true 2.0 0.0
+create homebase hb1
+connect_fields hb1 l1
+create cleaner c1
+spawn snowplow sp1 hb1 c1
+set_money c1 1000
+buy c1 sp1 salthead
+equip sp1 salthead
+move_plow sp1 l1
+move_plow sp1 l2
+stat l2
