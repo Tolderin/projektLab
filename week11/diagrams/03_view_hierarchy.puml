@@ -1,0 +1,98 @@
+@startuml
+title 11.2.2 - Nezetek (view csomag) reszletes
+skinparam classAttributeIconSize 0
+
+interface IObserver {
+    + void update(Observable s, String hint)
+}
+
+abstract class FieldView {
+    # Field model
+    # Rectangle bounds
+    # boolean dirty
+    + void draw(Graphics2D g)
+    + void update(Observable s, String hint)
+    + boolean contains(Point p)
+}
+
+class LaneView {
+    - Color snowOverlay
+    - Color iceOverlay
+    + void draw(Graphics2D g)
+}
+
+class RoadView {
+    - List<LaneView> forwardLanes
+    - List<LaneView> backwardLanes
+    + void draw(Graphics2D g)
+}
+
+class BuildingView {
+    # Color fillColor
+    # String label
+    + void draw(Graphics2D g)
+}
+
+class HomeBaseView {
+    - Image dockIcon
+    + void draw(Graphics2D g)
+}
+
+class TerminalView {
+    - Image flagIcon
+    + void draw(Graphics2D g)
+}
+
+abstract class VehicleView {
+    # Vehicle model
+    # Point position
+    + void draw(Graphics2D g)
+    + void update(Observable s, String hint)
+}
+
+class CarView
+class BusView
+class SnowPlowView {
+    - boolean showHeadIcon
+    + void draw(Graphics2D g)
+}
+
+FieldView <|-- LaneView
+FieldView <|-- RoadView
+FieldView <|-- BuildingView
+BuildingView <|-- HomeBaseView
+BuildingView <|-- TerminalView
+
+VehicleView <|-- CarView
+VehicleView <|-- BusView
+VehicleView <|-- SnowPlowView
+
+IObserver <|.. FieldView
+IObserver <|.. VehicleView
+
+class GameRenderer {
+    - List<FieldView> fieldViews
+    - List<VehicleView> vehicleViews
+    + void render(Graphics2D g)
+    + void registerView(IFieldView v)
+    + void unregisterView(IFieldView v)
+}
+
+class MapLayout {
+    - Map<String, Point> positions
+    + Point getPosition(String fieldId)
+    + void setPosition(String id, int x, int y)
+    + void loadFromFile(String filename)
+}
+
+class IconRegistry {
+    - Map<String, Image> icons
+    + Image get(String key)
+}
+
+GameRenderer --> FieldView
+GameRenderer --> VehicleView
+GameRenderer ..> MapLayout
+GameRenderer ..> IconRegistry
+
+@enduml

@@ -1,0 +1,19 @@
+@startsalt
+{+
+{* Jatek vege - Eredmenyek }
+{
+. . . { Vegso allapot a 50. korben } . . . . .
+{T
++ Sorrend (pontszam szerint)
+++ 1. cl1 (Cleaner) ... 78 pont, 320 Ft
+++ 2. bd1 (BusDriver) ... 64 pont
++ Statisztikak
+++ Megtisztitott savok: 27 db
+++ Sikeres busz-fordulok: 8 db
+++ Balesetek (slip + collide): 4 db
+++ Felhasznalt uzemanyag: 312 egys
+}
+}
+[ Uj jatek ] | [ Mentes ] | [ Kilepes ]
+}
+@endsalt

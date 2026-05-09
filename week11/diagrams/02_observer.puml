@@ -1,0 +1,49 @@
+@startuml
+title 11.2.1 - Observer minta (push alapu)
+skinparam classAttributeIconSize 0
+
+abstract class Observable {
+    - List<IObserver> observers
+    + void addObserver(IObserver o)
+    + void removeObserver(IObserver o)
+    # void notifyObservers(String hint)
+}
+
+interface IObserver {
+    + void update(Observable source, String hint)
+}
+
+class Lane {
+    + void addSnow(double amount)
+    + void removeSnow(double amount)
+    + void breakIce()
+    + void applyCompaction()
+    + void applySaltEffect(double duration)
+}
+
+class LaneView {
+    - Lane model
+    - Rectangle bounds
+    + void draw(Graphics2D g)
+    + void update(Observable s, String hint)
+}
+
+Observable <|-- Lane
+IObserver <|.. LaneView
+
+Lane "1" <-- "1" LaneView : observes >
+
+note right of Lane::addSnow
+  metodus vegen:
+  notifyObservers("snowChanged")
+end note
+
+note right of LaneView::update
+  flag jelolese, kesobb a
+  GamePanel.repaint() rajzol
+  (push: forras --> view, pull
+  csak a paint pillanatban
+  van a Lane attributumokra)
+end note
+
+@enduml

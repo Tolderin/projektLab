@@ -1,0 +1,68 @@
+@startuml
+title SD-4: Kirajzolas / megjelenites (paint ciklus)
+hide footbox
+skinparam maxMessageSize 220
+
+actor "Swing EDT" as EDT
+participant "panel : GamePanel" as GP
+participant "renderer : GameRenderer" as R
+participant "layout : MapLayout" as ML
+participant "lv : LaneView" as LV
+participant "lane : Lane" as L
+participant "spv : SnowPlowView" as SPV
+participant "sp : SnowPlow" as SP
+
+EDT -> GP : paintComponent(g)
+activate GP
+GP -> R : render(g)
+activate R
+
+R -> ML : getPosition("lane_1")
+activate ML
+ML --> R : Point(120, 80)
+deactivate ML
+
+loop minden FieldView-ra
+    R -> LV : draw(g)
+    activate LV
+    LV -> L : snowDepth
+    activate L
+    L --> LV : 12.5
+    deactivate L
+    LV -> L : isFrozen
+    activate L
+    L --> LV : true
+    deactivate L
+    note right of LV
+      pull stilus a paintben:
+      a friss adat lekerdezve
+      a modelltol (tipikus
+      "kevert" megkozelites)
+    end note
+    LV -> LV : g.fillRect, g.drawString
+    LV --> R
+    deactivate LV
+end
+
+loop minden VehicleView-ra
+    R -> SPV : draw(g)
+    activate SPV
+    SPV -> SP : currentField
+    activate SP
+    SP --> SPV : lane_1
+    deactivate SP
+    SPV -> ML : getPosition("lane_1")
+    activate ML
+    ML --> SPV : Point(120, 80)
+    deactivate ML
+    SPV -> SPV : g.drawImage(plowIcon, x, y)
+    SPV --> R
+    deactivate SPV
+end
+
+R --> GP
+deactivate R
+GP --> EDT
+deactivate GP
+
+@enduml

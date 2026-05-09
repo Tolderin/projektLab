@@ -1,0 +1,78 @@
+@startuml
+title 11.2.2 - Modellbeli valtozasok (csak a modositott elemek)
+skinparam classAttributeIconSize 0
+
+abstract class Observable <<UJ>> {
+    - List<IObserver> observers
+    + void addObserver(IObserver o)
+    + void removeObserver(IObserver o)
+    # void notifyObservers(String hint)
+}
+
+class Lane <<MODOSULT>> {
+    .. modosult metodusok ..
+    + void addSnow(double amount)
+    + void removeSnow(double amount)
+    + void breakIce()
+    + void applyCompaction()
+    + void applySaltEffect(double duration)
+    + void addGravel(double amount)
+    + void removeGravel(double amount)
+}
+
+class Vehicle <<MODOSULT>> {
+    .. modosult metodusok ..
+    + void move()
+    + void slip(Lane on)
+    + void collideWith(Vehicle v)
+}
+
+class Player <<MODOSULT>> {
+    .. modosult metodusok ..
+    + void addMoney(int amount)
+    + void addScore(int amount)
+}
+
+class GameLogic <<MODOSULT>> {
+    + void advanceTurn()
+    + void manageTurn()
+    + void endGame()
+}
+
+class HomeBase <<MODOSULT>> {
+    + void acceptSnowPlow(SnowPlow sp)
+    + void swapHead(SnowPlow sp, CleanerHead newHead)
+    + void refuelSnowPlow(SnowPlow sp, double amount)
+}
+
+class IntegratedMarket <<MODOSULT>> {
+    + boolean buyItem(Player buyer, IPurchasable item)
+}
+
+class Map <<MODOSULT>> {
+    .. uj attribum ..
+    + MapLayout layout
+    .. uj metodus ..
+    + void loadLayout(String filename)
+}
+
+Observable <|-- Lane
+Observable <|-- Vehicle
+Observable <|-- Player
+Observable <|-- GameLogic
+Observable <|-- HomeBase
+Observable <|-- IntegratedMarket
+
+note right of Observable
+  uj absztrakt osztaly
+  minden allapotvaltozo
+  modell-elem leszarmazottja
+end note
+
+note bottom of Lane
+  minden allapotvaltoztato
+  metodus vegen
+  notifyObservers(hint) hivas
+end note
+
+@enduml

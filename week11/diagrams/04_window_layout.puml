@@ -1,0 +1,79 @@
+@startuml
+title 11.2.2 - Foablak es vezerlo komponensek
+skinparam classAttributeIconSize 0
+
+class MainWindow {
+    - GamePanel gamePanel
+    - HUDPanel hudPanel
+    - ActionPanel actionPanel
+    - JMenuBar menuBar
+    + void show()
+    + void shutdown()
+}
+
+class GamePanel {
+    - GameRenderer renderer
+    - InputController input
+    + void paintComponent(Graphics g)
+    + void update(Observable s, String hint)
+}
+
+class HUDPanel {
+    - JLabel turnLabel
+    - JLabel moneyLabel
+    - JLabel scoreLabel
+    - JLabel currentPlayerLabel
+    + void update(Observable s, String hint)
+}
+
+class ActionPanel {
+    - JButton moveBtn
+    - JButton buyBtn
+    - JButton equipBtn
+    - JButton nextTurnBtn
+    + void onMoveClick()
+    + void onBuyClick()
+    + void onEquipClick()
+    + void onNextTurnClick()
+}
+
+class MarketDialog {
+    - HomeBase market
+    - SnowPlow target
+    - JList<IPurchasable> itemList
+    + void show()
+    + void onBuyButtonClick()
+}
+
+class EndGameDialog {
+    - List<Player> finalScores
+    + void show()
+}
+
+class InputController {
+    - GamePanel panel
+    - GameRenderer renderer
+    - CommandBridge bridge
+    + void mouseClicked(MouseEvent e)
+    + void keyPressed(KeyEvent e)
+    - FieldView pickField(Point p)
+}
+
+class CommandBridge {
+    - CommandParser parser
+    + void moveSelectedTo(String fieldId)
+    + void buyItem(String playerId, String plowId, String itemType)
+    + void equipHead(String plowId, String headType)
+    + void nextTurn()
+}
+
+MainWindow *-- GamePanel
+MainWindow *-- HUDPanel
+MainWindow *-- ActionPanel
+GamePanel ..> InputController
+ActionPanel ..> CommandBridge
+InputController ..> CommandBridge
+MarketDialog ..> CommandBridge
+EndGameDialog ..> MainWindow
+
+@enduml

@@ -1,0 +1,58 @@
+@startuml
+title SD-2: Kapcsolatok beallitasa (load utan view kotes)
+hide footbox
+skinparam maxMessageSize 220
+
+actor User
+participant "menu : MenuBar" as MB
+participant "bridge : CommandBridge" as B
+participant "parser : CommandParser" as P
+participant "loadCmd : LoadCommand" as LC
+participant "om : ObjectManager" as OM
+participant "binder : ViewBinder" as VB
+participant "lane : Lane" as Lane
+participant "lv : LaneView" as LV
+participant "renderer : GameRenderer" as R
+
+User -> MB : File > Load Map
+activate MB
+MB -> B : loadFile("test_map.txt")
+activate B
+B -> P : parseLine("load test_map.txt")
+activate P
+P -> LC : execute(args)
+activate LC
+LC -> OM : clearAll()
+note right : minden korabbi torlese
+LC -> P : parseStream(file)
+note right
+  a fajlon belul
+  create/spawn/connect
+  parancsok futnak
+end note
+LC --> P
+deactivate LC
+P --> B
+deactivate P
+
+B -> VB : bindAll(om, renderer)
+activate VB
+VB -> OM : getAll()
+OM --> VB : objektum-lista
+loop minden objektumra
+    alt Lane tipus
+        VB -> LV : new LaneView(lane)
+        VB -> Lane : addObserver(lv)
+        VB -> R : registerView(lv)
+    else Vehicle tipus
+        VB -> R : registerView(new VehicleView(v))
+    end
+end
+VB --> B
+deactivate VB
+B --> MB
+deactivate B
+MB --> User : palya megjelenik
+deactivate MB
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml
+title SD-5: Vasarlas a HomeBase aruhazaban (modal dialog)
+hide footbox
+skinparam maxMessageSize 220
+
+actor User
+participant "ap : ActionPanel" as AP
+participant "md : MarketDialog" as MD
+participant "bridge : CommandBridge" as B
+participant "parser : CommandParser" as P
+participant "buyCmd : BuyCommand" as BC
+participant "market : IntegratedMarket" as IM
+participant "cleaner : Cleaner" as C
+participant "hud : HUDPanel" as HUD
+
+User -> AP : "Buy" gomb
+activate AP
+AP -> MD : show(market, snowplow)
+activate MD
+MD --> User : terma-lista (gravelhead, salt, ...)
+deactivate MD
+
+User -> MD : "Vasarol: GravelHead"
+activate MD
+MD -> B : buyItem("c1", "sp1", "gravelhead")
+activate B
+B -> P : parseLine("buy c1 sp1 gravelhead")
+activate P
+P -> BC : execute(args)
+activate BC
+BC -> IM : buyItem(cleaner, item)
+activate IM
+IM -> C : addMoney(-price)
+activate C
+C -> C : notifyObservers("moneyChanged")
+C -> HUD : update(C, "moneyChanged")
+HUD -> HUD : moneyLabel.setText(...)
+C --> IM
+deactivate C
+IM --> BC : true
+deactivate IM
+BC --> P
+deactivate BC
+P --> B
+deactivate P
+B --> MD
+deactivate B
+MD --> User : OK / hibauzenet
+deactivate MD
+deactivate AP
+
+@enduml

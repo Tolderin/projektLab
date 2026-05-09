@@ -1,0 +1,22 @@
+@startsalt
+{
+{* File | Game | Help }
+{
+. . . . . . . . . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . . . . . . . . .
+. . . { GonoszOnosz - Hokotrok } . . . . . . .
+. . . . . . . . . . . . . . . . . . . . . . .
+. . . [ Uj jatek ] . . . . . . . . . . . . . .
+. . . [ Palya betoltese ] . . . . . . . . . .
+. . . [ Mentes betoltese ] . . . . . . . . . .
+. . . [ Beallitasok ] . . . . . . . . . . . .
+. . . [ Kilepes ] . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . . . . . . . . .
+}
+{T
++ verzio: 11_proto.gui
++ konzulens: Marcsingo Adam
+}
+}
+@endsalt

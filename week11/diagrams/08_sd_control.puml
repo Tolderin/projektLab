@@ -1,0 +1,65 @@
+@startuml
+title SD-3: Vezerles (egerkattintas - hokotro mozgatasa)
+hide footbox
+skinparam maxMessageSize 220
+
+actor User
+participant "panel : GamePanel" as GP
+participant "input : InputController" as IC
+participant "bridge : CommandBridge" as B
+participant "parser : CommandParser" as P
+participant "moveCmd : MovePlowCommand" as MPC
+participant "sp : SnowPlow" as SP
+participant "lane : Lane" as L
+participant "spv : SnowPlowView" as SPV
+participant "lv : LaneView" as LV
+
+User -> GP : mouseClicked(x,y) szomszedos savon
+activate GP
+GP -> IC : mouseClicked(e)
+activate IC
+IC -> IC : pickField(point) -> "lane_2"
+note right
+  GamePanel atadja az MouseEvent-et
+  az InputController-nek; az pedig
+  geometria alapjan kivalasztja a
+  cel mezot a layoutbol.
+end note
+IC -> B : moveSelectedTo("lane_2")
+activate B
+B -> P : parseLine("move_plow sp1 lane_2")
+activate P
+P -> MPC : execute(args)
+activate MPC
+MPC -> SP : move()
+activate SP
+SP -> L : accept(this)
+activate L
+L -> L : notifyObservers("vehiclesChanged")
+L -> LV : update(L, "vehiclesChanged")
+activate LV
+LV -> LV : dirty = true
+LV --> L
+deactivate LV
+L --> SP
+deactivate L
+SP -> SP : notifyObservers("moved")
+SP -> SPV : update(SP, "moved")
+activate SPV
+SPV -> SPV : pozicio ujrakalkulalasa
+SPV --> SP
+deactivate SPV
+SP --> MPC
+deactivate SP
+MPC --> P
+deactivate MPC
+P --> B
+deactivate P
+B --> IC
+deactivate B
+IC -> GP : repaint()
+IC --> GP
+deactivate IC
+deactivate GP
+
+@enduml

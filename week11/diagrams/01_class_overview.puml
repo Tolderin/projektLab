@@ -1,0 +1,101 @@
+@startuml
+title 11.2.2 - Grafikus felulet osztaly-strukturaja (attekintes)
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+left to right direction
+
+package "view (UJ)" #LightBlue {
+    class MainWindow
+    class GamePanel
+    class HUDPanel
+    class ActionPanel
+    class MarketDialog
+    class EndGameDialog
+
+    interface IObserver
+    abstract class FieldView
+    class LaneView
+    class RoadView
+    class BuildingView
+    class HomeBaseView
+    class TerminalView
+
+    abstract class VehicleView
+    class CarView
+    class BusView
+    class SnowPlowView
+
+    class GameRenderer
+    class IconRegistry
+    class MapLayout
+}
+
+package "controller (UJ)" #LightYellow {
+    class InputController
+    class CommandBridge
+}
+
+package "model (MODOSULT)" #LightGray {
+    abstract class Observable
+    class GameLogic
+    class Lane
+    class Vehicle
+    class Player
+    class HomeBase
+    class IntegratedMarket
+    class Map
+}
+
+package "cli (valtozatlan)" #White {
+    class CommandParser
+    class ObjectManager
+}
+
+' Oroklesi/kapcsolati alap
+FieldView <|-- LaneView
+FieldView <|-- RoadView
+FieldView <|-- BuildingView
+BuildingView <|-- HomeBaseView
+BuildingView <|-- TerminalView
+
+VehicleView <|-- CarView
+VehicleView <|-- BusView
+VehicleView <|-- SnowPlowView
+
+IObserver <|.. FieldView
+IObserver <|.. VehicleView
+IObserver <|.. HUDPanel
+IObserver <|.. GamePanel
+
+Observable <|-- Lane
+Observable <|-- Vehicle
+Observable <|-- Player
+Observable <|-- GameLogic
+Observable <|-- HomeBase
+Observable <|-- IntegratedMarket
+
+' Megfigyelt-megfigyelo viszonyok
+Lane "1" <-- "1" LaneView : observes
+Vehicle "1" <-- "1" VehicleView : observes
+GameLogic "1" <-- "1" HUDPanel : observes
+HomeBase "1" <-- "1" MarketDialog : observes
+
+' GUI hierarchia
+MainWindow *-- GamePanel
+MainWindow *-- HUDPanel
+MainWindow *-- ActionPanel
+GamePanel *-- GameRenderer
+GameRenderer --> FieldView : draws
+GameRenderer --> VehicleView : draws
+GameRenderer --> MapLayout : reads positions
+GameRenderer --> IconRegistry : reads icons
+
+' Vezerles
+InputController --> CommandBridge
+CommandBridge --> CommandParser : parseLine(string)
+ActionPanel --> CommandBridge
+
+' Map kapcsolat
+Map "1" --> "1" MapLayout : layout
+
+@enduml

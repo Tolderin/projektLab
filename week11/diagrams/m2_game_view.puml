@@ -1,0 +1,18 @@
+@startsalt
+{
+{* File | Game | Help }
+{/ Palya | Statisztikak }
+{
+. . . . . . . . . . . . . . . . . . . . . . . | { Kor: 12 / 50 } . .
+. . [HB1] === [l1==hofehe] === [t1] . . . . . | . . . . . . . . . .
+. . . . . . . . . | . . . . . . . . . . . . . | { Aktiv jatekos: cl1 }
+. . . . . . . . [l2=jeges] . . . . . . . . . . | { Penz: 1500 Ft } .
+. . . . . . . . . | . . . . . . . . . . . . . | { Pontszam: 12 } . .
+. . [B1] === [l3=zuzal] === [B2] . . . . . . . | . . . . . . . . . .
+. . . . . . . . . . . . . . . . . . . . . . . | { Aktiv fej: gravelhead }
+{ Jelmagyarazat: } . . . . . . . . . . . . . . | { Tank: 35 / 100 }
+"#fff = sav (tiszta)" "#ddf = jeges" "#aaa = zuzalek" . . . . . . . . . . .
+}
+{ [ Move ] | [ Buy ] | [ Equip ] | [ Next turn ] | [ Save ] | [ Stat ] }
+}
+@endsalt

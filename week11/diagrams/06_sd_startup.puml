@@ -1,0 +1,42 @@
+@startuml
+title SD-1: Felepites (alkalmazas inditasa)
+hide footbox
+skinparam maxMessageSize 200
+
+actor User
+participant "MainApp" as M
+participant "win : MainWindow" as W
+participant "parser : CommandParser" as P
+participant "om : ObjectManager" as OM
+participant "logic : GameLogic" as L
+participant "renderer : GameRenderer" as R
+participant "input : InputController" as IC
+
+User -> M : main()
+activate M
+
+M -> P : new CommandParser()
+M -> OM : new ObjectManager()
+M -> L : new GameLogic()
+M -> P : registerCommand("move_bus", ...)
+note right
+  az osszes 22 parancs
+  regisztralasa (CLI valtozatlan)
+end note
+
+M -> R : new GameRenderer()
+M -> IC : new InputController(panel, renderer, bridge)
+
+M -> W : new MainWindow(renderer, input)
+activate W
+W --> M
+deactivate W
+
+M -> W : show()
+activate W
+W --> User : ablak megjelenik
+deactivate W
+
+deactivate M
+
+@enduml

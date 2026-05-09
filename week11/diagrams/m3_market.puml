@@ -1,0 +1,27 @@
+@startsalt
+{+
+{* HomeBase aruhaz - sp1 hokotro }
+{
+{ Kaphato termekek: }
+{T
++ Tisztito fejek
+++ sweephead . . . . . . . . . . . . . 50 Ft
+++ throwerhead . . . . . . . . . . . 120 Ft
+++ icebreakerhead . . . . . . . . .  200 Ft
+++ salthead . . . . . . . . . . . . . 250 Ft
+++ dragonhead . . . . . . . . . . . . 800 Ft
+++ gravelhead . . . . . . . . . . . . 180 Ft
++ Uzemanyagok
+++ salt (kg) . . . . . . . . . . . . . 5 Ft / kg
+++ biofuel (l) . . . . . . . . . . . 12 Ft / l
+++ gravel (kg) . . . . . . . . . . . . 3 Ft / kg
+}
+. . . . . . . . . . . . . . . . . . . . . . .
+{ Mennyiseg: } "50 . . . . . . . ."
+. . . . . . . . . . . . . . . . . . . . . . .
+{ Egyenleg: 1500 Ft } . . . . . . . . . . . .
+{ Vegosszeg: 250 Ft (-> 1250 Ft maradek) } . .
+}
+[ Vasarlas ] | [ Megse ]
+}
+@endsalt
