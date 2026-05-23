@@ -1,0 +1,245 @@
+create road rH00
+set_road_length rH00 334.0
+create road rH01
+set_road_length rH01 334.0
+create road rH10
+set_road_length rH10 334.0
+create road rH11
+set_road_length rH11 334.0
+create road rH20
+set_road_length rH20 334.0
+create road rH21
+set_road_length rH21 334.0
+create road rV00
+set_road_length rV00 334.0
+create road rV01
+set_road_length rV01 334.0
+create road rV10
+set_road_length rV10 334.0
+create road rV11
+set_road_length rV11 334.0
+create road rV20
+set_road_length rV20 334.0
+create road rV21
+set_road_length rV21 334.0
+create lane lH00_f
+create lane lH00_b
+create lane lH01_f
+create lane lH01_b
+create lane lH10_f
+create lane lH10_b
+create lane lH11_f
+create lane lH11_b
+create lane lH20_f
+create lane lH20_b
+create lane lH21_f
+create lane lH21_b
+create lane lV00_f
+create lane lV00_b
+create lane lV01_f
+create lane lV01_b
+create lane lV10_f
+create lane lV10_b
+create lane lV11_f
+create lane lV11_b
+create lane lV20_f
+create lane lV20_b
+create lane lV21_f
+create lane lV21_b
+add_to_road rH00 lane lH00_f forward
+add_to_road rH00 lane lH00_b backward
+add_to_road rH01 lane lH01_f forward
+add_to_road rH01 lane lH01_b backward
+add_to_road rH10 lane lH10_f forward
+add_to_road rH10 lane lH10_b backward
+add_to_road rH11 lane lH11_f forward
+add_to_road rH11 lane lH11_b backward
+add_to_road rH20 lane lH20_f forward
+add_to_road rH20 lane lH20_b backward
+add_to_road rH21 lane lH21_f forward
+add_to_road rH21 lane lH21_b backward
+add_to_road rV00 lane lV00_f forward
+add_to_road rV00 lane lV00_b backward
+add_to_road rV01 lane lV01_f forward
+add_to_road rV01 lane lV01_b backward
+add_to_road rV10 lane lV10_f forward
+add_to_road rV10 lane lV10_b backward
+add_to_road rV11 lane lV11_f forward
+add_to_road rV11 lane lV11_b backward
+add_to_road rV20 lane lV20_f forward
+add_to_road rV20 lane lV20_b backward
+add_to_road rV21 lane lV21_f forward
+add_to_road rV21 lane lV21_b backward
+create homebase hb1
+create terminal t1
+create terminal t2
+create building b1
+create building b2
+create homebase hb2
+create terminal t3
+create terminal t4
+create cleaner c1
+create cleaner c2
+create busdriver bd1
+create busdriver bd2
+set_lane_state lH00_f 1.0 false 0.0 0.0
+set_lane_state lH00_b 1.0 false 0.0 0.0
+set_lane_state lH01_f 1.0 false 0.0 0.0
+set_lane_state lH01_b 1.0 false 0.0 0.0
+set_lane_state lH10_f 1.0 false 0.0 0.0
+set_lane_state lH10_b 1.0 false 0.0 0.0
+set_lane_state lH11_f 1.0 false 0.0 0.0
+set_lane_state lH11_b 1.0 false 0.0 0.0
+set_lane_state lH20_f 1.0 false 0.0 0.0
+set_lane_state lH20_b 1.0 false 0.0 0.0
+set_lane_state lH21_f 1.0 false 0.0 0.0
+set_lane_state lH21_b 1.0 false 0.0 0.0
+set_lane_state lV00_f 1.0 false 0.0 0.0
+set_lane_state lV00_b 1.0 false 0.0 0.0
+set_lane_state lV01_f 1.0 false 0.0 0.0
+set_lane_state lV01_b 1.0 false 0.0 0.0
+set_lane_state lV10_f 1.0 false 0.0 0.0
+set_lane_state lV10_b 1.0 false 0.0 0.0
+set_lane_state lV11_f 1.0 false 0.0 0.0
+set_lane_state lV11_b 1.0 false 0.0 0.0
+set_lane_state lV20_f 1.0 false 0.0 0.0
+set_lane_state lV20_b 1.0 false 0.0 0.0
+set_lane_state lV21_f 1.0 false 0.0 0.0
+set_lane_state lV21_b 1.0 false 0.0 0.0
+connect_fields lH00_f lV00_f
+connect_fields lH00_f lV00_b
+connect_fields lH00_f lH01_f
+connect_fields lH00_f lH01_b
+connect_fields lH00_f lV10_f
+connect_fields lH00_f lV10_b
+connect_fields lH00_f t1
+connect_fields lH00_b lH00_f
+connect_fields lH00_b lV00_f
+connect_fields lH00_b lV00_b
+connect_fields lH00_b lH01_f
+connect_fields lH00_b lH01_b
+connect_fields lH00_b lV10_f
+connect_fields lH00_b lV10_b
+connect_fields lH01_f lV10_f
+connect_fields lH01_f lV10_b
+connect_fields lH01_f lV20_f
+connect_fields lH01_f lV20_b
+connect_fields lH01_f t2
+connect_fields lH01_b lH01_f
+connect_fields lH01_b lV10_f
+connect_fields lH01_b lV10_b
+connect_fields lH01_b lV20_f
+connect_fields lH01_b lV20_b
+connect_fields lH10_f lV00_f
+connect_fields lH10_f lV00_b
+connect_fields lH10_f lV01_f
+connect_fields lH10_f lV01_b
+connect_fields lH10_f lH11_f
+connect_fields lH10_f lH11_b
+connect_fields lH10_f lV10_f
+connect_fields lH10_f lV10_b
+connect_fields lH10_f lV11_f
+connect_fields lH10_f lV11_b
+connect_fields lH10_b lH10_f
+connect_fields lH10_b lV00_f
+connect_fields lH10_b lV00_b
+connect_fields lH10_b lV01_f
+connect_fields lH10_b lV01_b
+connect_fields lH10_b lH11_f
+connect_fields lH10_b lH11_b
+connect_fields lH10_b lV10_f
+connect_fields lH10_b lV10_b
+connect_fields lH10_b lV11_f
+connect_fields lH10_b lV11_b
+connect_fields lH11_f lV10_f
+connect_fields lH11_f lV10_b
+connect_fields lH11_f lV11_f
+connect_fields lH11_f lV11_b
+connect_fields lH11_f lV20_f
+connect_fields lH11_f lV20_b
+connect_fields lH11_f lV21_f
+connect_fields lH11_f lV21_b
+connect_fields lH11_b lH11_f
+connect_fields lH11_b lV10_f
+connect_fields lH11_b lV10_b
+connect_fields lH11_b lV11_f
+connect_fields lH11_b lV11_b
+connect_fields lH11_b lV20_f
+connect_fields lH11_b lV20_b
+connect_fields lH11_b lV21_f
+connect_fields lH11_b lV21_b
+connect_fields lH20_f lV01_f
+connect_fields lH20_f lV01_b
+connect_fields lH20_f lH21_f
+connect_fields lH20_f lH21_b
+connect_fields lH20_f lV11_f
+connect_fields lH20_f lV11_b
+connect_fields lH20_b lH20_f
+connect_fields lH20_b lV01_f
+connect_fields lH20_b lV01_b
+connect_fields lH20_b lH21_f
+connect_fields lH20_b lH21_b
+connect_fields lH20_b lV11_f
+connect_fields lH20_b lV11_b
+connect_fields lH20_b t3
+connect_fields lH21_f lV11_f
+connect_fields lH21_f lV11_b
+connect_fields lH21_f lV21_f
+connect_fields lH21_f lV21_b
+connect_fields lH21_b lH21_f
+connect_fields lH21_b lV11_f
+connect_fields lH21_b lV11_b
+connect_fields lH21_b lV21_f
+connect_fields lH21_b lV21_b
+connect_fields lH21_b t4
+connect_fields lV00_f lV01_f
+connect_fields lV00_f lV01_b
+connect_fields lV00_b lV00_f
+connect_fields lV00_b lV01_f
+connect_fields lV00_b lV01_b
+connect_fields lV01_b lV01_f
+connect_fields lV10_f lV11_f
+connect_fields lV10_f lV11_b
+connect_fields lV10_b lV10_f
+connect_fields lV10_b lV11_f
+connect_fields lV10_b lV11_b
+connect_fields lV11_b lV11_f
+connect_fields lV20_f lV21_f
+connect_fields lV20_f lV21_b
+connect_fields lV20_b lV20_f
+connect_fields lV20_b lV21_f
+connect_fields lV20_b lV21_b
+connect_fields lV21_b lV21_f
+connect_fields hb1 lH00_f
+connect_fields b1 lV00_f
+connect_fields b2 lV21_b
+connect_fields hb2 lH20_f
+set_money c1 5000.0
+set_money c2 5000.0
+spawn snowplow sp1 lH00_f c1
+spawn snowplow sp2 lH20_f c2
+spawn bus bus1 lV10_b bd1 t1 t2
+spawn bus bus2 lV11_b bd2 t3 t4
+spawn car car1 lH00_f b1 t2
+spawn car car2 lH21_f b2 hb2
+spawn car car3 lH10_f b1 t4
+set_road_pos rH00 110 150 334 horizontal
+set_road_pos rH01 360 150 334 horizontal
+set_road_pos rH10 110 400 334 horizontal
+set_road_pos rH11 360 400 334 horizontal
+set_road_pos rH20 110 650 334 horizontal
+set_road_pos rH21 360 650 334 horizontal
+set_road_pos rV00 110 150 334 vertical
+set_road_pos rV01 110 400 334 vertical
+set_road_pos rV10 360 150 334 vertical
+set_road_pos rV11 360 400 334 vertical
+set_road_pos rV20 610 150 334 vertical
+set_road_pos rV21 610 400 334 vertical
+set_building_pos hb1 34 74 60 60
+set_building_pos t1 372 74 60 60
+set_building_pos t2 710 74 60 60
+set_building_pos b1 34 412 60 60
+set_building_pos b2 710 412 60 60
+set_building_pos hb2 34 750 60 60
+set_building_pos t3 372 750 60 60
+set_building_pos t4 710 750 60 60
