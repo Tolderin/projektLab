@@ -14,6 +14,7 @@ public class SweepHead extends CleanerHead {
      * Letrehoz egy sopro fejet.
      */
     public SweepHead() {
+        // 13. heti: ar a spec szerinti novekvo sorrendben (söprő < hányó < jégtörő < sószóró < sárkány).
         this.price = 50;
         this.usesFuel = false;
         this.name = "sweephead";

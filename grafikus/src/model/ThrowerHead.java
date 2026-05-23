@@ -15,7 +15,9 @@ public class ThrowerHead extends CleanerHead {
      * Letrehoz egy hanyo fejet.
      */
     public ThrowerHead() {
-        this.price = 50;
+        // 13. heti: hányó a söprő utan a 2. legolcsobb (spec szerinti
+        // novekvo arrend: söprő < hányó < jégtörő < sószóró < sárkány).
+        this.price = 100;
         this.usesFuel = false;
         this.name = "throwerhead";
     }

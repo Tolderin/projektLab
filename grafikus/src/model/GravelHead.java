@@ -26,7 +26,10 @@ public class GravelHead extends CleanerHead {
      * Letrehoz egy zuzalekszoro fejet.
      */
     public GravelHead() {
-        this.price = 50;
+        // 13. heti: a zuzalek-fejnek nincs sorrend-eloiras a specben
+        // (a sorrend csak a 5 fö fejre vonatkozik); olcsobban arazva
+        // mint a hányó, hogy ne kerulje meg a sorrendet.
+        this.price = 75;
         this.usesFuel = true;
         this.name = "gravelhead";
     }

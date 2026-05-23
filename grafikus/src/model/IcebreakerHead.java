@@ -15,7 +15,8 @@ public class IcebreakerHead extends CleanerHead {
      * Letrehoz egy jegtoro fejet.
      */
     public IcebreakerHead() {
-        this.price = 50;
+        // 13. heti: jégtörő a 3. legolcsobb (söprő < hányó < jégtörő < sószóró < sárkány).
+        this.price = 150;
         this.usesFuel = false;
         this.name = "icebreakerhead";
     }

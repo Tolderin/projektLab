@@ -63,7 +63,10 @@ public class Lane extends Observable implements Field {
     @Override
     public void accept(Vehicle v) {
         vehicles.add(v);
-        if (isFrozen) {
+        // 13. heti: a zuzalek megszunteti a jeg csuszosagat -- ha
+        // gravelDepth > 0, akkor jeges savon sem csusszan meg semelyik
+        // jarmu. (Egyebkent a Determinism szabalya szerint.)
+        if (isFrozen && gravelDepth <= 0) {
             String vehicleId = Context.objectManager.getId(v);
             if (Context.determinism.shouldSlip(vehicleId)) {
                 v.slip(this);

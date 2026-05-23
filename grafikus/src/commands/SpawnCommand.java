@@ -12,6 +12,8 @@ import model.Field;
 import model.Lane;
 import model.SnowPlow;
 import model.SweepHead;
+import model.Terminal;
+import model.ThrowerHead;
 
 /**
  * A 'spawn <type> ...' parancs implementacioja. Jarmuvet helyez a
@@ -83,7 +85,10 @@ public class SpawnCommand implements ICommand {
         } else {
             sp = new SnowPlow();
             sp.setName(id);
-            sp.activeHead = new SweepHead();
+            // 13. heti: kezdo fej ThrowerHead (hányó). A SweepHead
+            // korabbi default volt; a spec szerint "hányó vagy jégtörő"
+            // jellegu fejjel indul minden hokotro.
+            sp.activeHead = new ThrowerHead();
             Context.objectManager.registerObject(id, sp);
         }
         // Tulajdonos beallitasa
@@ -148,12 +153,13 @@ public class SpawnCommand implements ICommand {
 
     /**
      * Letrehoz egy Bus-t es elhelyezi. Az 5. argumentum (opcionalis) az
-     * owner BusDriver ID-je; ha jelen van, a busz felkerul a driver
-     * controlledBuses listajara (bus.owner is rogzitve).
+     * owner BusDriver ID-je. A 6. es 7. argumentum (opcionalis) a
+     * busz jaratanak ket vegallomasa.
      *
      * Szintaxis:
-     *  - spawn bus <id> <field_id>
-     *  - spawn bus <id> <field_id> <busdriver_id>
+     *  - spawn bus &lt;id&gt; &lt;field_id&gt;
+     *  - spawn bus &lt;id&gt; &lt;field_id&gt; &lt;busdriver_id&gt;
+     *  - spawn bus &lt;id&gt; &lt;field_id&gt; &lt;busdriver_id&gt; &lt;terminalA&gt; &lt;terminalB&gt;
      */
     private void spawnBus(String[] args, String id, Field field, String fieldId) {
         Bus bus;
@@ -178,6 +184,19 @@ public class SpawnCommand implements ICommand {
                 ((BusDriver) ownerObj).addBus(bus);
             } else {
                 OutputFormatter.printError("busdriver not found: " + args[4]);
+            }
+        }
+        // Opcionalis route-vegallomas argumentumok (6. es 7.).
+        if (args.length >= 7) {
+            Object tA = Context.objectManager.getObject(args[5]);
+            Object tB = Context.objectManager.getObject(args[6]);
+            if (tA instanceof Terminal && tB instanceof Terminal) {
+                bus.routeTerminalA = (Terminal) tA;
+                bus.routeTerminalB = (Terminal) tB;
+            } else {
+                OutputFormatter.printError(
+                        "spawn bus: route-terminals not found ("
+                                + args[5] + ", " + args[6] + ")");
             }
         }
         if (Context.gameLogic instanceof model.GameLogic) {

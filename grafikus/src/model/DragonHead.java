@@ -22,7 +22,8 @@ public class DragonHead extends CleanerHead {
      * Letrehoz egy sarkany fejet.
      */
     public DragonHead() {
-        this.price = 100;
+        // 13. heti: sárkány a legdragabb fej (söprő < hányó < jégtörő < sószóró < sárkány).
+        this.price = 300;
         this.usesFuel = true;
         this.name = "dragonhead";
     }

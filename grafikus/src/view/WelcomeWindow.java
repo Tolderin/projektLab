@@ -69,7 +69,8 @@ public class WelcomeWindow extends JFrame {
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
-        JLabel subtitle = new JLabel("Team #48 GonoszOnosz – BME projektlabor 2026");
+        JLabel subtitle = new JLabel(
+                "Team #48 GonoszOnosz · BME projektlabor 2026 · 13. heti vegleges");
         subtitle.setFont(new Font("Sans-Serif", Font.PLAIN, 13));
         subtitle.setForeground(new Color(180, 180, 180));
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);

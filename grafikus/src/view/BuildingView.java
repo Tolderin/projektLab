@@ -10,7 +10,9 @@ import java.awt.Stroke;
 
 import javax.swing.JPanel;
 
+import cli.Context;
 import model.Building;
+import model.Bus;
 import model.HomeBase;
 import model.Terminal;
 
@@ -114,5 +116,56 @@ public class BuildingView extends FieldView {
         FontMetrics fmL = g.getFontMetrics();
         int lw = fmL.stringWidth(label);
         g.drawString(label, x + (w - lw) / 2, y + h - 6);
+
+        // 4. Terminal-specifikus: a busz-jaratok listaja a sarokba.
+        // A 13. heti spec szerint a buszok ket-vegallomas kozott
+        // jarnak; a felhasznalo lassa, MELY buszok hasznaljak EZT a
+        // terminal-t. A megfelelo Bus-oket lookup-oljuk az
+        // ObjectManager-ben (routeTerminalA/B == this).
+        if (building instanceof Terminal) {
+            drawBusRoutesBadge(g, x, y, w);
+        }
+    }
+
+    /**
+     * Kis chip-sor a Terminal alsoFa felso saraban: minden busz egy
+     * sarga hatteru chip-ben jelenik meg, amelynek a route-jaban
+     * szerepel ez a Terminal. A chip belsoje a busz ID-ja.
+     *
+     * @param g A celzott Graphics2D.
+     * @param x A building bal-felso x.
+     * @param y A building bal-felso y.
+     * @param w A building szelessege.
+     */
+    private void drawBusRoutesBadge(Graphics2D g, int x, int y, int w) {
+        java.util.List<String> busIds = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<String, Object> e
+                : Context.objectManager.getAll().entrySet()) {
+            if (e.getValue() instanceof Bus) {
+                Bus b = (Bus) e.getValue();
+                if (b.routeTerminalA == building || b.routeTerminalB == building) {
+                    busIds.add(e.getKey());
+                }
+            }
+        }
+        if (busIds.isEmpty()) {
+            return;
+        }
+        // Chips lefele a jobb-felso sarokban
+        int chipY = y + 22;
+        g.setFont(new Font("SansSerif", Font.BOLD, 9));
+        FontMetrics fm = g.getFontMetrics();
+        for (String bid : busIds) {
+            int textW = fm.stringWidth(bid);
+            int chipW = textW + 8;
+            int chipX = x + w - chipW - 3;
+            // sarga (Bus szin) hatter
+            g.setColor(new Color(245, 200, 60));
+            g.fillRoundRect(chipX, chipY, chipW, 12, 4, 4);
+            g.setColor(Color.BLACK);
+            g.drawRoundRect(chipX, chipY, chipW, 12, 4, 4);
+            g.drawString(bid, chipX + 4, chipY + 9);
+            chipY += 14;
+        }
     }
 }

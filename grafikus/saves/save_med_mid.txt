@@ -161,15 +161,15 @@ set_lane_state lV20_b 3.0 false 0.0 0.0
 create cleaner c1
 create busdriver bd1
 create busdriver bd2
-set_money c1 1000800
+set_money c1 5800
 set_score bd1 200
 set_score bd2 100
 
 # ===== Vehicles =====
 spawn snowplow sp1 hb1 c1
 spawn snowplow sp2 hb1 c1
-spawn bus bus1 lH00_f bd1
-spawn bus bus2 lH11_f bd2
+spawn bus bus1 lH00_f bd1 t1 t2
+spawn bus bus2 lH11_f bd2 t3 t2
 spawn car car1 lH10_b b1 t2
 spawn car car2 lH11_b b2 t1
 

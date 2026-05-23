@@ -92,10 +92,10 @@ public class CreateCommand implements ICommand {
             case "snowplow": {
                 SnowPlow sp = new SnowPlow();
                 sp.setName(id);
-                // Default fej (sweephead) a SpawnCommand-hez kepest
-                // itt mar beallitva, hogy a 'create snowplow' utan az
-                // sp activeHead-je ne null legyen.
-                sp.activeHead = new model.SweepHead();
+                // 13. heti: a problemleiras szerint a takaritok
+                // kezdetben "hányó fejes vagy jégtörő fejes" hokotrot
+                // kapnak. ThrowerHead-re (hányó) allitjuk.
+                sp.activeHead = new model.ThrowerHead();
                 return sp;
             }
             case "car":

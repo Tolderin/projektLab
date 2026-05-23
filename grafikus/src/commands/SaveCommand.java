@@ -208,13 +208,20 @@ public class SaveCommand implements ICommand {
                         ? Context.objectManager.getId(b.currentField) : null;
                 String ownerId = b.owner != null
                         ? Context.objectManager.getId(b.owner) : null;
+                String tAId = b.routeTerminalA != null
+                        ? Context.objectManager.getId(b.routeTerminalA) : null;
+                String tBId = b.routeTerminalB != null
+                        ? Context.objectManager.getId(b.routeTerminalB) : null;
                 if (fieldId != null) {
+                    StringBuilder sb = new StringBuilder("spawn bus ");
+                    sb.append(e.getKey()).append(' ').append(fieldId);
                     if (ownerId != null) {
-                        out.println("spawn bus " + e.getKey() + " "
-                                + fieldId + " " + ownerId);
-                    } else {
-                        out.println("spawn bus " + e.getKey() + " " + fieldId);
+                        sb.append(' ').append(ownerId);
+                        if (tAId != null && tBId != null) {
+                            sb.append(' ').append(tAId).append(' ').append(tBId);
+                        }
                     }
+                    out.println(sb.toString());
                 }
             }
         }

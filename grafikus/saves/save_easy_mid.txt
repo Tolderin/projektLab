@@ -75,12 +75,12 @@ set_lane_state lRight_f 1.0 false 0.0 0.0
 # ----- Jatekosok + felgyult penz/pont -----
 create cleaner c1
 create busdriver bd1
-set_money c1 1000150
+set_money c1 5150
 set_score bd1 150
 
 # ----- Vehicles (mid-game positions) -----
 spawn snowplow sp1 hb1 c1
-spawn bus bus1 lTop_f bd1
+spawn bus bus1 lTop_f bd1 t1 t2
 spawn car car1 lBot_b b1 t1
 
 # ----- Layout (13. heti save/load: pixel-pozicio megorzes, autoLayout helyett) -----

@@ -6,7 +6,9 @@ import io.OutputFormatter;
 import model.CleanerHead;
 import model.Cleaner;
 import model.DragonHead;
+import model.GameLogic;
 import model.GravelHead;
+import model.HomeBase;
 import model.IcebreakerHead;
 import model.IPurchasable;
 import model.Player;
@@ -52,10 +54,74 @@ public class BuyCommand implements ICommand {
         if (args.length >= 5) {
             // Uzemanyag-vasarlas
             buyFuel(player, sp, itemType, args);
+        } else if ("snowplow".equals(itemType)) {
+            // Uj hokotro vasarlasa -- "legdragabb segedeszköz"
+            buySnowPlow(player, sp);
         } else {
             // Fej-vasarlas
             buyHead(player, sp, itemType);
         }
+    }
+
+    /**
+     * Uj hokotrot vasarol a Cleaner-nek. A `sp` az a hokotro, amely
+     * jelenleg a HomeBase-en all es ahonnan a vasarlas kezdemenyezve
+     * van -- az uj hokotrot ugyanarra a HomeBase-re tesszuk, es a
+     * vasarlo Cleaner flotillajaba adjuk. Default fej: ThrowerHead.
+     *
+     * @param player   A vasarlo (Cleaner kell legyen).
+     * @param buyerSp  Egy meglevo hokotro a Cleaner-fel, a HomeBase
+     *                 azonositasahoz.
+     */
+    private void buySnowPlow(Player player, SnowPlow buyerSp) {
+        final int price = 1000;
+        if (!(player instanceof Cleaner)) {
+            OutputFormatter.printError("only cleaner can buy snowplow");
+            return;
+        }
+        if (!(buyerSp.currentField instanceof HomeBase)) {
+            OutputFormatter.printError(
+                    "snowplow purchase requires existing plow at homebase");
+            return;
+        }
+        if (player.money < price) {
+            String pid = Context.objectManager.getId(player);
+            OutputFormatter.printError(
+                    (pid != null ? pid : "?")
+                            + " has insufficient funds for snowplow");
+            return;
+        }
+        String newId = nextSnowPlowId();
+        SnowPlow newSp = new SnowPlow();
+        newSp.setName(newId);
+        newSp.activeHead = new ThrowerHead();
+        Context.objectManager.registerObject(newId, newSp);
+        ((Cleaner) player).addPlow(newSp);
+        HomeBase hb = (HomeBase) buyerSp.currentField;
+        newSp.currentField = hb;
+        hb.accept(newSp);
+        if (Context.gameLogic instanceof GameLogic) {
+            ((GameLogic) Context.gameLogic).addVehicle(newSp);
+        }
+        player.addMoney(-(double) price);
+        String pid = Context.objectManager.getId(player);
+        OutputFormatter.printSuccess(
+                (pid != null ? pid : "?")
+                        + " bought new snowplow " + newId);
+    }
+
+    /**
+     * Ujabb, meg nem foglalt SnowPlow ID-t general. Konvencio: sp1,
+     * sp2, sp3, ...
+     *
+     * @return Az uj egyedi azonosito.
+     */
+    private String nextSnowPlowId() {
+        int n = 1;
+        while (Context.objectManager.hasObject("sp" + n)) {
+            n++;
+        }
+        return "sp" + n;
     }
 
     /**
@@ -75,7 +141,9 @@ public class BuyCommand implements ICommand {
                             + " has insufficient funds for " + itemType);
             return;
         }
-        player.money -= head.getPrice();
+        // 13. heti: addMoney(-price) triggereli a notifyObservers-t,
+        // igy a HUD / MarketDialog egyenleg azonnal frissul.
+        player.addMoney(-(double) head.getPrice());
         sp.attachments.add(head);
         String pid = Context.objectManager.getId(player);
         String spId = Context.objectManager.getId(sp);
@@ -114,7 +182,7 @@ public class BuyCommand implements ICommand {
                             + " has insufficient funds for " + fuelType);
             return;
         }
-        player.money -= totalCost;
+        player.addMoney(-totalCost);
         // Toltes
         if (targetHead instanceof SaltHead) {
             ((SaltHead) targetHead).refillFuel(amount);

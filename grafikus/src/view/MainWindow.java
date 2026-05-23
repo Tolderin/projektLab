@@ -220,7 +220,9 @@ public class MainWindow extends JFrame implements IObserver {
         JMenuItem about = new JMenuItem("About");
         about.addActionListener(e -> JOptionPane.showMessageDialog(this,
                 "Snow Plows szimulator – grafikus változat\n"
-                        + "Team #48 GonoszOnosz, BME projektlabor 2026.",
+                        + "Team #48 GonoszOnosz · BME projektlabor 2026\n"
+                        + "13. heti vegleges valtozat (turn-order rendszer,\n"
+                        + "3-palya valasztas, save/load, szegmentalt road-ok).",
                 "About", JOptionPane.INFORMATION_MESSAGE));
         JMenuItem keys = new JMenuItem("Billentyűk");
         keys.setAccelerator(KeyStroke.getKeyStroke("F1"));

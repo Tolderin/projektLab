@@ -29,7 +29,8 @@ public class SaltHead extends CleanerHead {
      * Letrehoz egy soszoro fejet.
      */
     public SaltHead() {
-        this.price = 50;
+        // 13. heti: sószóró a 4. legolcsobb (söprő < hányó < jégtörő < sószóró < sárkány).
+        this.price = 200;
         this.usesFuel = true;
         this.name = "salthead";
     }

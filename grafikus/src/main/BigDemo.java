@@ -93,18 +93,21 @@ public final class BigDemo {
         builder.getCommands().add("spawn snowplow sp1 hb1 c1");
         builder.getCommands().add("spawn snowplow sp2 hb2 c2");
 
-        // 6. Buszok
-        builder.getCommands().add("spawn bus bus1 lH00_f bd1");
-        builder.getCommands().add("spawn bus bus2 lH20_f bd2");
+        // 6. Buszok (13. heti: jaratuk ket vegallomas kozott)
+        // bus1 (bd1): t1 <-> t2 (felso ket terminal)
+        builder.getCommands().add("spawn bus bus1 lH00_f bd1 t1 t2");
+        // bus2 (bd2): t3 <-> t4 (also ket terminal)
+        builder.getCommands().add("spawn bus bus2 lH20_f bd2 t3 t4");
 
         // 7. NPC autok
         builder.getCommands().add("spawn car car1 lV00_f b1 t2");
         builder.getCommands().add("spawn car car2 lV21_b b2 hb2");
         builder.getCommands().add("spawn car car3 lV00_f b1 t4");
 
-        // 8. Kezdo penz
-        builder.getCommands().add("set_money c1 1000000");
-        builder.getCommands().add("set_money c2 1000000");
+        // 8. Kezdo penz (5000 cleaner-enkent -- a fej-arak es a
+        // hokotro-vasarlas (1000) figyelembevetelevel meretezve).
+        builder.getCommands().add("set_money c1 5000");
+        builder.getCommands().add("set_money c2 5000");
 
         // Parancsok lefuttatasa
         for (String line : builder.getCommands()) {

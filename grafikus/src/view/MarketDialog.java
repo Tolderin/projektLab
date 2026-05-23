@@ -11,7 +11,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -71,17 +70,28 @@ public class MarketDialog extends JDialog implements IObserver {
     /** Uzemanyag-mennyiseg beviteli mezo. */
     private final JTextField fuelAmountField = new JTextField("5", 4);
 
+    /** A befoglalo MainWindow (rebindAll hivasahoz uj hokotro vasarlasa utan). */
+    private final MainWindow mainWindow;
+
+    /**
+     * Jelzo: a felhasznalo vett uj hokotrot a dialog session alatt.
+     * Bezaraskor a MainWindow.rebindAll-t hivjuk, hogy az uj
+     * hokotro nezete azonnal megjelenjen a karten.
+     */
+    private boolean newPlowBought = false;
+
     /**
      * Letrehoz egy MarketDialog-ot.
      *
-     * @param parent A befoglalo JFrame (a modal kapcsolathoz).
+     * @param parent A befoglalo MainWindow (a modal kapcsolathoz + rebind-hez).
      * @param target A celzott SnowPlow.
      * @param buyer  A vasarlo Cleaner.
      * @param bridge A parancs-bridge.
      */
-    public MarketDialog(JFrame parent, SnowPlow target, Cleaner buyer,
+    public MarketDialog(MainWindow parent, SnowPlow target, Cleaner buyer,
                         CommandBridge bridge) {
         super(parent, "HomeBase Áruház", true);
+        this.mainWindow = parent;
         this.target = target;
         this.buyer = buyer;
         this.bridge = bridge;
@@ -132,6 +142,15 @@ public class MarketDialog extends JDialog implements IObserver {
         fuelBuy.addActionListener(e -> onBuyFuel());
         fuelRow.add(fuelBuy);
         grid.add(fuelRow);
+
+        // Uj hokotro-vasarlasi sor (a 13. heti spec szerint a legdragabb)
+        JPanel plowRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+        plowRow.setOpaque(false);
+        plowRow.add(new JLabel("Új hókotró (1000):"));
+        JButton plowBuy = new JButton("Vásárol");
+        plowBuy.addActionListener(e -> onBuySnowPlow());
+        plowRow.add(plowBuy);
+        grid.add(plowRow);
 
         content.add(grid, BorderLayout.CENTER);
 
@@ -198,6 +217,25 @@ public class MarketDialog extends JDialog implements IObserver {
     }
 
     /**
+     * Uj hokotro vasarlas a Cleaner-nek. A `target` SnowPlow a vasarlo-
+     * agensként szolgal: az uj hokotro az o HomeBase-ere kerul. Sikeres
+     * vasarlas eseten beallitjuk a newPlowBought flag-et, hogy a dialog
+     * bezarasakor a MainWindow.rebindAll megjelenitse az uj hokotrot.
+     */
+    private void onBuySnowPlow() {
+        int before = buyer.getControlledPlows().size();
+        bridge.buyItem(idOf(buyer), idOf(target), "snowplow", 0);
+        int after = buyer.getControlledPlows().size();
+        if (after > before) {
+            newPlowBought = true;
+            JOptionPane.showMessageDialog(this,
+                    "Új hókotró sikeresen megvásárolva.\n"
+                            + "A flotta a dialog bezárásakor frissül a térképen.",
+                    "Vásárlás", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    /**
      * Az uzemanyag-vasarlasi parancs kiadasa a kivalasztott
      * tipusra es mennyisegre.
      */
@@ -214,12 +252,18 @@ public class MarketDialog extends JDialog implements IObserver {
     }
 
     /**
-     * Bezarja a dialog-ot es leiratkoztatja a megfigyeloket.
+     * Bezarja a dialog-ot es leiratkoztatja a megfigyeloket. Ha uj
+     * hokotro vasarlas tortent, a MainWindow.rebindAll-t hivjuk, hogy
+     * a karten megjelenjen a friss flotta.
      */
     private void doClose() {
         market.removeObserver(this);
         buyer.removeObserver(this);
+        boolean shouldRebind = newPlowBought;
         dispose();
+        if (shouldRebind && mainWindow != null) {
+            mainWindow.rebindAll();
+        }
     }
 
     /**

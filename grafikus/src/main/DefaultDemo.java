@@ -153,19 +153,20 @@ public final class DefaultDemo {
         c.add("spawn snowplow sp1 hb1 c1");
 
         // ----- Busz a t1 terminal melletti felso savon, bd1 tulajdonban -----
-        // A bus a top road forward savjan all, kozvetlenul t1 mellett
-        // (t1 a connect_fields-szel a lTop_f-hez kotodik). A bd1
-        // BusDriver-t adjuk meg owner-kent, igy a turn-order rendszer
-        // (GameLogic.getCurrentTurnVehicle) be tudja sorolni.
-        c.add("spawn bus bus1 lTop_f bd1");
+        // A bus a top road forward savjan all, kozvetlenul t1 mellett.
+        // A 13. heti spec: a busznak (járattól függően) ket vegallomas
+        // (t1 es t2) kozott kell minel tobbszor megfordulnia. Pontot
+        // csak az alternalo terminal-erkezesekre kap.
+        c.add("spawn bus bus1 lTop_f bd1 t1 t2");
 
         // ----- NPC auto: home=b1 (BR), work=t1 (TL) -- atelloben -----
         // Kezdo lane = lBot_b (mert a b1-bol erre lep a graf szerint;
         // a route a negyzet bal-also majd bal-felso szelen vezet).
         c.add("spawn car car1 lBot_b b1 t1");
 
-        // Boseges kezdo penz a market/equip tesztelesehez
-        c.add("set_money c1 1000000");
+        // Kezdo penz: a fej-arak (50/75/100/150/200/300) + esetleges
+        // hokotro-vasarlas (1000) figyelembevetelevel meretezve.
+        c.add("set_money c1 5000");
         return c;
     }
 

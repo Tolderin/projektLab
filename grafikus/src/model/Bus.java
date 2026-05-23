@@ -37,6 +37,27 @@ public class Bus extends Vehicle {
      */
     public BusDriver owner;
 
+    /**
+     * A busz jaratanak elso vegallomasa. A 13. heti spec szerint a
+     * busznak (járattól függően) ket vegallomas kozott kell minel
+     * tobbszor megfordulnia. A spawn parancs 6. argumentumakent
+     * allithato. Ha null, mindkettonek, akkor fallback: barmely
+     * Terminal-erkezes pontot ad.
+     */
+    public Terminal routeTerminalA;
+
+    /** A busz jaratanak masik vegallomasa. Lasd routeTerminalA. */
+    public Terminal routeTerminalB;
+
+    /**
+     * Az utolso latogatott vegallomas (route-on belül). Egy "forduló"
+     * akkor szamol pontot, ha a busz a routeTerminalA-rol erkezik a
+     * routeTerminalB-re vagy fordítva (nem ket egymas utani azonos
+     * terminal-erkezes szamol). Spawn utan null; az elso ervenyes
+     * terminal-erkezesre allitodik be.
+     */
+    public Terminal lastVisitedTerminal;
+
     /** Konstans: hany kort kell kihagyni egy utkozes/megcsuszas utan. */
     private static final int PENALTY_TURNS = 3;
 

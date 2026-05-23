@@ -149,21 +149,39 @@ public class LaneView extends FieldView {
     }
 
     /**
-     * Egy iranyjelzo nyilat rajzol a sáv elso negyeden, hogy ne
-     * essen a keresztezodesbe (ami a sáv kozepen helyezkedik el).
+     * Egy iranyjelzo nyilat rajzol a sáv azon a vegen, AHOL A JARMUVEK
+     * BELEPNEK az adott iranyba (vagyis a forward irany START-jan,
+     * backward irany VEGEN, ami visszafele az ott levo "start"-tol):
+     *  - direction 0 (jobb / east): a sav BAL VEGENEL.
+     *  - direction 1 (le / south): a sav FELSO VEGENEL.
+     *  - direction 2 (bal / west): a sav JOBB VEGENEL.
+     *  - direction 3 (fel / north): a sav ALSO VEGENEL.
+     * Igy mindketto sav (forward + backward) nyila a sav kulonbozo
+     * vegen all -- az olvashato a vezetes irany.
      *
      * @param g A celzott Graphics2D.
      */
     private void drawDirectionArrow(Graphics2D g) {
         int cx, cy;
-        if (bounds.width >= bounds.height) {
-            // Horizontalis sáv: elso negyed
-            cx = bounds.x + bounds.width / 4;
+        boolean horizontalLane = bounds.width >= bounds.height;
+        if (horizontalLane) {
+            if (direction == 0) {
+                // East: arrow at LEFT quarter (vehicle's entry side)
+                cx = bounds.x + bounds.width / 4;
+            } else {
+                // West (direction 2): arrow at RIGHT quarter
+                cx = bounds.x + 3 * bounds.width / 4;
+            }
             cy = bounds.y + bounds.height / 2;
         } else {
-            // Vertikalis sáv: elso negyed
             cx = bounds.x + bounds.width / 2;
-            cy = bounds.y + bounds.height / 4;
+            if (direction == 1) {
+                // South: arrow at TOP quarter
+                cy = bounds.y + bounds.height / 4;
+            } else {
+                // North (direction 3): arrow at BOTTOM quarter
+                cy = bounds.y + 3 * bounds.height / 4;
+            }
         }
         int sz = 7;
         g.setColor(new Color(255, 255, 255, 150));

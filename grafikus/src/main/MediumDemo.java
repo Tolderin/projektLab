@@ -84,16 +84,18 @@ public final class MediumDemo {
         builder.getCommands().add("spawn snowplow sp1 hb1 c1");
         builder.getCommands().add("spawn snowplow sp2 hb1 c1");
 
-        // 6. Buszok
-        builder.getCommands().add("spawn bus bus1 lH00_f bd1");
-        builder.getCommands().add("spawn bus bus2 lH11_f bd2");
+        // 6. Buszok (13. heti: jaratuk ket vegallomas kozott)
+        // bus1 (bd1): t1 <-> t2 (felso szegmensek terminaljai)
+        builder.getCommands().add("spawn bus bus1 lH00_f bd1 t1 t2");
+        // bus2 (bd2): t3 <-> t2 (also-kozep es jobb-felso terminalok)
+        builder.getCommands().add("spawn bus bus2 lH11_f bd2 t3 t2");
 
         // 7. NPC autok
         builder.getCommands().add("spawn car car1 lH10_b b1 t2");
         builder.getCommands().add("spawn car car2 lH11_b b2 t1");
 
-        // 8. Kezdo penz
-        builder.getCommands().add("set_money c1 1000000");
+        // 8. Kezdo penz (5000 -- a fej-arakat figyelembe veve)
+        builder.getCommands().add("set_money c1 5000");
 
         // Parancsok lefuttatasa
         for (String line : builder.getCommands()) {
