@@ -35,14 +35,6 @@ public class Car extends Vehicle {
     /** Konstans: hany kort kell kihagyni egy baleset utan. */
     private static final int PENALTY_TURNS = 3;
 
-    /**
-     * Konstans: az a horeteg-vastagsag, amely felett az auto elakad
-     * (nem tud belepni az adott savra). A 13. heti spec szerint
-     * "a város autói a túl mély hóban elakadnak". A kuszob alatt
-     * mernek meg kozlekedni.
-     */
-    private static final double DEEP_SNOW_THRESHOLD = 4.0;
-
     /** Privat: hany korbol marad meg ki az auto baleset miatt. */
     private int waitTurns = 0;
 
@@ -61,22 +53,10 @@ public class Car extends Vehicle {
         if (nextField == null) {
             return;
         }
-        // 13. heti: tul mely hoban elakad -- nem lep be az adott savra,
-        // marad a jelenlegi mezojen ebben a korben. Ha a horeteg
-        // letakaritodik (snowDepth lecsokken a kuszob ala), a kovetkezo
-        // korben mar megint normalisan tud kozlekedni.
-        if (nextField instanceof Lane
-                && ((Lane) nextField).snowDepth > DEEP_SNOW_THRESHOLD) {
-            String vid = Context.objectManager.getId(this);
-            String dst = Context.objectManager.getId(nextField);
-            OutputFormatter.printEvent(
-                    (vid != null ? vid : "?")
-                            + " stalled in deep snow on "
-                            + (dst != null ? dst : "?"));
-            nextField = null;
-            notifyObservers("stalled");
-            return;
-        }
+        // (Megj. 13. heti: a "tul mely hoban elakad" mechanika ki
+        // lett kapcsolva, mert a kompaktalas blokkolasa miatt a
+        // sav soha nem fagyott le. A spec szovege poetikus; a
+        // mechanikailag fontos resz a compaction -> freeze ut.)
         Field oldField = currentField;
         currentField.remove(this);
         nextField.accept(this);

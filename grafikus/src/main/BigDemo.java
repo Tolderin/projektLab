@@ -126,5 +126,57 @@ public final class BigDemo {
         layout.setBounds("hb2", builder.outsideAt(2, 0, "BL", bs, gap));
         layout.setBounds("t3",  builder.outsideAt(2, 1, "B",  bs, gap));
         layout.setBounds("t4",  builder.outsideAt(2, 2, "BR", bs, gap));
+
+        // 13. heti kozmetikai dekoraciok
+        addCosmetics(layout);
+    }
+
+    /**
+     * Kozmetikai dekoraciok a nagy palyahoz. 3x3 racs eseten a
+     * 4 kozepso racs-cella belsejei (~250x250 px) befogadnak nehany
+     * fa+szikla csoportot. Az MM (kozeppont) cellaba kerul a
+     * "BRIDGE" felirat, a kozepso road egyik fele alagut.
+     *
+     * @param layout MapLayout.
+     */
+    private static void addCosmetics(view.MapLayout layout) {
+        // Fak a 4 belso cella koruli ures teruleten
+        int[][] treePositions = {
+                { 200, 240 }, { 240, 300 }, { 280, 350 },
+                { 470, 250 }, { 510, 300 }, { 540, 350 },
+                { 200, 500 }, { 240, 540 }, { 270, 580 },
+                { 470, 510 }, { 530, 560 }, { 580, 540 }
+        };
+        for (int[] p : treePositions) {
+            layout.addDecoration(new view.Decoration(view.Decoration.Type.TREE,
+                    new java.awt.Rectangle(p[0], p[1], 16, 22)));
+        }
+        // Sziklak a fak kozott
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
+                new java.awt.Rectangle(260, 320, 14, 8)));
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
+                new java.awt.Rectangle(500, 320, 12, 7)));
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
+                new java.awt.Rectangle(260, 570, 14, 8)));
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
+                new java.awt.Rectangle(520, 570, 12, 7)));
+        // Hopelyhek a palya szelein
+        int[][] snowPositions = {
+                { 30, 400 }, { 800, 400 }, { 360, 30 }, { 360, 850 },
+                { 30, 100 }, { 800, 100 }, { 30, 800 }, { 800, 800 }
+        };
+        for (int[] p : snowPositions) {
+            layout.addDecoration(new view.Decoration(view.Decoration.Type.SNOWFLAKE,
+                    new java.awt.Rectangle(p[0], p[1], 11, 11)));
+        }
+        // Egy hegy a kozepso (rMidH) road felso szegmensere -- alagut
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.MOUNTAIN,
+                new java.awt.Rectangle(170, 360, 130, 100)));
+        // Egy hegy a (rBot) road masodik felere
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.MOUNTAIN,
+                new java.awt.Rectangle(420, 620, 130, 100)));
+        // Egy hid a felso road masodik szegmensere
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.BRIDGE,
+                new java.awt.Rectangle(380, 155, 180, 70)));
     }
 }

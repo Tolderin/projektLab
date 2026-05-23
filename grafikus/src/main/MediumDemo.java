@@ -112,5 +112,50 @@ public final class MediumDemo {
         layout.setBounds("b1",  builder.outsideAt(1, 0, "BL", bs, gap));
         layout.setBounds("t3",  builder.outsideAt(1, 1, "B",  bs, gap));
         layout.setBounds("b2",  builder.outsideAt(1, 2, "BR", bs, gap));
+
+        // 13. heti kozmetikai dekoraciok (a 2x3 racs ures kozepso
+        // foltjai + alagut/hid illuzio nehany roadon).
+        addCosmetics(layout);
+    }
+
+    /**
+     * Dekoraciok hozzaadasa a kozepes palya hatterehez.
+     *
+     * @param layout MapLayout.
+     */
+    private static void addCosmetics(view.MapLayout layout) {
+        // Fak a 2 racs-cella belsejeben
+        int[][] treePositions = {
+                { 270, 320 }, { 340, 290 }, { 410, 350 },
+                { 470, 300 }, { 660, 320 }, { 720, 290 },
+                { 790, 360 }, { 850, 320 },
+                { 290, 430 }, { 380, 470 }, { 700, 430 }, { 790, 470 }
+        };
+        for (int[] p : treePositions) {
+            layout.addDecoration(new view.Decoration(view.Decoration.Type.TREE,
+                    new java.awt.Rectangle(p[0], p[1], 18, 24)));
+        }
+        // Sziklak
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
+                new java.awt.Rectangle(310, 390, 14, 8)));
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
+                new java.awt.Rectangle(650, 400, 16, 9)));
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
+                new java.awt.Rectangle(840, 470, 14, 8)));
+        // Hopelyhek a palya szelein
+        int[][] snowPositions = {
+                { 50, 380 }, { 1080, 380 }, { 470, 30 }, { 470, 740 },
+                { 1080, 50 }, { 30, 720 }, { 920, 30 }, { 920, 740 }
+        };
+        for (int[] p : snowPositions) {
+            layout.addDecoration(new view.Decoration(view.Decoration.Type.SNOWFLAKE,
+                    new java.awt.Rectangle(p[0], p[1], 12, 12)));
+        }
+        // Egy hegy az also road kozeppontjan (BM kozepso szegmens) -- alagut
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.MOUNTAIN,
+                new java.awt.Rectangle(620, 510, 130, 110)));
+        // Egy hid (BRIDGE) a felso road (TR szegmens) felett
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.BRIDGE,
+                new java.awt.Rectangle(680, 165, 200, 80)));
     }
 }

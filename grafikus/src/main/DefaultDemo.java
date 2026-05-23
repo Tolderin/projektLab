@@ -219,5 +219,47 @@ public final class DefaultDemo {
         // b1 a jobb-also sarokba (rRight jobb oldalan, rBot alatt) -- az "utolso" sarok
         layout.setBounds("b1", new java.awt.Rectangle(
                 rV_rightX + gap, rH_bottomY + gap, bs, bs));
+
+        // 13. heti: kozmetikai dekoraciok. Tel-tema (fak, sziklak,
+        // hopelyhek). Egy hegy az also road (rBot) felett -- alagut-illuzio.
+        addCosmetics(layout);
+    }
+
+    /**
+     * Hozzaad nehany kozmetikai dekoraciot a palya hatterehez (a
+     * MapLayout decorations listajan keresztul a GamePanel rajzolja).
+     *
+     * @param layout Az aktiv MapLayout.
+     */
+    private static void addCosmetics(view.MapLayout layout) {
+        // Fak a kozepre eso ures teruleten (a 4 road altal kepzett
+        // negyzet belseje), elkerulve a road-aszfalt 280-500 x 240-540 reszet.
+        int[][] treePositions = {
+                { 270, 310 }, { 340, 280 }, { 410, 340 },
+                { 470, 290 }, { 350, 420 }, { 290, 460 },
+                { 420, 470 }, { 480, 430 }
+        };
+        for (int[] p : treePositions) {
+            layout.addDecoration(new view.Decoration(view.Decoration.Type.TREE,
+                    new java.awt.Rectangle(p[0], p[1], 18, 24)));
+        }
+        // Sziklak
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
+                new java.awt.Rectangle(310, 380, 14, 8)));
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
+                new java.awt.Rectangle(450, 380, 12, 7)));
+        // Hopelyhek (szorvanyosan a palya korul)
+        int[][] snowPositions = {
+                { 50, 380 }, { 690, 380 }, { 380, 30 }, { 380, 730 },
+                { 720, 50 }, { 30, 750 }
+        };
+        for (int[] p : snowPositions) {
+            layout.addDecoration(new view.Decoration(view.Decoration.Type.SNOWFLAKE,
+                    new java.awt.Rectangle(p[0], p[1], 12, 12)));
+        }
+        // Egy hegy az also road (rBot) felett -- alagut-szeru illuzio.
+        // rBot: x=85..619, y=540..624. A kozepere helyezzuk.
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.MOUNTAIN,
+                new java.awt.Rectangle(280, 510, 140, 110)));
     }
 }

@@ -48,6 +48,13 @@ public class MapLayout {
     /** A road-ok iranya: true = horizontal, false = vertical. */
     private final Map<String, Boolean> roadHorizontal = new LinkedHashMap<>();
 
+    /**
+     * Pusztan kozmetikai vizualis-elemek (fak, hegyek, hidak, stb.) a
+     * palya hatterere. A Demo osztalyok adjak hozza, a GamePanel
+     * paintComponent-je ket fazisban rajzolja (background / overlay).
+     */
+    private final List<Decoration> decorations = new ArrayList<>();
+
     /** Egy sav szelessege/magassaga pixelben (a road kereszt-iranya). */
     public static final int LANE_BREADTH = 42;
 
@@ -147,12 +154,36 @@ public class MapLayout {
     }
 
     /**
-     * Toroli az osszes nyilvantartott poziciot.
+     * Toroli az osszes nyilvantartott poziciot, beleertve a
+     * dekoraciokat is (uj jatek inditasakor a Demo-k uj listat tudnak
+     * felepiteni).
      */
     public void clear() {
         bounds.clear();
         roadBounds.clear();
         roadHorizontal.clear();
+        decorations.clear();
+    }
+
+    /**
+     * Hozzaad egy kozmetikai dekoraciot a palya hatterehez.
+     *
+     * @param d A dekoracio.
+     */
+    public void addDecoration(Decoration d) {
+        if (d != null) {
+            decorations.add(d);
+        }
+    }
+
+    /**
+     * Visszaadja a regisztralt dekoraciok listajat (sorrend = a Demo
+     * felvetel sorrendje, ami a rajzolasi sorrend is).
+     *
+     * @return Az aktualis dekoracio-lista.
+     */
+    public List<Decoration> getDecorations() {
+        return decorations;
     }
 
     /**

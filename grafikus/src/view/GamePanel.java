@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -7,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 
 import javax.swing.JPanel;
 
@@ -43,9 +45,10 @@ public class GamePanel extends JPanel implements IObserver {
      * allitja be (a MainWindow-bol).
      */
     public GamePanel() {
-        // Halvanyabb park-szürke hatter: a road-aszfalt (60,62,68)
-        // viszonylag vilagosabb, igy az utak kontrasztosan kiallnak.
-        setBackground(new Color(48, 58, 55));
+        // 13. heti vegleges: havas tel-tema hatter (vilagosabb,
+        // hideg kekes-szurke), igy a road-aszfalt (sotetebb szurke)
+        // kontrasztosan kiall, es a fak/hegyek dekoraciok lathatoak.
+        setBackground(new Color(64, 80, 96));
         setFocusable(true);
     }
 
@@ -146,7 +149,31 @@ public class GamePanel extends JPanel implements IObserver {
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        // 1. Tel-hangulatu hattermintazat (kis feher hopelyhe-szeru
+        // pontok elosztva a panel teljes teruleten). Statikus, igy a
+        // panel meretetol fugg, nem a kor-szamtol.
+        drawSnowBackground(g2);
+
+        // 2. Background dekoraciok (fak, sziklak, hopelyhek) -- a
+        // road-ok ELOTT rajzolva, igy az aszfalt felulrol fed.
+        MapLayout layout = renderer.getLayout();
+        for (Decoration d : layout.getDecorations()) {
+            if (!d.isOverlay()) {
+                drawDecoration(g2, d);
+            }
+        }
+
+        // 3. A modell-elemek (road -> field -> vehicle) renderelese
         renderer.render(g2);
+
+        // 4. Overlay dekoraciok (hegyek, hid-ivek) -- a road-okra
+        // RÁTÉVE, az alagut/hid illuzio adása végett.
+        for (Decoration d : layout.getDecorations()) {
+            if (d.isOverlay()) {
+                drawDecoration(g2, d);
+            }
+        }
 
         // Kijelolt mezo overlay
         if (selectedFieldId != null) {
@@ -251,5 +278,192 @@ public class GamePanel extends JPanel implements IObserver {
     @Override
     public void update(Observable source, String hint) {
         repaint();
+    }
+
+    /**
+     * A panel hátteren elosztott apro feher pontokkal egy enyhe
+     * "havazas" textura. Static raster: kiszamolt pontok rogzitettek
+     * a panel x/y koordinatak alapjan, nem mozognak.
+     *
+     * @param g2 A Graphics2D context.
+     */
+    private void drawSnowBackground(Graphics2D g2) {
+        int w = getWidth();
+        int h = getHeight();
+        if (w <= 0 || h <= 0) {
+            return;
+        }
+        // Halvanyabb feher pontok suru elosztasban: a panel haver
+        // bevilagitott teli-erzese
+        g2.setColor(new Color(220, 230, 240, 110));
+        int step = 18;
+        for (int y = 6; y < h; y += step) {
+            int offset = ((y / step) % 2 == 0) ? 0 : step / 2;
+            for (int x = 6 + offset; x < w; x += step) {
+                g2.fillOval(x, y, 2, 2);
+            }
+        }
+    }
+
+    /**
+     * Kirajzol egy adott dekoraciot a tipusa szerint.
+     *
+     * @param g2 A Graphics2D context.
+     * @param d  A dekoracio.
+     */
+    private void drawDecoration(Graphics2D g2, Decoration d) {
+        Rectangle b = d.bounds;
+        switch (d.type) {
+            case TREE:
+                drawTree(g2, b);
+                break;
+            case ROCK:
+                drawRock(g2, b);
+                break;
+            case SNOWFLAKE:
+                drawSnowflake(g2, b);
+                break;
+            case MOUNTAIN:
+                drawMountain(g2, b);
+                break;
+            case BRIDGE:
+                drawBridge(g2, b);
+                break;
+            default:
+        }
+    }
+
+    /**
+     * Fenyofa: barna torzs + zold haromszog.
+     */
+    private void drawTree(Graphics2D g2, Rectangle b) {
+        int trunkW = Math.max(3, b.width / 4);
+        int trunkH = Math.max(4, b.height / 4);
+        // Torzs
+        g2.setColor(new Color(90, 60, 30));
+        g2.fillRect(b.x + (b.width - trunkW) / 2, b.y + b.height - trunkH,
+                trunkW, trunkH);
+        // Tujak (haromszog)
+        int[] xs = { b.x + b.width / 2,
+                     b.x,
+                     b.x + b.width };
+        int[] ys = { b.y,
+                     b.y + b.height - trunkH,
+                     b.y + b.height - trunkH };
+        g2.setColor(new Color(45, 110, 60));
+        g2.fillPolygon(xs, ys, 3);
+        // Hokarak (kis feher pont a tujak tetejen)
+        g2.setColor(new Color(245, 250, 255, 220));
+        g2.fillOval(b.x + b.width / 2 - 2, b.y - 1, 4, 4);
+    }
+
+    /**
+     * Szikla: szurke ovalis + sotetebb arnyek.
+     */
+    private void drawRock(Graphics2D g2, Rectangle b) {
+        g2.setColor(new Color(110, 110, 120));
+        g2.fillOval(b.x, b.y, b.width, b.height);
+        g2.setColor(new Color(80, 80, 90));
+        g2.drawOval(b.x, b.y, b.width, b.height);
+        // Felso fenyfolt
+        g2.setColor(new Color(180, 180, 195, 180));
+        g2.fillArc(b.x + 2, b.y + 1, b.width - 4, b.height / 2, 20, 140);
+    }
+
+    /**
+     * Hopelyhe: feher "*" karakter.
+     */
+    private void drawSnowflake(Graphics2D g2, Rectangle b) {
+        int cx = b.x + b.width / 2;
+        int cy = b.y + b.height / 2;
+        int r = Math.min(b.width, b.height) / 2;
+        Stroke prev = g2.getStroke();
+        g2.setStroke(new BasicStroke(1.6f));
+        g2.setColor(new Color(245, 250, 255, 230));
+        g2.drawLine(cx - r, cy, cx + r, cy);
+        g2.drawLine(cx, cy - r, cx, cy + r);
+        int d = (int) (r * 0.7);
+        g2.drawLine(cx - d, cy - d, cx + d, cy + d);
+        g2.drawLine(cx - d, cy + d, cx + d, cy - d);
+        g2.setStroke(prev);
+    }
+
+    /**
+     * Hegy: szurke haromszog feher havas csuccsal. Egy nagyobb
+     * objektum, amely a road-ra ratevodve "alagut" illuziot ad
+     * (a road tovabbra is reszben latszik).
+     */
+    private void drawMountain(Graphics2D g2, Rectangle b) {
+        int peakX = b.x + b.width / 2;
+        int peakY = b.y;
+        // Sotetszurke hegy-test
+        int[] xs = { b.x, b.x + b.width, peakX };
+        int[] ys = { b.y + b.height, b.y + b.height, peakY };
+        g2.setColor(new Color(95, 95, 105, 235));
+        g2.fillPolygon(xs, ys, 3);
+        g2.setColor(new Color(40, 40, 50, 235));
+        g2.drawPolygon(xs, ys, 3);
+        // Havas csucs (kisebb haromszog felulrol)
+        int snowH = b.height / 3;
+        int[] xsSnow = {
+                b.x + b.width / 3,
+                b.x + 2 * b.width / 3,
+                peakX
+        };
+        int[] ysSnow = {
+                b.y + snowH,
+                b.y + snowH,
+                peakY
+        };
+        g2.setColor(new Color(245, 250, 255, 230));
+        g2.fillPolygon(xsSnow, ysSnow, 3);
+        // Alagut-iv jelolesere a hegy aljara (sotetebb iv)
+        int archW = Math.max(20, b.width / 4);
+        int archH = Math.max(12, b.height / 4);
+        int archX = peakX - archW / 2;
+        int archY = b.y + b.height - archH;
+        g2.setColor(new Color(20, 20, 30, 245));
+        g2.fillArc(archX, archY, archW, archH * 2, 0, 180);
+        // "TUNNEL" felirat halvanyan
+        g2.setColor(new Color(245, 240, 220, 210));
+        g2.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 9));
+        java.awt.FontMetrics fm = g2.getFontMetrics();
+        String txt = "TUNNEL";
+        g2.drawString(txt,
+                peakX - fm.stringWidth(txt) / 2,
+                b.y + b.height - archH - 4);
+    }
+
+    /**
+     * Hid: ko-szinu iv a road folott, ket pillarrel a vegein.
+     */
+    private void drawBridge(Graphics2D g2, Rectangle b) {
+        // Ko-szinu pillar bal
+        int pillarW = Math.max(8, b.width / 8);
+        g2.setColor(new Color(150, 145, 130));
+        g2.fillRect(b.x, b.y, pillarW, b.height);
+        g2.setColor(new Color(95, 90, 80));
+        g2.drawRect(b.x, b.y, pillarW, b.height);
+        // Pillar jobb
+        g2.setColor(new Color(150, 145, 130));
+        g2.fillRect(b.x + b.width - pillarW, b.y, pillarW, b.height);
+        g2.setColor(new Color(95, 90, 80));
+        g2.drawRect(b.x + b.width - pillarW, b.y, pillarW, b.height);
+        // Iv (felso resz)
+        int archH = Math.max(8, b.height / 3);
+        Stroke prev = g2.getStroke();
+        g2.setStroke(new BasicStroke(3.5f));
+        g2.setColor(new Color(170, 165, 150));
+        g2.drawArc(b.x, b.y - archH / 2,
+                b.width, archH, 0, 180);
+        g2.setStroke(prev);
+        // "BRIDGE" felirat halvanyan
+        g2.setColor(new Color(245, 240, 220, 210));
+        g2.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 9));
+        java.awt.FontMetrics fm = g2.getFontMetrics();
+        String txt = "BRIDGE";
+        g2.drawString(txt,
+                b.x + b.width / 2 - fm.stringWidth(txt) / 2,
+                b.y - archH / 2 - 4);
     }
 }
