@@ -29,8 +29,24 @@ public class Bus extends Vehicle {
     /** A busz vizualis es logikai azonositasara szolgalo nev. */
     public String name;
 
+    /**
+     * A buszt iranyito jatekos. A spawn parancs opcionalis 5.
+     * argumentumakent allithato (lasd: SpawnCommand). Csak az
+     * owner BusDriver kap pontot a Terminal-ra erkezeskor
+     * (Terminal.registerArrival).
+     */
+    public BusDriver owner;
+
     /** Konstans: hany kort kell kihagyni egy utkozes/megcsuszas utan. */
     private static final int PENALTY_TURNS = 3;
+
+    /**
+     * Round-cadence flag: true, ha a buszt mar mozgattak ezzel a
+     * korben. A GameLogic.advanceTurn() a kor elejen false-ra
+     * allitja, a MoveBusCommand pedig sikeres lepes utan true-ra.
+     * Csak akkor van hatasa, ha a GameLogic.roundCadenceEnabled = true.
+     */
+    public boolean hasMovedThisTurn = false;
 
     /**
      * Mozgatja a buszt a tervezett kovetkezo mezo fele. Ha a busz

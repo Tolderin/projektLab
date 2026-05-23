@@ -1,0 +1,94 @@
+# ===========================================================
+#  Easy mid-game save  (#48 GonoszOnosz, BME projektlabor 2026)
+#  Negyzet-pálya, ~5 kor utan: snow accumulated, 1 frozen lane,
+#  Cleaner has earned a small amount, BusDriver has 3 terminal
+#  visits already.
+# ===========================================================
+
+random off
+
+# ----- Roads (4 negyzet-oldal) -----
+create road rTop
+set_road_length rTop 380.0
+create lane lTop_f
+create lane lTop_b
+add_to_road rTop lane lTop_f forward
+add_to_road rTop lane lTop_b backward
+
+create road rBot
+set_road_length rBot 380.0
+create lane lBot_f
+create lane lBot_b
+add_to_road rBot lane lBot_f forward
+add_to_road rBot lane lBot_b backward
+
+create road rLeft
+set_road_length rLeft 380.0
+create lane lLeft_f
+create lane lLeft_b
+add_to_road rLeft lane lLeft_f forward
+add_to_road rLeft lane lLeft_b backward
+
+create road rRight
+set_road_length rRight 380.0
+create lane lRight_f
+create lane lRight_b
+add_to_road rRight lane lRight_f forward
+add_to_road rRight lane lRight_b backward
+
+# ----- Sarki keresztezodesek -----
+connect_fields lTop_f lLeft_f
+connect_fields lTop_f lLeft_b
+connect_fields lTop_b lLeft_f
+connect_fields lTop_b lLeft_b
+connect_fields lTop_f lRight_f
+connect_fields lTop_f lRight_b
+connect_fields lTop_b lRight_f
+connect_fields lTop_b lRight_b
+connect_fields lBot_f lLeft_f
+connect_fields lBot_f lLeft_b
+connect_fields lBot_b lLeft_f
+connect_fields lBot_b lLeft_b
+connect_fields lBot_f lRight_f
+connect_fields lBot_f lRight_b
+connect_fields lBot_b lRight_f
+connect_fields lBot_b lRight_b
+
+# ----- Epuletek -----
+create terminal t1
+create terminal t2
+create homebase hb1
+create building b1
+connect_fields t1 lTop_f
+connect_fields t2 lTop_f
+connect_fields hb1 lBot_b
+connect_fields b1 lBot_b
+
+# ----- Mid-game sav-allapotok: ~5 kor utani snow + 1 jeges sav -----
+set_lane_state lTop_f 3.0 false 0.0 0.0
+set_lane_state lTop_b 5.0 false 0.0 0.0
+set_lane_state lLeft_f 2.0 false 0.0 0.0
+set_lane_state lLeft_b 4.0 false 0.0 0.0
+set_lane_state lBot_b 0.0 true 0.0 0.0
+set_lane_state lRight_f 1.0 false 0.0 0.0
+
+# ----- Jatekosok + felgyult penz/pont -----
+create cleaner c1
+create busdriver bd1
+set_money c1 1000150
+set_score bd1 150
+
+# ----- Vehicles (mid-game positions) -----
+spawn snowplow sp1 hb1 c1
+spawn bus bus1 lTop_f bd1
+spawn car car1 lBot_b b1 t1
+
+# ----- Layout (13. heti save/load: pixel-pozicio megorzes, autoLayout helyett) -----
+set_road_pos rTop 85 160 534 horizontal
+set_road_pos rBot 85 540 534 horizontal
+set_road_pos rLeft 120 125 534 vertical
+set_road_pos rRight 500 125 534 vertical
+set_building_pos t1 42 82 60 60
+set_building_pos t2 602 82 60 60
+set_building_pos hb1 42 642 60 60
+set_building_pos b1 602 642 60 60

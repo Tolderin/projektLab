@@ -7,32 +7,40 @@ import cli.CommandParser;
 import view.MapLayout;
 
 /**
- * A default demo-pálya konstrukcioja. Egy 3x3 racs-szerkezetu varos:
- *  - 3 vizszintes road (rH1, rH2, rH3, felulrol lefele)
- *  - 3 fuggoleges road (rV1, rV2, rV3, balrol jobbra)
- *  - 9 keresztezodes (a vizszintes/fuggoleges metszetein)
- *  - 6 epulet a 4 sarokba + 2 oldalsava
- *  - 1 hokotro a HomeBase-en, 1 busz, 2 NPC auto
+ * A default demo-pálya konstrukcioja. Egyetlen negyzet alaku
+ * varos: minden oldala egy road, a 4 sarok = 4 keresztezodes.
+ *  - 4 road (rTop, rBot, rLeft, rRight) -- mindegyik 1 forward
+ *    + 1 backward sav (osszesen 8 lane)
+ *  - 4 keresztezodes a sarkoknal; minden sarok 4 sav-kombinacio
+ *    cross-connectelve (osszesen 16 connect_fields)
+ *  - 4 epulet a 4 sarokba:
+ *      - t1 terminal a bal-felso sarokba
+ *      - t2 terminal a jobb-felso sarokba
+ *      - hb1 HomeBase a bal-also sarokba
+ *      - b1 epulet a jobb-also sarokba (az "utolso" sarok)
+ *  - 1 hokotro (sp1) a HomeBase-en, tulajdonosa Cleaner (c1)
+ *  - 1 NPC auto (car1): home=b1, work=t1 (atelloben, a negyzet
+ *    ket szelen at)
  *
  * Az apply() ket dolgot vegez:
- *  1. CLI parancsokat futtat a CommandParser-en (create / connect_fields
- *     / spawn / set_money), ugyanazokat amiket egy *_in.txt fajl
- *     hasznalna. Ezzel a modell-allapot teljes felepitett.
+ *  1. CLI parancsokat futtat a CommandParser-en (create / add_to_road
+ *     / connect_fields / spawn / set_money), ugyanazokat amiket egy
+ *     *_in.txt fajl hasznalna. Ezzel a modell-allapot teljes felepitett.
  *  2. A MapLayout-ot kozvetlenul beallitja az adott pixel-pozíciókkal
  *     (placeRoadHorizontal / placeRoadVertical) -- megkerulve az
- *     autoLayout-ot, mert annak 9 keresztezodessel a center-center
- *     elrendezesi heurisztikaja nem mukodik.
+ *     autoLayout-ot, mert annak heurisztikaja a sarki keresztezodes-
+ *     osszerendezest nem mindig adja vissza atlathato modon.
  */
 public final class DefaultDemo {
 
-    /** A racs vizszintes road-jainak szama. */
-    public static final int ROWS = 3;
+    /** A racs vizszintes road-jainak szama (top + bottom). */
+    public static final int ROWS = 2;
 
-    /** A racs fuggoleges road-jainak szama. */
-    public static final int COLS = 3;
+    /** A racs fuggoleges road-jainak szama (left + right). */
+    public static final int COLS = 2;
 
     /** Keresztezodes-kozeppontok kozti tavolsag pixelben. */
-    public static final int CELL = 150;
+    public static final int CELL = 380;
 
     /** A road tulnyulasa a keresztezodesen pixelben. */
     public static final int EXT = 35;
@@ -62,80 +70,115 @@ public final class DefaultDemo {
     }
 
     /**
-     * Felepiti a CLI parancsok listajat a 3x3 racs-pályához.
+     * Felepiti a CLI parancsok listajat a negyzet alaku pályához.
+     * 4 road (mindegyik 1 forward + 1 backward sav = 8 lane osszesen),
+     * 4 sarki keresztezodes mindegyikenel a 4 sav-kombinaciot
+     * cross-connectelve (16 connect_fields).
      *
      * @return Az osszes parancs, soronkent.
      */
     private static List<String> buildConfig() {
         List<String> c = new ArrayList<>();
         c.add("random off");
-        // 3 vizszintes + 3 fuggoleges road, mindegyik 1 forward + 1 backward sáv
-        for (int i = 1; i <= ROWS; i++) {
-            c.add("create road rH" + i);
-            c.add("set_road_length rH" + i + " 200.0");
-            c.add("create lane lH" + i + "_f");
-            c.add("create lane lH" + i + "_b");
-            c.add("add_to_road rH" + i + " lane lH" + i + "_f forward");
-            c.add("add_to_road rH" + i + " lane lH" + i + "_b backward");
-        }
-        for (int j = 1; j <= COLS; j++) {
-            c.add("create road rV" + j);
-            c.add("set_road_length rV" + j + " 200.0");
-            c.add("create lane lV" + j + "_f");
-            c.add("create lane lV" + j + "_b");
-            c.add("add_to_road rV" + j + " lane lV" + j + "_f forward");
-            c.add("add_to_road rV" + j + " lane lV" + j + "_b backward");
-        }
-        // Keresztezodesek: ROWS × COLS = 9 keresztezodes, mindegyik 4 connect_fields
-        for (int i = 1; i <= ROWS; i++) {
-            for (int j = 1; j <= COLS; j++) {
-                c.add("connect_fields lH" + i + "_f lV" + j + "_f");
-                c.add("connect_fields lH" + i + "_f lV" + j + "_b");
-                c.add("connect_fields lH" + i + "_b lV" + j + "_f");
-                c.add("connect_fields lH" + i + "_b lV" + j + "_b");
-            }
-        }
-        // 6 epulet: 4 sarokba + 2 oldalt kozepen
-        c.add("create homebase hb1");
-        c.add("create terminal t1");
-        c.add("create building b1");
-        c.add("create building b2");
-        c.add("create building b3");
-        c.add("create building b4");
-        // hb1 (bal-felso) es t1 (jobb-felso): a felso road forward savjara.
-        // A placeBuildings algoritmus 0.10 es 0.90 frakcio-pozícióra teszi a kettot.
-        c.add("connect_fields hb1 lH1_f");
-        c.add("connect_fields t1 lH1_f");
-        // b1 (bal-also) es b2 (jobb-also): az also road backward savjara
-        c.add("connect_fields b1 lH3_b");
-        c.add("connect_fields b2 lH3_b");
-        // b3 a bal kozep oldalra, b4 a jobb kozep oldalra
-        c.add("connect_fields b3 lV1_f");
-        c.add("connect_fields b4 lV3_b");
-        // Jatekosok
-        c.add("create cleaner c1");
-        c.add("create busdriver bd1");
-        // Hokotro a HomeBase-en
+
+        // ----- 4 road (negyzet 4 oldala), mindegyik 1 forward + 1 backward sav -----
+        c.add("create road rTop");
+        c.add("set_road_length rTop " + CELL + ".0");
+        c.add("create lane lTop_f");
+        c.add("create lane lTop_b");
+        c.add("add_to_road rTop lane lTop_f forward");
+        c.add("add_to_road rTop lane lTop_b backward");
+
+        c.add("create road rBot");
+        c.add("set_road_length rBot " + CELL + ".0");
+        c.add("create lane lBot_f");
+        c.add("create lane lBot_b");
+        c.add("add_to_road rBot lane lBot_f forward");
+        c.add("add_to_road rBot lane lBot_b backward");
+
+        c.add("create road rLeft");
+        c.add("set_road_length rLeft " + CELL + ".0");
+        c.add("create lane lLeft_f");
+        c.add("create lane lLeft_b");
+        c.add("add_to_road rLeft lane lLeft_f forward");
+        c.add("add_to_road rLeft lane lLeft_b backward");
+
+        c.add("create road rRight");
+        c.add("set_road_length rRight " + CELL + ".0");
+        c.add("create lane lRight_f");
+        c.add("create lane lRight_b");
+        c.add("add_to_road rRight lane lRight_f forward");
+        c.add("add_to_road rRight lane lRight_b backward");
+
+        // ----- Sarki keresztezodesek: 4 corner × 4 sav-kombinacio = 16 connect_fields -----
+        // TL: rTop ∩ rLeft
+        c.add("connect_fields lTop_f lLeft_f");
+        c.add("connect_fields lTop_f lLeft_b");
+        c.add("connect_fields lTop_b lLeft_f");
+        c.add("connect_fields lTop_b lLeft_b");
+        // TR: rTop ∩ rRight
+        c.add("connect_fields lTop_f lRight_f");
+        c.add("connect_fields lTop_f lRight_b");
+        c.add("connect_fields lTop_b lRight_f");
+        c.add("connect_fields lTop_b lRight_b");
+        // BL: rBot ∩ rLeft
+        c.add("connect_fields lBot_f lLeft_f");
+        c.add("connect_fields lBot_f lLeft_b");
+        c.add("connect_fields lBot_b lLeft_f");
+        c.add("connect_fields lBot_b lLeft_b");
+        // BR: rBot ∩ rRight
+        c.add("connect_fields lBot_f lRight_f");
+        c.add("connect_fields lBot_f lRight_b");
+        c.add("connect_fields lBot_b lRight_f");
+        c.add("connect_fields lBot_b lRight_b");
+
+        // ----- 4 epulet a 4 sarokba -----
+        c.add("create terminal t1");     // bal-felso (TL)
+        c.add("create terminal t2");     // jobb-felso (TR)
+        c.add("create homebase hb1");    // bal-also (BL)
+        c.add("create building b1");     // jobb-also (BR) -- az "utolso" sarok
+
+        // Az epuletek lane-hez kapcsolasa (a placeBuildings es a
+        // jarmu-navigaciot vezerlo adjacency-graf szamara)
+        c.add("connect_fields t1 lTop_f");
+        c.add("connect_fields t2 lTop_f");
+        c.add("connect_fields hb1 lBot_b");
+        c.add("connect_fields b1 lBot_b");
+
+        // ----- Jatekosok -----
+        c.add("create cleaner c1");          // Cleaner: a hokotrot iranyitja
+        c.add("create busdriver bd1");       // BusDriver: a buszt iranyitja
+
+        // ----- Hokotro a HomeBase-en, c1 tulajdonban -----
         c.add("spawn snowplow sp1 hb1 c1");
-        // Busz a felso road forward savjan
-        c.add("spawn bus bus1 lH1_f");
-        // 2 NPC auto: home/work valami epulet-par kozott
-        c.add("spawn car car1 lV1_f b3 t1");
-        c.add("spawn car car2 lV3_b b4 hb1");
-        c.add("set_money c1 500");
+
+        // ----- Busz a t1 terminal melletti felso savon, bd1 tulajdonban -----
+        // A bus a top road forward savjan all, kozvetlenul t1 mellett
+        // (t1 a connect_fields-szel a lTop_f-hez kotodik). A bd1
+        // BusDriver-t adjuk meg owner-kent, igy a turn-order rendszer
+        // (GameLogic.getCurrentTurnVehicle) be tudja sorolni.
+        c.add("spawn bus bus1 lTop_f bd1");
+
+        // ----- NPC auto: home=b1 (BR), work=t1 (TL) -- atelloben -----
+        // Kezdo lane = lBot_b (mert a b1-bol erre lep a graf szerint;
+        // a route a negyzet bal-also majd bal-felso szelen vezet).
+        c.add("spawn car car1 lBot_b b1 t1");
+
+        // Boseges kezdo penz a market/equip tesztelesehez
+        c.add("set_money c1 1000000");
         return c;
     }
 
     /**
      * Manualisan beallitja a road-pozíciókat és az épület-pozíciókat
-     * is a MapLayout-on. A 3x3 racs:
-     *  - rHi (i=1..3): y = OY + (i-1) * CELL, x = OX - EXT, hossza =
-     *    (COLS-1) * CELL + 2 * EXT + roadBr
-     *  - rVj (j=1..3): x = OX + (j-1) * CELL, y = OY - EXT, hossza =
-     *    (ROWS-1) * CELL + 2 * EXT + roadBr
+     * is a MapLayout-on.
+     *  - rTop / rBot: y = OY illetve OY + CELL, x = OX - EXT,
+     *    hossz = CELL + 2*EXT + roadBr
+     *  - rLeft / rRight: x = OX illetve OX + CELL, y = OY - EXT,
+     *    hossz = CELL + 2*EXT + roadBr
      *
-     * Az épületek a 4 sarokra (rács kulso oldalain) + 2 oldali kozep-
-     * ponton helyezkednek el, a road-tol egy konstans gap-pel.
+     * A 4 sarki epulet a road-kvadransok kulso oldalan helyezkedik
+     * el (bs + gap tavolsagra a road-kvadrans sarkatol).
      *
      * @param layout Az aktiv MapLayout.
      */
@@ -144,42 +187,36 @@ public final class DefaultDemo {
         int roadBr = 2 * laneBr; // 1 forward + 1 backward
         int hLength = (COLS - 1) * CELL + 2 * EXT + roadBr;
         int vLength = (ROWS - 1) * CELL + 2 * EXT + roadBr;
-        for (int i = 1; i <= ROWS; i++) {
-            int x = OX - EXT;
-            int y = OY + (i - 1) * CELL;
-            layout.placeRoadHorizontal("rH" + i, x, y, hLength);
-        }
-        for (int j = 1; j <= COLS; j++) {
-            int x = OX + (j - 1) * CELL;
-            int y = OY - EXT;
-            layout.placeRoadVertical("rV" + j, x, y, vLength);
-        }
 
-        // Epuletek manualis elhelyezese:
+        // 2 horizontal road (top, bottom)
+        int hX = OX - EXT;
+        layout.placeRoadHorizontal("rTop", hX, OY, hLength);
+        layout.placeRoadHorizontal("rBot", hX, OY + (ROWS - 1) * CELL, hLength);
+
+        // 2 vertical road (left, right)
+        int vY = OY - EXT;
+        layout.placeRoadVertical("rLeft",  OX,                          vY, vLength);
+        layout.placeRoadVertical("rRight", OX + (COLS - 1) * CELL,      vY, vLength);
+
+        // Epuletek manualis elhelyezese a 4 sarokba
         int bs = MapLayout.BUILDING_SIZE;
         int gap = 18;
         int rH_topY = OY;
         int rH_bottomY = OY + (ROWS - 1) * CELL + roadBr;
         int rV_leftX = OX;
         int rV_rightX = OX + (COLS - 1) * CELL + roadBr;
-        int midRowsY = OY + ((ROWS - 1) * CELL + roadBr) / 2 - bs / 2;
-        // hb1 a bal-felso kvadrans:  bal road bal oldalan, felso road folott
-        layout.setBounds("hb1", new java.awt.Rectangle(
-                rV_leftX - bs - gap, rH_topY - bs - gap, bs, bs));
-        // t1 a jobb-felso kvadrans
+
+        // t1 a bal-felso sarokba (rLeft bal oldalan, rTop folott)
         layout.setBounds("t1", new java.awt.Rectangle(
+                rV_leftX - bs - gap, rH_topY - bs - gap, bs, bs));
+        // t2 a jobb-felso sarokba (rRight jobb oldalan, rTop folott)
+        layout.setBounds("t2", new java.awt.Rectangle(
                 rV_rightX + gap, rH_topY - bs - gap, bs, bs));
-        // b1 a bal-also kvadrans
-        layout.setBounds("b1", new java.awt.Rectangle(
+        // hb1 a bal-also sarokba (rLeft bal oldalan, rBot alatt)
+        layout.setBounds("hb1", new java.awt.Rectangle(
                 rV_leftX - bs - gap, rH_bottomY + gap, bs, bs));
-        // b2 a jobb-also kvadrans
-        layout.setBounds("b2", new java.awt.Rectangle(
+        // b1 a jobb-also sarokba (rRight jobb oldalan, rBot alatt) -- az "utolso" sarok
+        layout.setBounds("b1", new java.awt.Rectangle(
                 rV_rightX + gap, rH_bottomY + gap, bs, bs));
-        // b3 a bal oldali kozep
-        layout.setBounds("b3", new java.awt.Rectangle(
-                rV_leftX - bs - gap, midRowsY, bs, bs));
-        // b4 a jobb oldali kozep
-        layout.setBounds("b4", new java.awt.Rectangle(
-                rV_rightX + gap, midRowsY, bs, bs));
     }
 }

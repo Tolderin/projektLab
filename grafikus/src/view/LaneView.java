@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.Stroke;
 
 import javax.swing.JPanel;
@@ -65,18 +66,45 @@ public class LaneView extends FieldView {
             g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
         }
 
-        // Jeg overlay: kekes, fel-attetszo
+        // Jeg overlay: erosen lathato, 13. heti vizualis ujitas.
+        // KLIP: a hatch-vonalak es a szilank-mintazat a bounds-on belul
+        // maradnak, igy nem nyulnak at a szomszedos savokra / road
+        // overshoot teruletekre.
         if (lane.isFrozen) {
-            g.setColor(new Color(140, 200, 245, 200));
-            g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-            // Jegszilank-mintazat
-            g.setColor(new Color(220, 240, 255, 200));
-            for (int i = 0; i < 8; i++) {
-                int dx = bounds.x + 4 + ((i * 19) % (bounds.width - 8));
-                int dy = bounds.y + 4 + ((i * 11) % (bounds.height - 8));
-                g.drawLine(dx, dy, dx + 4, dy - 4);
-                g.drawLine(dx, dy, dx - 4, dy + 4);
+            int w = bounds.width;
+            int h = bounds.height;
+            Shape oldClip = g.getClip();
+            Stroke prevStroke = g.getStroke();
+            g.setClip(bounds);
+            // 1. Telitett kek base
+            g.setColor(new Color(95, 165, 235, 230));
+            g.fillRect(bounds.x, bounds.y, w, h);
+            // 2. Atloos vilagosabb cyan hatchel-csikok (jeg-csillogas)
+            g.setColor(new Color(210, 235, 255, 170));
+            g.setStroke(new BasicStroke(1.6f));
+            int step = 12;
+            int hatchEnd = w + h;
+            for (int i = -h; i < hatchEnd; i += step) {
+                g.drawLine(bounds.x + i, bounds.y,
+                        bounds.x + i + h, bounds.y + h);
             }
+            // 3. Vastagabb jeg-szilank cross-minta
+            g.setColor(new Color(245, 252, 255, 235));
+            g.setStroke(new BasicStroke(2.2f));
+            int shards = Math.max(5, (w / 28) + (h / 28));
+            for (int i = 0; i < shards; i++) {
+                int dx = bounds.x + 6 + ((i * 23) % Math.max(1, w - 12));
+                int dy = bounds.y + 6 + ((i * 17) % Math.max(1, h - 12));
+                int sz = 7;
+                g.drawLine(dx, dy, dx + sz, dy - sz);
+                g.drawLine(dx, dy, dx - sz, dy + sz);
+            }
+            // 4. Vastag sotetkek border (warning)
+            g.setColor(new Color(30, 80, 165, 240));
+            g.setStroke(new BasicStroke(3f));
+            g.drawRect(bounds.x + 1, bounds.y + 1, w - 2, h - 2);
+            g.setStroke(prevStroke);
+            g.setClip(oldClip);
         }
 
         // Zuzalek: barnasszurke pottyok

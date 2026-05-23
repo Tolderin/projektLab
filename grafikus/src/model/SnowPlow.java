@@ -32,6 +32,15 @@ public class SnowPlow extends Vehicle implements IPurchasable {
     private Cleaner owner;
 
     /**
+     * Round-cadence flag: true, ha a Cleaner mar lepett ezzel a
+     * hokotrovel az aktualis korben. A GameLogic.advanceTurn() a
+     * kor elejen visszaallitja false-ra, a MovePlowCommand pedig
+     * sikeres lepes utan true-ra. Csak akkor van hatasa, ha a
+     * GameLogic.roundCadenceEnabled = true.
+     */
+    public boolean hasMovedThisTurn = false;
+
+    /**
      * Mozgatja a hokotrot a tervezett utvonal szerint.
      * remove(this) -> accept(this) -> cleanCurrentLane().
      */
@@ -66,10 +75,29 @@ public class SnowPlow extends Vehicle implements IPurchasable {
      * A jelenlegi savon vegrehajtja az aktiv fejre jellemzo
      * takaritast. Csak akkor hat, ha a currentField Lane es van
      * aktiv fej.
+     *
+     * A 13. heti bovites: a takaritas elott/utan snapshot-olja a
+     * sav allapotat, kiszamolja az eltavolitott ho mennyiseget es
+     * azt, hogy a fej feltorte-e a jeget; majd a tulajdonos Cleaner-
+     * nek penzt ad (snowRemoved * 10, ice-broken bonusz +25).
      */
     public void cleanCurrentLane() {
-        if (activeHead != null && currentField instanceof Lane) {
-            activeHead.clean((Lane) currentField);
+        if (activeHead == null || !(currentField instanceof Lane)) {
+            return;
+        }
+        Lane lane = (Lane) currentField;
+        double snowBefore = lane.snowDepth;
+        boolean iceBefore = lane.isFrozen;
+        activeHead.clean(lane);
+        double snowAfter = lane.snowDepth;
+        boolean iceAfter = lane.isFrozen;
+        double removed = Math.max(0.0, snowBefore - snowAfter);
+        int reward = (int) Math.round(removed * 10.0);
+        if (iceBefore && !iceAfter) {
+            reward += 25;
+        }
+        if (reward > 0 && owner != null) {
+            owner.addMoney((double) reward);
         }
     }
 

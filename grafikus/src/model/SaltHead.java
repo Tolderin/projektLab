@@ -35,13 +35,26 @@ public class SaltHead extends CleanerHead {
     }
 
     /**
-     * Sot szor a savra, beallitja a sohatas idotartamat.
+     * Sot szor a savra. A 13. heti modositas alapjan a so:
+     *  1. felolvasztja a jegpancelt, ha van (breakIce -- a +1.0
+     *     residual snow majd kovetkezo lepessel kezelheto, vagy a
+     *     kovetkezo removeSnow eltavolitja);
+     *  2. levonja a horeteget 1.0 mennyiseggel (legalabb 0-ra);
+     *  3. beallitja a saltEffect-et SALT_DURATION_TURNS korre, igy
+     *     az uj hohullas tobb korig nem rakodik le.
+     *
+     * 1.0 egyseg sot fogyaszt minden takaritasi alkalommal.
      *
      * @param lane A takaritando sav.
      */
     @Override
     public void clean(Lane lane) {
         if (fuelAmount > 0) {
+            if (lane.isFrozen) {
+                lane.breakIce(); // +1.0 residual snow
+            }
+            // Hot is levon (akar a breakIce utan keletkezo residual-bol)
+            lane.removeSnow(1.0);
             lane.applySaltEffect(SALT_DURATION_TURNS);
             fuelAmount -= SALT_CONSUMPTION_RATE;
             if (fuelAmount < 0) {

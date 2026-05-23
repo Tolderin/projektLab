@@ -5,6 +5,7 @@ import cli.ICommand;
 import io.OutputFormatter;
 import model.Bus;
 import model.Field;
+import model.GameLogic;
 
 /**
  * A 'move_bus <bus_id> <target_field_id>' parancs implementacioja.
@@ -44,9 +45,20 @@ public class MoveBusCommand implements ICommand {
                             + (currentId != null ? currentId : args[1]));
             return;
         }
+        // Round-cadence: ha be van kapcsolva es a busz mar lepett
+        // ebben a korben, visszautasitjuk.
+        if (Context.gameLogic instanceof GameLogic) {
+            GameLogic gl = (GameLogic) Context.gameLogic;
+            if (gl.roundCadenceEnabled && bus.hasMovedThisTurn) {
+                OutputFormatter.printError(
+                        args[1] + " already moved this round");
+                return;
+            }
+        }
         // SUCCESS elobb -- igy a slip event utana sorba kerul
         OutputFormatter.printSuccess(args[1] + " moved to " + args[2]);
         bus.nextField = target;
         bus.move();
+        bus.hasMovedThisTurn = true;
     }
 }

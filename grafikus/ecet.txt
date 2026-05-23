@@ -1,0 +1,50 @@
+create road rTop
+create road rBot
+create road rLeft
+create road rRight
+create lane lTop_f
+create lane lTop_b
+create lane lBot_f
+create lane lBot_b
+create lane lLeft_f
+create lane lLeft_b
+create lane lRight_f
+create lane lRight_b
+create terminal t1
+create terminal t2
+create homebase hb1
+create building b1
+create cleaner c1
+create busdriver bd1
+set_lane_state lTop_f 3.0 false 0.0 0.0
+set_lane_state lTop_b 2.0 false 0.0 0.0
+set_lane_state lBot_f 2.0 false 0.0 0.0
+set_lane_state lBot_b 2.0 false 0.0 0.0
+set_lane_state lLeft_f 2.0 false 0.0 0.0
+set_lane_state lLeft_b 1.0 false 0.0 0.0
+set_lane_state lRight_f 2.0 false 0.0 0.0
+set_lane_state lRight_b 2.0 false 0.0 0.0
+connect_fields lTop_f t1
+connect_fields lTop_f t2
+connect_fields lBot_f lLeft_f
+connect_fields lBot_f lLeft_b
+connect_fields lBot_f lRight_f
+connect_fields lBot_f lRight_b
+connect_fields lBot_b lLeft_f
+connect_fields lBot_b lLeft_b
+connect_fields lBot_b lRight_f
+connect_fields lBot_b lRight_b
+connect_fields lLeft_f lTop_f
+connect_fields lLeft_f lTop_b
+connect_fields lLeft_b lTop_f
+connect_fields lLeft_b lTop_b
+connect_fields lRight_f lTop_f
+connect_fields lRight_f lTop_b
+connect_fields lRight_b lTop_f
+connect_fields lRight_b lTop_b
+connect_fields hb1 lBot_b
+connect_fields b1 lBot_b
+set_money c1 1000010.0
+spawn snowplow sp1 lLeft_b c1
+spawn bus bus1 lTop_f bd1
+spawn car car1 lTop_f b1 t1

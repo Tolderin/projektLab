@@ -30,6 +30,17 @@ public class Context {
      *  fajl tartalmanak ujrafeldolgozasahoz). Tipusa Object ugyanazert. */
     public static Object commandParser;
 
+    /**
+     * Az aktiv MapLayout. A 13. heti modositas: a save/load
+     * pixel-pozicio megorzeshez bevezetett set_road_pos /
+     * set_building_pos parancsok ezt hasznaljak. GUI modban a
+     * MainWindow konstruktora allitja be; CLI modban (ProtoApp)
+     * null marad, igy a layout-parancsok no-op-pal terenek vissza.
+     * Tipusa Object hogy elkeruljuk a cli -> view package
+     * fuggosegi gondot.
+     */
+    public static Object mapLayout;
+
     private Context() {
         // statikus osztaly, nem peldanyosithato
     }

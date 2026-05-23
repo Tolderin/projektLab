@@ -24,7 +24,9 @@ import view.HUDPanel;
 import view.LaneView;
 import view.MapLayout;
 import view.RoadView;
+import view.Scoreboard;
 import view.SnowPlowView;
+import view.TurnIndicatorPanel;
 
 /**
  * Load utan vagy uj jatek inditasakor osszerendeli a modell-elemeket
@@ -64,11 +66,16 @@ public class ViewBinder {
     /**
      * Letrehozza es osszerendel minden modell-elemhez egy nezetet.
      *
-     * @param renderer Az aktiv GameRenderer.
-     * @param host     A befoglalo Swing-panel (repaint cel).
-     * @param hud      A frissitendo HUDPanel.
+     * @param renderer            Az aktiv GameRenderer.
+     * @param host                A befoglalo Swing-panel (repaint cel).
+     * @param hud                 A frissitendo HUDPanel.
+     * @param turnIndicatorPanel  A frissitendo TurnIndicatorPanel,
+     *                            ami a GameLogic-ra es a Player-ekre
+     *                            iratkozik fel (lehet null is).
      */
-    public void bindAll(GameRenderer renderer, JPanel host, HUDPanel hud) {
+    public void bindAll(GameRenderer renderer, JPanel host, HUDPanel hud,
+                        TurnIndicatorPanel turnIndicatorPanel,
+                        Scoreboard scoreboard) {
         unbindAll();
         renderer.clear();
         MapLayout layout = renderer.getLayout();
@@ -131,11 +138,28 @@ public class ViewBinder {
             } else if (obj instanceof Player) {
                 ((Player) obj).addObserver(hud);
                 registered.add(new Bind((Player) obj, hud));
+                if (turnIndicatorPanel != null) {
+                    ((Player) obj).addObserver(turnIndicatorPanel);
+                    registered.add(new Bind((Player) obj, turnIndicatorPanel));
+                }
+                if (scoreboard != null) {
+                    ((Player) obj).addObserver(scoreboard);
+                    registered.add(new Bind((Player) obj, scoreboard));
+                }
             }
         }
         if (Context.gameLogic instanceof Observable) {
-            ((Observable) Context.gameLogic).addObserver(hud);
-            registered.add(new Bind((Observable) Context.gameLogic, hud));
+            Observable gl = (Observable) Context.gameLogic;
+            gl.addObserver(hud);
+            registered.add(new Bind(gl, hud));
+            if (turnIndicatorPanel != null) {
+                gl.addObserver(turnIndicatorPanel);
+                registered.add(new Bind(gl, turnIndicatorPanel));
+            }
+            if (scoreboard != null) {
+                gl.addObserver(scoreboard);
+                registered.add(new Bind(gl, scoreboard));
+            }
         }
     }
 

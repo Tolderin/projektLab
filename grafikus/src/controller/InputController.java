@@ -9,7 +9,9 @@ import java.awt.event.MouseListener;
 import cli.Context;
 import model.Bus;
 import model.Field;
+import model.GameLogic;
 import model.SnowPlow;
+import model.Vehicle;
 import view.GamePanel;
 import view.MainWindow;
 import view.VehicleView;
@@ -122,30 +124,22 @@ public class InputController implements MouseListener, KeyListener {
             return;
         }
 
-        if (actionMode == ActionMode.MOVE && selectedVehicleId != null) {
-            // A clickelt mezore mozgas-parancsot adunk ki
-            if (fieldId != null) {
-                doMove(selectedVehicleId, fieldId);
-            }
-            actionMode = ActionMode.NONE;
-            panel.setMoveModeHint(false);
+        // A 13. heti turn-order rendszerben az auto-select mindig
+        // MOVE modba allitja az aktualis vehicle-t. Bal kattintas
+        // egyetlen feladata: ha highlightolt szomszedos mezore
+        // kattintunk, mozgatjuk az aktualis jarmuvet es atvaltunk
+        // a kovetkezo turn-slotra (autoSelectNextVehicle a doMove
+        // vegen). Hibas (nem szomszedos) mezo eseten a CLI [ERROR]-t
+        // ad de a MOVE mod marad. Jobb-kattintas: stat (inspekcio).
+        if (actionMode == ActionMode.MOVE && selectedVehicleId != null
+                && fieldId != null) {
+            doMove(selectedVehicleId, fieldId);
             return;
         }
-
-        // Egyebkent kijeloles
-        if (vv != null) {
-            selectedVehicleId = vv.getId();
-            selectedFieldId = null;
-        } else if (fieldId != null) {
-            selectedFieldId = fieldId;
-            selectedVehicleId = null;
-        } else {
-            selectedFieldId = null;
-            selectedVehicleId = null;
-        }
-        panel.setSelectedFieldId(selectedFieldId);
-        panel.setSelectedVehicleId(selectedVehicleId);
-        mainWindow.onSelectionChanged(selectedVehicleId, selectedFieldId);
+        // Egyebkent (nincs aktiv vehicle, vagy ures kattintas):
+        // szandekosan nincs hatas. A felhasznalo a Skip turn gombbal
+        // ugorhat a kovetkezo aktualis vehicle-re, a jobb-kattintasok
+        // pedig a stat-dialogot nyitjak.
     }
 
     /**
@@ -167,6 +161,94 @@ public class InputController implements MouseListener, KeyListener {
             return;
         }
         bridge.moveSelectedTo(vehicleId, targetId, isPlow);
+        // Streamlined experience: a lepes utan (es az esetleges
+        // CommandBridge-altal kivaltott auto-next_turn utan) a
+        // kovetkezo "tovabb-mozdithato" jarmuvet automatikusan
+        // kijeloljuk MOVE modban, hogy a jatekos azonnal kattinthat
+        // a cel-mezore.
+        autoSelectNextVehicle();
+    }
+
+    /**
+     * A 13. heti turn-order: a GameLogic.getCurrentTurnVehicle-tol
+     * kapja meg a kovetkezo lepheto jarmuvet (Cleaner-osszes-plow
+     * elobb, BusDriver-osszes-bus utana, players regisztracios
+     * sorrendjeben). Ha nincs ilyen, a kornyezet kor automatikusan
+     * vegrehajtodik (bridge.nextTurn) es utana ujra megnezzuk.
+     *
+     * Akkor hivjuk:
+     *  - jatek inditasakor (MainWindow.rebindAll),
+     *  - sikeres lepes utan (doMove),
+     *  - Skip turn / SPACE / next_turn utan (skipCurrentVehicleAndAdvance).
+     */
+    public void autoSelectNextVehicle() {
+        if (!(Context.gameLogic instanceof GameLogic)) {
+            clearSelection();
+            return;
+        }
+        GameLogic gl = (GameLogic) Context.gameLogic;
+        Vehicle v = gl.getCurrentTurnVehicle();
+        if (v == null) {
+            // Mindenki lepett -> kornyezet kor automatikusan vegre-
+            // hajtodik (advanceTurn nullazza a hasMovedThisTurn flageket).
+            bridge.nextTurn();
+            v = gl.getCurrentTurnVehicle();
+        }
+        if (v == null) {
+            // Tovabbra is nincs lepheto jarmu (pl. game over). Toroljuk
+            // a kijelolest.
+            clearSelection();
+            return;
+        }
+        String nextId = Context.objectManager.getId(v);
+        if (nextId == null) {
+            clearSelection();
+            return;
+        }
+        selectedVehicleId = nextId;
+        selectedFieldId = null;
+        actionMode = ActionMode.MOVE;
+        panel.setSelectedFieldId(null);
+        panel.setSelectedVehicleId(nextId);
+        panel.setMoveModeHint(true);
+        mainWindow.onSelectionChanged(nextId, null);
+        panel.repaint();
+    }
+
+    /**
+     * Eltavolitja az aktualis kijelolest, kikapcsolja a MOVE mod
+     * highlightot. Atmeneti allapot pl. game-over utan.
+     */
+    private void clearSelection() {
+        selectedVehicleId = null;
+        selectedFieldId = null;
+        actionMode = ActionMode.NONE;
+        panel.setSelectedFieldId(null);
+        panel.setSelectedVehicleId(null);
+        panel.setMoveModeHint(false);
+        mainWindow.onSelectionChanged(null, null);
+        panel.repaint();
+    }
+
+    /**
+     * Kihagyja a jelenlegi aktualis jarmu kor-lepeset es atvalt a
+     * kovetkezo turn-slotra. Ha nincs tobb lepheto jarmu, a kornyezet
+     * kor automatikusan vegrehajtodik (autoSelectNextVehicle gondoskodik
+     * errol).
+     *
+     * Hivjak: SPACE / Skip turn gomb / Game menu Next Turn.
+     */
+    public void skipCurrentVehicleAndAdvance() {
+        if (Context.gameLogic instanceof GameLogic) {
+            GameLogic gl = (GameLogic) Context.gameLogic;
+            Vehicle current = gl.getCurrentTurnVehicle();
+            if (current instanceof SnowPlow) {
+                ((SnowPlow) current).hasMovedThisTurn = true;
+            } else if (current instanceof Bus) {
+                ((Bus) current).hasMovedThisTurn = true;
+            }
+        }
+        autoSelectNextVehicle();
     }
 
     @Override
@@ -195,16 +277,18 @@ public class InputController implements MouseListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_SPACE:
-                bridge.nextTurn();
+                // SPACE = "Skip turn" a 13. heti turn-rendben: kihagyja
+                // a jelenlegi aktualis jarmu lepeset, automatikusan
+                // valt a kovetkezo turn-slotra (es ha mindenki kihagyott,
+                // a kornyezet kor is vegrehajtodik).
+                skipCurrentVehicleAndAdvance();
                 break;
             case KeyEvent.VK_ESCAPE:
-                selectedFieldId = null;
-                selectedVehicleId = null;
-                actionMode = ActionMode.NONE;
-                panel.setSelectedFieldId(null);
-                panel.setSelectedVehicleId(null);
-                panel.setMoveModeHint(false);
-                mainWindow.onSelectionChanged(null, null);
+                // A 13. heti turn-rendben az ESC visszaall a turn-order
+                // szerinti aktualis vehicle MOVE-mod kijelolesére (a
+                // manualis "clear selection" kevesbé hasznos, mivel
+                // az auto-select azonnal visszairna).
+                autoSelectNextVehicle();
                 break;
             case KeyEvent.VK_F1:
                 mainWindow.showHelp();

@@ -28,10 +28,19 @@ public class Terminal extends Building {
      * @param bus Az erkezo busz.
      */
     public void registerArrival(Bus bus) {
-        // BusDriver-ek megkeresese es completedRounds inkrementalas
-        for (Object o : Context.objectManager.getAll().values()) {
-            if (o instanceof BusDriver) {
-                ((BusDriver) o).incrementRounds();
+        // Ha a busznak van rendelt tulajdonosa, csak az kap pontot.
+        // Egyebkent (backward compat: ha a spawn nem adott owner-t)
+        // minden BusDriver completedRounds-jat noveljuk (regi viselkedes).
+        if (bus.owner != null) {
+            bus.owner.incrementRounds();
+            bus.owner.addScore(50);
+        } else {
+            for (Object o : Context.objectManager.getAll().values()) {
+                if (o instanceof BusDriver) {
+                    BusDriver bd = (BusDriver) o;
+                    bd.incrementRounds();
+                    bd.addScore(50);
+                }
             }
         }
         // Esemeny jelzese

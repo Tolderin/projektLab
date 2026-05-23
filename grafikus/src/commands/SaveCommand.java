@@ -1,5 +1,6 @@
 package commands;
 
+import java.awt.Rectangle;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,6 +22,7 @@ import model.Lane;
 import model.Road;
 import model.SnowPlow;
 import model.Terminal;
+import view.MapLayout;
 
 /**
  * A 'save [filename]' parancs implementacioja. Lekerdezi az
@@ -72,16 +74,44 @@ public class SaveCommand implements ICommand {
     private void writeAll(PrintWriter out) {
         // 1) Object create-ek tipus szerinti sorrendben (fuggosegekhez)
         Map<String, Object> all = Context.objectManager.getAll();
+        MapLayout layout = (Context.mapLayout instanceof MapLayout)
+                ? (MapLayout) Context.mapLayout : null;
+
         // a) Roadok
         for (Map.Entry<String, Object> e : all.entrySet()) {
             if (e.getValue() instanceof Road) {
+                Road r = (Road) e.getValue();
                 out.println("create road " + e.getKey());
+                if (r.length > 0) {
+                    out.println(String.format(Locale.US,
+                            "set_road_length %s %.1f", e.getKey(), r.length));
+                }
             }
         }
         // b) Lane-ek
         for (Map.Entry<String, Object> e : all.entrySet()) {
             if (e.getValue() instanceof Lane) {
                 out.println("create lane " + e.getKey());
+            }
+        }
+        // b2) add_to_road minden sav -> road kapcsolatra
+        // (a Road forwardLanes/backwardLanes szerinti rekonstrukciohoz)
+        for (Map.Entry<String, Object> e : all.entrySet()) {
+            if (e.getValue() instanceof Road) {
+                Road r = (Road) e.getValue();
+                String roadId = e.getKey();
+                for (Lane fwd : r.forwardLanes) {
+                    String lid = Context.objectManager.getId(fwd);
+                    if (lid != null) {
+                        out.println("add_to_road " + roadId + " lane " + lid + " forward");
+                    }
+                }
+                for (Lane bwd : r.backwardLanes) {
+                    String lid = Context.objectManager.getId(bwd);
+                    if (lid != null) {
+                        out.println("add_to_road " + roadId + " lane " + lid + " backward");
+                    }
+                }
             }
         }
         // c) Buildingek
@@ -176,9 +206,40 @@ public class SaveCommand implements ICommand {
                 Bus b = (Bus) e.getValue();
                 String fieldId = b.currentField != null
                         ? Context.objectManager.getId(b.currentField) : null;
+                String ownerId = b.owner != null
+                        ? Context.objectManager.getId(b.owner) : null;
                 if (fieldId != null) {
-                    out.println("spawn bus " + e.getKey() + " " + fieldId);
+                    if (ownerId != null) {
+                        out.println("spawn bus " + e.getKey() + " "
+                                + fieldId + " " + ownerId);
+                    } else {
+                        out.println("spawn bus " + e.getKey() + " " + fieldId);
+                    }
                 }
+            }
+        }
+
+        // 6) Layout-info: pixel-pozicik megorzeshez (csak GUI-modban
+        // van Context.mapLayout aktiv -- CLI esetén kihagyjuk)
+        if (layout != null) {
+            for (Map.Entry<String, Object> e : all.entrySet()) {
+                if (!(e.getValue() instanceof Road)) continue;
+                String roadId = e.getKey();
+                Rectangle rb = layout.getRoadBounds(roadId);
+                if (rb == null) continue;
+                boolean horiz = layout.isRoadHorizontal(roadId);
+                int len = horiz ? rb.width : rb.height;
+                out.println("set_road_pos " + roadId + " "
+                        + rb.x + " " + rb.y + " " + len + " "
+                        + (horiz ? "horizontal" : "vertical"));
+            }
+            for (Map.Entry<String, Object> e : all.entrySet()) {
+                if (!(e.getValue() instanceof Building)) continue;
+                String bid = e.getKey();
+                Rectangle bb = layout.getBounds(bid);
+                if (bb == null) continue;
+                out.println("set_building_pos " + bid + " "
+                        + bb.x + " " + bb.y + " " + bb.width + " " + bb.height);
             }
         }
     }

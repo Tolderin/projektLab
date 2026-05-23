@@ -19,10 +19,14 @@ import javax.swing.JTextField;
 
 import cli.Context;
 import controller.CommandBridge;
+import model.CleanerHead;
 import model.Cleaner;
+import model.DragonHead;
+import model.GravelHead;
 import model.IObserver;
 import model.IntegratedMarket;
 import model.Observable;
+import model.SaltHead;
 import model.SnowPlow;
 
 /**
@@ -144,10 +148,53 @@ public class MarketDialog extends JDialog implements IObserver {
 
     /**
      * A vasarlasi parancs kiadasa a kivalasztott fej-tipusra.
+     * Sikeres vasarlas utan (attachments melyseg novekedett) auto-
+     * matikusan equip-olja az uj fejet, majd ha az uj fej uzem-
+     * anyagot igenyel es a tartaly ures, figyelmeztetest jelenit meg.
      */
     private void onBuyHead() {
         String head = (String) headCombo.getSelectedItem();
+        int before = target.attachments.size();
         bridge.buyItem(idOf(buyer), idOf(target), head, 0);
+        boolean bought = target.attachments.size() > before;
+        if (bought) {
+            bridge.equipHead(idOf(target), head);
+            warnIfActiveHeadNeedsFuel();
+        }
+    }
+
+    /**
+     * Ha a frissen felszerelt activeHead uzemanyagot igenyel
+     * (Salt/Dragon/Gravel) es a tartaly ures, modal figyelmezteto
+     * dialog jelenik meg.
+     */
+    private void warnIfActiveHeadNeedsFuel() {
+        CleanerHead h = target.activeHead;
+        if (h == null) {
+            return;
+        }
+        double fuel;
+        String fuelType;
+        if (h instanceof SaltHead) {
+            fuel = ((SaltHead) h).fuelAmount;
+            fuelType = "salt";
+        } else if (h instanceof DragonHead) {
+            fuel = ((DragonHead) h).fuelAmount;
+            fuelType = "kerosine";
+        } else if (h instanceof GravelHead) {
+            fuel = ((GravelHead) h).fuelAmount;
+            fuelType = "gravel";
+        } else {
+            return; // nem uzemanyag-fuggo fej
+        }
+        if (fuel <= 0.0) {
+            JOptionPane.showMessageDialog(this,
+                    "A felszerelt " + h.getName() + " fej üzemanyagot igényel,\n"
+                            + "de a tartály üres. Tankolj " + fuelType
+                            + "-ből a használathoz!",
+                    "Figyelmeztetés",
+                    JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     /**

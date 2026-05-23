@@ -248,9 +248,12 @@ public class MapLayout {
      * Akkor hivjuk, ha a hivо mar elozetesen beallitotta a road
      * pozíciókat (pl. DefaultDemo). Csak a Building-eket helyezi
      * el a kapcsolt sávok mellé, es a maradek Field-eket a layout
-     * aljara.
+     * aljara. Elotte a savokat osszezsugoritjuk a sarki keresztezodes-
+     * teglalapok kihagyasara, igy a click-detekcio es a lane-overlay
+     * nem akad bele a keresztezodesbe.
      */
     public void placeBuildingsAndMissing() {
+        shrinkLanesAtIntersections();
         placeBuildings();
         autoLayoutMissing();
     }
@@ -260,12 +263,16 @@ public class MapLayout {
      * levezetese a connect_fields graf alapjan, harom retegben:
      *  1. Road-szintu BFS sav-szomszedsag alapjan (perpendikular
      *     orientacioval, kozeppont-igazitassal a keresztezodesnél).
-     *  2. Building elhelyezes a kapcsolt sav menten.
-     *  3. Maradek Field-ekre egyszeru BFS-rács fallback.
+     *  2. Sav-bounds osszezsugoritasa a sarki keresztezodesek korul
+     *     (a sav csak a ket keresztezodes kozotti szakaszt fedi).
+     *  3. Building elhelyezes a kapcsolt sav menten (zsugoritott
+     *     bounds-on).
+     *  4. Maradek Field-ekre egyszeru BFS-rács fallback.
      */
     public void autoLayout() {
         clear();
         placeRoadsByLaneAdjacency();
+        shrinkLanesAtIntersections();
         placeBuildings();
         autoLayoutMissing();
     }
@@ -431,6 +438,103 @@ public class MapLayout {
             }
         }
         return result;
+    }
+
+    /**
+     * Osszezsugoritja az osszes sav (Lane) befoglalo teglalapjat,
+     * hogy ne fedjek a sarki keresztezodeseket. A road tarmac (a
+     * RoadView altal rajzolt szurke hatter) tovabbra is folytono-
+     * san atlatszik a keresztezodesen, de a sav-overlay (ho, jeg,
+     * iranymutato nyil, kek move-target-highlight) es a click-
+     * detekcio (pickFieldId) csak a keresztezodesen kivuli
+     * szakaszra hat. Igy a "roads only span between two
+     * intersections" osszbenyomas vizualisan is megjelenik.
+     *
+     * Algoritmus per sav: a getIntersectionRects() altal vissza-
+     * adott teglalapokkal "kilyukasztva" a sav bounds-at, a
+     * keletkezo szakaszok kozul a LEGNAGYOBB teruletut tartjuk meg.
+     * 4-oldalu negyzet eseten ez a ket sarok kozti kozepso szakasz.
+     */
+    public void shrinkLanesAtIntersections() {
+        List<Rectangle> intersections = getIntersectionRects();
+        if (intersections.isEmpty()) {
+            return;
+        }
+        Map<String, Rectangle> updated = new LinkedHashMap<>();
+        for (Map.Entry<String, Rectangle> entry : bounds.entrySet()) {
+            String id = entry.getKey();
+            Object o = Context.objectManager.getObject(id);
+            if (!(o instanceof Lane)) {
+                continue;
+            }
+            Rectangle lane = entry.getValue();
+            boolean horiz = lane.width > lane.height;
+            List<Rectangle> overlaps = new ArrayList<>();
+            for (Rectangle inter : intersections) {
+                Rectangle ovr = lane.intersection(inter);
+                if (!ovr.isEmpty()) {
+                    overlaps.add(ovr);
+                }
+            }
+            if (overlaps.isEmpty()) {
+                continue;
+            }
+            if (horiz) {
+                overlaps.sort((a, b) -> Integer.compare(a.x, b.x));
+            } else {
+                overlaps.sort((a, b) -> Integer.compare(a.y, b.y));
+            }
+            List<Rectangle> gaps = new ArrayList<>();
+            if (horiz) {
+                int currentX = lane.x;
+                int laneEndX = lane.x + lane.width;
+                for (Rectangle ovr : overlaps) {
+                    int ovrEndX = ovr.x + ovr.width;
+                    if (ovr.x > currentX) {
+                        gaps.add(new Rectangle(currentX, lane.y,
+                                ovr.x - currentX, lane.height));
+                    }
+                    if (ovrEndX > currentX) {
+                        currentX = ovrEndX;
+                    }
+                }
+                if (currentX < laneEndX) {
+                    gaps.add(new Rectangle(currentX, lane.y,
+                            laneEndX - currentX, lane.height));
+                }
+            } else {
+                int currentY = lane.y;
+                int laneEndY = lane.y + lane.height;
+                for (Rectangle ovr : overlaps) {
+                    int ovrEndY = ovr.y + ovr.height;
+                    if (ovr.y > currentY) {
+                        gaps.add(new Rectangle(lane.x, currentY,
+                                lane.width, ovr.y - currentY));
+                    }
+                    if (ovrEndY > currentY) {
+                        currentY = ovrEndY;
+                    }
+                }
+                if (currentY < laneEndY) {
+                    gaps.add(new Rectangle(lane.x, currentY,
+                            lane.width, laneEndY - currentY));
+                }
+            }
+            if (gaps.isEmpty()) {
+                continue;
+            }
+            Rectangle largest = gaps.get(0);
+            long largestArea = (long) largest.width * largest.height;
+            for (Rectangle g : gaps) {
+                long area = (long) g.width * g.height;
+                if (area > largestArea) {
+                    largest = g;
+                    largestArea = area;
+                }
+            }
+            updated.put(id, largest);
+        }
+        bounds.putAll(updated);
     }
 
     /**

@@ -1,0 +1,70 @@
+create road rTop
+set_road_length rTop 380.0
+create road rBot
+set_road_length rBot 380.0
+create road rLeft
+set_road_length rLeft 380.0
+create road rRight
+set_road_length rRight 380.0
+create lane lTop_f
+create lane lTop_b
+create lane lBot_f
+create lane lBot_b
+create lane lLeft_f
+create lane lLeft_b
+create lane lRight_f
+create lane lRight_b
+add_to_road rTop lane lTop_f forward
+add_to_road rTop lane lTop_b backward
+add_to_road rBot lane lBot_f forward
+add_to_road rBot lane lBot_b backward
+add_to_road rLeft lane lLeft_f forward
+add_to_road rLeft lane lLeft_b backward
+add_to_road rRight lane lRight_f forward
+add_to_road rRight lane lRight_b backward
+create terminal t1
+create terminal t2
+create homebase hb1
+create building b1
+create cleaner c1
+create busdriver bd1
+set_lane_state lTop_f 9.0 false 0.0 0.0
+set_lane_state lTop_b 5.0 false 0.0 0.0
+set_lane_state lBot_f 0.0 false 0.0 0.0
+set_lane_state lBot_b 3.0 false 0.0 0.0
+set_lane_state lLeft_f 12.0 false 0.0 0.0
+set_lane_state lLeft_b 5.0 false 0.0 0.0
+set_lane_state lRight_f 1.0 false 0.0 0.0
+set_lane_state lRight_b 5.0 false 0.0 0.0
+connect_fields lTop_f t1
+connect_fields lTop_f t2
+connect_fields lBot_f lLeft_f
+connect_fields lBot_f lLeft_b
+connect_fields lBot_f lRight_f
+connect_fields lBot_f lRight_b
+connect_fields lBot_b lLeft_f
+connect_fields lBot_b lLeft_b
+connect_fields lBot_b lRight_f
+connect_fields lBot_b lRight_b
+connect_fields lLeft_f lTop_f
+connect_fields lLeft_f lTop_b
+connect_fields lLeft_b lTop_f
+connect_fields lLeft_b lTop_b
+connect_fields lRight_f lTop_f
+connect_fields lRight_f lTop_b
+connect_fields lRight_b lTop_f
+connect_fields lRight_b lTop_b
+connect_fields hb1 lBot_b
+connect_fields b1 lBot_b
+set_money c1 1000110.0
+spawn snowplow sp1 lBot_f c1
+spawn bus bus1 lTop_f bd1
+spawn car car1 lLeft_f b1 t1
+set_road_pos rTop 85 160 534 horizontal
+set_road_pos rBot 85 540 534 horizontal
+set_road_pos rLeft 120 125 534 vertical
+set_road_pos rRight 500 125 534 vertical
+set_building_pos t1 42 82 60 60
+set_building_pos t2 602 82 60 60
+set_building_pos hb1 42 642 60 60
+set_building_pos b1 602 642 60 60

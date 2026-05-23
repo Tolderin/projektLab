@@ -4,6 +4,7 @@ import cli.Context;
 import cli.ICommand;
 import io.OutputFormatter;
 import model.Bus;
+import model.BusDriver;
 import model.Building;
 import model.Car;
 import model.Cleaner;
@@ -146,7 +147,13 @@ public class SpawnCommand implements ICommand {
     }
 
     /**
-     * Letrehoz egy Bus-t es elhelyezi.
+     * Letrehoz egy Bus-t es elhelyezi. Az 5. argumentum (opcionalis) az
+     * owner BusDriver ID-je; ha jelen van, a busz felkerul a driver
+     * controlledBuses listajara (bus.owner is rogzitve).
+     *
+     * Szintaxis:
+     *  - spawn bus <id> <field_id>
+     *  - spawn bus <id> <field_id> <busdriver_id>
      */
     private void spawnBus(String[] args, String id, Field field, String fieldId) {
         Bus bus;
@@ -163,6 +170,15 @@ public class SpawnCommand implements ICommand {
             ((Lane) field).vehicles.add(bus);
         } else {
             field.accept(bus);
+        }
+        // Opcionalis owner argumentum
+        if (args.length >= 5) {
+            Object ownerObj = Context.objectManager.getObject(args[4]);
+            if (ownerObj instanceof BusDriver) {
+                ((BusDriver) ownerObj).addBus(bus);
+            } else {
+                OutputFormatter.printError("busdriver not found: " + args[4]);
+            }
         }
         if (Context.gameLogic instanceof model.GameLogic) {
             ((model.GameLogic) Context.gameLogic).addVehicle(bus);

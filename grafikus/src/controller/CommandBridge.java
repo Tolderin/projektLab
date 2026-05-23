@@ -44,6 +44,10 @@ public class CommandBridge {
         } else {
             parser.parseLine("move_bus " + vehicleId + " " + targetId);
         }
+        // A 13. heti turn-order: az InputController.autoSelectNextVehicle
+        // gondoskodik a kovetkezo aktualis vehicle kijelolesérol, es
+        // szukseg eseten o maga indítja a kornyezet kor (next_turn)
+        // hivasat is. Itt csak a lepest adjuk ki.
     }
 
     /**

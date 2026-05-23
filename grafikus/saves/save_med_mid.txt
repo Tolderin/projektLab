@@ -1,0 +1,192 @@
+# ===========================================================
+#  Medium mid-game save (#48 GonoszOnosz, BME projektlabor 2026)
+#  2x3 racs szegmentalt road-okkal (rH00 / rH01 / rH10 / rH11 +
+#  rV00 / rV10 / rV20). ~10 kor utan: havazas, 2 frozen lane,
+#  Cleaner has +800 money, BusDrivers have 200/100 score.
+# ===========================================================
+
+random off
+
+# ===== Horizontalis road-szegmensek (row 0: top) =====
+create road rH00
+set_road_length rH00 464.0
+create lane lH00_f
+create lane lH00_b
+add_to_road rH00 lane lH00_f forward
+add_to_road rH00 lane lH00_b backward
+
+create road rH01
+set_road_length rH01 464.0
+create lane lH01_f
+create lane lH01_b
+add_to_road rH01 lane lH01_f forward
+add_to_road rH01 lane lH01_b backward
+
+# ===== Horizontalis road-szegmensek (row 1: bot) =====
+create road rH10
+set_road_length rH10 464.0
+create lane lH10_f
+create lane lH10_b
+add_to_road rH10 lane lH10_f forward
+add_to_road rH10 lane lH10_b backward
+
+create road rH11
+set_road_length rH11 464.0
+create lane lH11_f
+create lane lH11_b
+add_to_road rH11 lane lH11_f forward
+add_to_road rH11 lane lH11_b backward
+
+# ===== Vertikalis road-szegmensek (col 0/1/2) =====
+create road rV00
+set_road_length rV00 464.0
+create lane lV00_f
+create lane lV00_b
+add_to_road rV00 lane lV00_f forward
+add_to_road rV00 lane lV00_b backward
+
+create road rV10
+set_road_length rV10 464.0
+create lane lV10_f
+create lane lV10_b
+add_to_road rV10 lane lV10_f forward
+add_to_road rV10 lane lV10_b backward
+
+create road rV20
+set_road_length rV20 464.0
+create lane lV20_f
+create lane lV20_b
+add_to_road rV20 lane lV20_f forward
+add_to_road rV20 lane lV20_b backward
+
+# ===== Sarki cross-connect: (0,0) intersection =====
+# Lanes here: lH00_f, lH00_b (jobb fele), lV00_f, lV00_b (lefele)
+connect_fields lH00_f lH00_b
+connect_fields lH00_f lV00_f
+connect_fields lH00_f lV00_b
+connect_fields lH00_b lV00_f
+connect_fields lH00_b lV00_b
+connect_fields lV00_f lV00_b
+
+# ===== (0,1) intersection =====
+# Lanes here: lH00 (jobbrol jovo), lH01 (jobbra meno), lV10 (lefele meno)
+connect_fields lH00_f lH00_b
+connect_fields lH00_f lH01_f
+connect_fields lH00_f lH01_b
+connect_fields lH00_f lV10_f
+connect_fields lH00_f lV10_b
+connect_fields lH00_b lH01_f
+connect_fields lH00_b lH01_b
+connect_fields lH00_b lV10_f
+connect_fields lH00_b lV10_b
+connect_fields lH01_f lH01_b
+connect_fields lH01_f lV10_f
+connect_fields lH01_f lV10_b
+connect_fields lH01_b lV10_f
+connect_fields lH01_b lV10_b
+connect_fields lV10_f lV10_b
+
+# ===== (0,2) intersection =====
+connect_fields lH01_f lH01_b
+connect_fields lH01_f lV20_f
+connect_fields lH01_f lV20_b
+connect_fields lH01_b lV20_f
+connect_fields lH01_b lV20_b
+connect_fields lV20_f lV20_b
+
+# ===== (1,0) intersection =====
+connect_fields lH10_f lH10_b
+connect_fields lH10_f lV00_f
+connect_fields lH10_f lV00_b
+connect_fields lH10_b lV00_f
+connect_fields lH10_b lV00_b
+connect_fields lV00_f lV00_b
+
+# ===== (1,1) intersection =====
+connect_fields lH10_f lH10_b
+connect_fields lH10_f lH11_f
+connect_fields lH10_f lH11_b
+connect_fields lH10_f lV10_f
+connect_fields lH10_f lV10_b
+connect_fields lH10_b lH11_f
+connect_fields lH10_b lH11_b
+connect_fields lH10_b lV10_f
+connect_fields lH10_b lV10_b
+connect_fields lH11_f lH11_b
+connect_fields lH11_f lV10_f
+connect_fields lH11_f lV10_b
+connect_fields lH11_b lV10_f
+connect_fields lH11_b lV10_b
+connect_fields lV10_f lV10_b
+
+# ===== (1,2) intersection =====
+connect_fields lH11_f lH11_b
+connect_fields lH11_f lV20_f
+connect_fields lH11_f lV20_b
+connect_fields lH11_b lV20_f
+connect_fields lH11_b lV20_b
+connect_fields lV20_f lV20_b
+
+# ===== Epuletek =====
+create homebase hb1
+create terminal t1
+create terminal t2
+create building b1
+create terminal t3
+create building b2
+connect_fields hb1 lH00_f
+connect_fields t1 lH00_f
+connect_fields t2 lH01_f
+connect_fields b1 lH10_b
+connect_fields t3 lH11_b
+connect_fields b2 lH11_b
+
+# ===== Mid-game sav-allapotok =====
+set_lane_state lH00_f 4.0 false 0.0 0.0
+set_lane_state lH00_b 6.0 false 0.0 0.0
+set_lane_state lH01_f 3.0 false 0.0 0.0
+set_lane_state lH01_b 0.0 true 0.0 0.0
+set_lane_state lH10_f 4.0 false 0.0 0.0
+set_lane_state lH10_b 5.0 false 0.0 0.0
+set_lane_state lH11_f 2.0 false 0.0 0.0
+set_lane_state lH11_b 3.0 false 0.0 0.0
+set_lane_state lV00_f 3.0 false 0.0 0.0
+set_lane_state lV00_b 0.0 true 0.0 0.0
+set_lane_state lV10_f 4.0 false 0.0 0.0
+set_lane_state lV10_b 2.0 false 0.0 0.0
+set_lane_state lV20_f 1.0 false 0.0 0.0
+set_lane_state lV20_b 3.0 false 0.0 0.0
+
+# ===== Jatekosok + felgyult penz/pont =====
+create cleaner c1
+create busdriver bd1
+create busdriver bd2
+set_money c1 1000800
+set_score bd1 200
+set_score bd2 100
+
+# ===== Vehicles =====
+spawn snowplow sp1 hb1 c1
+spawn snowplow sp2 hb1 c1
+spawn bus bus1 lH00_f bd1
+spawn bus bus2 lH11_f bd2
+spawn car car1 lH10_b b1 t2
+spawn car car2 lH11_b b2 t1
+
+# ===== Layout (13. heti save/load) =====
+# Road-szegmensek pozicioja (autoLayout helyett, igy a betoltott
+# pálya kepkockahuen visszaall a New Game-Medium layouttal).
+set_road_pos rH00 120 160 464 horizontal
+set_road_pos rH01 500 160 464 horizontal
+set_road_pos rH10 120 540 464 horizontal
+set_road_pos rH11 500 540 464 horizontal
+set_road_pos rV00 120 160 464 vertical
+set_road_pos rV10 500 160 464 vertical
+set_road_pos rV20 880 160 464 vertical
+# Epuletek pozicio (MapBuilder.outsideAt eredmenyei)
+set_building_pos hb1 42 82 60 60
+set_building_pos t1 512 82 60 60
+set_building_pos t2 982 82 60 60
+set_building_pos b1 42 642 60 60
+set_building_pos t3 512 642 60 60
+set_building_pos b2 982 642 60 60

@@ -4,6 +4,7 @@ import cli.Context;
 import cli.ICommand;
 import io.OutputFormatter;
 import model.Field;
+import model.GameLogic;
 import model.Lane;
 import model.SnowPlow;
 
@@ -46,8 +47,19 @@ public class MovePlowCommand implements ICommand {
                             + (currentId != null ? currentId : args[1]));
             return;
         }
+        // Round-cadence: csak ha be van kapcsolva. Ha igen es a hokotro
+        // mar lepett ebben a korben, visszautasitjuk.
+        if (Context.gameLogic instanceof GameLogic) {
+            GameLogic gl = (GameLogic) Context.gameLogic;
+            if (gl.roundCadenceEnabled && sp.hasMovedThisTurn) {
+                OutputFormatter.printError(
+                        args[1] + " already moved this round");
+                return;
+            }
+        }
         OutputFormatter.printSuccess(args[1] + " moved to " + args[2]);
         sp.nextField = target;
         sp.move();
+        sp.hasMovedThisTurn = true;
     }
 }

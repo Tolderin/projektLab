@@ -57,6 +57,14 @@ public class Determinism {
     }
 
     /**
+     * Torli az osszes force_slip override-ot. A "New Game" reset
+     * hivja, hogy az elozo jatek force_slip-jei ne maradjanak ervenyben.
+     */
+    public void clearForceSlips() {
+        forceSlipMap.clear();
+    }
+
+    /**
      * Eldonti, hogy egy jarmu megcsusszon-e jeges savra erkezeskor.
      * Hasznalat: a Lane.accept(Vehicle) hivja amikor isFrozen=true.
      *

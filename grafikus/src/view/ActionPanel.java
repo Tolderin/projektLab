@@ -43,10 +43,14 @@ public class ActionPanel extends JPanel {
         setLayout(new FlowLayout(FlowLayout.LEFT, 6, 6));
         setBackground(new Color(40, 45, 55));
         setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-        add(makeButton("Move",      e -> onMoveClick()));
+        // A 13. heti turn-order rendszerben a "Move" mar nem szukseges:
+        // az autoSelectNextVehicle automatikusan MOVE modba allitja a
+        // jelenlegi vehicle-t, a kek highlightolt mezo-kattintas
+        // azonnal mozgat es atvalt a kovetkezo aktualis vehicle-re.
         add(makeButton("Buy",       e -> onBuyClick()));
         add(makeButton("Equip",     e -> onEquipClick()));
-        add(makeButton("Next turn", e -> onNextTurnClick()));
+        add(makeButton("Skip turn", e -> onNextTurnClick()));
+        add(makeButton("End game",  e -> mainWindow.endGameNow()));
         add(makeButton("Save",      e -> onSaveClick()));
         add(makeButton("Stat",      e -> onStatClick()));
     }
@@ -64,19 +68,6 @@ public class ActionPanel extends JPanel {
         b.setFont(new Font("SansSerif", Font.PLAIN, 12));
         b.addActionListener(l);
         return b;
-    }
-
-    /**
-     * Move-mod aktivalasa: a kovetkezo mezo-kattintas a kijelolt
-     * jarmu mozgatasi parancsa lesz.
-     */
-    public void onMoveClick() {
-        if (input.getSelectedVehicleId() == null) {
-            mainWindow.showMessage("Eloszor valassz ki egy jarmuvet a karteren.");
-            return;
-        }
-        input.setActionMode(ActionMode.MOVE);
-        mainWindow.getGamePanel().setMoveModeHint(true);
     }
 
     /**
@@ -140,10 +131,13 @@ public class ActionPanel extends JPanel {
     }
 
     /**
-     * Kor-lepteto.
+     * "Skip turn": kihagyja a jelenlegi aktualis jarmu kor-lepeset
+     * es atall a kovetkezo aktualis vehicle-re. Ha az utolso jarmu
+     * is kimaradt, a kornyezet kor automatikusan vegrehajtodik (lasd
+     * InputController.skipCurrentVehicleAndAdvance).
      */
     public void onNextTurnClick() {
-        bridge.nextTurn();
+        input.skipCurrentVehicleAndAdvance();
     }
 
     /**

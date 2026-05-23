@@ -11,6 +11,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
@@ -18,7 +19,10 @@ import cli.Context;
 import controller.CommandBridge;
 import controller.InputController;
 import controller.ViewBinder;
+import main.BigDemo;
 import main.DefaultDemo;
+import main.MapType;
+import main.MediumDemo;
 import model.Cleaner;
 import model.HomeBase;
 import model.IObserver;
@@ -40,6 +44,12 @@ public class MainWindow extends JFrame implements IObserver {
 
     /** A status-panel. */
     private final HUDPanel hudPanel = new HUDPanel();
+
+    /** A felso szin-kodolt turn-indikator panel. */
+    private final TurnIndicatorPanel turnIndicatorPanel = new TurnIndicatorPanel();
+
+    /** Persistens mini-eredmenytabla (osszes jatekos pénz/pont). */
+    private final Scoreboard scoreboard = new Scoreboard();
 
     /** Az akcio-toolbar. */
     private ActionPanel actionPanel;
@@ -71,6 +81,10 @@ public class MainWindow extends JFrame implements IObserver {
         MapLayout layout = new MapLayout();
         renderer = new GameRenderer(layout);
         gamePanel.setRenderer(renderer);
+        // 13. heti save/load: a layout-allapot megorzeshez a Context-en
+        // keresztul elerheto kell legyen a CLI parancsok (set_road_pos,
+        // set_building_pos) szamara is.
+        Context.mapLayout = layout;
 
         input = new InputController(gamePanel, bridge, this);
         gamePanel.addMouseListener(input);
@@ -78,7 +92,17 @@ public class MainWindow extends JFrame implements IObserver {
 
         actionPanel = new ActionPanel(bridge, input, this);
 
-        add(buildMenuBar(), BorderLayout.NORTH);
+        // Felso resz: menubar + turn-indikator + persistens
+        // mini-eredmenytabla egy fuggoleges stack-be. Igy minden
+        // jatekos eredmenye mindig latszik fenn (HUD csak a
+        // jelenlegi jatekost mutatja).
+        JPanel northStack = new JPanel();
+        northStack.setLayout(new javax.swing.BoxLayout(northStack,
+                javax.swing.BoxLayout.Y_AXIS));
+        northStack.add(buildMenuBar());
+        northStack.add(turnIndicatorPanel);
+        northStack.add(scoreboard);
+        add(northStack, BorderLayout.NORTH);
         JScrollPane scroll = new JScrollPane(gamePanel);
         scroll.getViewport().setBackground(new Color(48, 58, 55));
         add(scroll, BorderLayout.CENTER);
@@ -161,18 +185,24 @@ public class MainWindow extends JFrame implements IObserver {
         JMenuItem save = new JMenuItem("Save…");
         save.setAccelerator(KeyStroke.getKeyStroke("control S"));
         save.addActionListener(e -> onSave());
+        JMenuItem mainMenu = new JMenuItem("Main Menu");
+        mainMenu.addActionListener(e -> backToMainMenu());
         JMenuItem exit = new JMenuItem("Exit");
         exit.addActionListener(e -> dispose());
         file.add(newGame);
         file.add(loadMap);
         file.add(save);
         file.addSeparator();
+        file.add(mainMenu);
         file.add(exit);
 
         JMenu game = new JMenu("Game");
-        JMenuItem next = new JMenuItem("Next Turn");
-        next.setAccelerator(KeyStroke.getKeyStroke("SPACE"));
-        next.addActionListener(e -> bridge.nextTurn());
+        JMenuItem next = new JMenuItem("Skip Turn");
+        // A SPACE accelerator-t szandekosan nem allitjuk be ujra: a
+        // turn-order-rendszerben az InputController.keyPressed VK_SPACE
+        // mar kezeli a SPACE-t. Ket helyen feliratkozva dupla-skip-
+        // hibahoz vezetne.
+        next.addActionListener(e -> input.skipCurrentVehicleAndAdvance());
         JMenuItem randomOff = new JMenuItem("Random Off");
         randomOff.addActionListener(e -> bridge.setRandom(false));
         JMenuItem randomOn = new JMenuItem("Random On");
@@ -214,21 +244,83 @@ public class MainWindow extends JFrame implements IObserver {
         JFileChooser fc = new JFileChooser(baseDir);
         fc.setDialogTitle("Pálya-konfig fájl megnyitása (*_in.txt)");
         if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File f = fc.getSelectedFile();
-            // Reset elotte: modell + layout torlese, hogy az
-            // autoLayout fusson a betöltött pályára
-            Context.objectManager.clearAll();
-            if (Context.gameLogic instanceof model.GameLogic) {
-                model.GameLogic gl = (model.GameLogic) Context.gameLogic;
-                gl.players.clear();
-                gl.vehicles.clear();
-                gl.gameMap = new model.Map();
-                gl.turnCount = 0;
-            }
-            renderer.getLayout().clear();
-            bridge.load(f.getAbsolutePath());
-            rebindAll();
+            loadMapAndBind(fc.getSelectedFile());
         }
+    }
+
+    /**
+     * Betölti a megadott pálya-konfig fájlt: a modell- és layout-állapotot
+     * törli, futtatja a load parancsot, majd újraköti a nézeteket.
+     * Publikus, hogy a WelcomeWindow közvetlenül használhassa.
+     *
+     * @param f A pálya-konfig fájl (CLI-formátum: *_in.txt vagy save.txt).
+     */
+    public void loadMapAndBind(File f) {
+        resetGameState();
+        renderer.getLayout().clear();
+        bridge.load(f.getAbsolutePath());
+        rebindAll();
+    }
+
+    /**
+     * Teljes jatek-allapot ujrainitcializalas: ObjectManager torles,
+     * GameLogic players + vehicles + gameMap + turnCount + isGameOver
+     * reset (a startGame() hivasaval), valamint a Determinism (force-
+     * slip overrides es randomEnabled) reset. Ezt hivja a New Game
+     * es a Load Game is. Ennek a hianyaval a kovetkezo "uj jatek"
+     * eseten az elozo isGameOver flag, vagy a stale force_slip-ek
+     * okoztak inkonzisztens viselkedest (a 13. heti hibajavitas).
+     */
+    private void resetGameState() {
+        Context.objectManager.clearAll();
+        if (Context.gameLogic instanceof model.GameLogic) {
+            model.GameLogic gl = (model.GameLogic) Context.gameLogic;
+            gl.players.clear();
+            gl.vehicles.clear();
+            gl.gameMap = new model.Map();
+            gl.startGame(); // reset turnCount + isGameOver
+        }
+        if (Context.determinism != null) {
+            Context.determinism.clearForceSlips();
+            Context.determinism.setRandomEnabled(true);
+        }
+    }
+
+    /**
+     * "Main Menu" menüpont kezelője. Publikus, mert az EndGameDialog
+     * is hivja a "Vissza a fomenube" gombrol. Leiratkozik a GameLogic-
+     * rol, elengedi a view-binder megfigyelőit, eldobja a MainWindow-ot,
+     * majd újra megjeleníti a WelcomeWindow-ot. A modell-állapot
+     * (ObjectManager, GameLogic gyűjteményei) szándékosan nem kerül
+     * itt nullázásra -- a következő New Game / Load Game gomb ezt
+     * automatikusan elvégzi.
+     */
+    /**
+     * "End Game" akcio: a felhasznalo a jelen koron befejezi a jatekot.
+     * Megerositest ker, majd hivja a GameLogic.endGame()-et. Az ennek
+     * hatasara kivaltott "gameEnded" jelzes nyitja meg az EndGameDialog-
+     * ot, ahonnan a "Vissza a fomenube" gombbal a welcome screen-re
+     * jut a felhasznalo.
+     */
+    public void endGameNow() {
+        int choice = JOptionPane.showConfirmDialog(this,
+                "Biztosan befejezed most a játékot?",
+                "Játék befejezése",
+                JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION
+                && Context.gameLogic instanceof model.GameLogic) {
+            ((model.GameLogic) Context.gameLogic).endGame();
+        }
+    }
+
+    public void backToMainMenu() {
+        if (Context.gameLogic instanceof Observable) {
+            ((Observable) Context.gameLogic).removeObserver(this);
+        }
+        viewBinder.unbindAll();
+        dispose();
+        javax.swing.SwingUtilities.invokeLater(
+                () -> new WelcomeWindow(bridge).setVisible(true));
     }
 
     /**
@@ -275,7 +367,8 @@ public class MainWindow extends JFrame implements IObserver {
      * ObjectManager elemeit, és minden modellhez letrehoz egy nezetet.
      */
     public void rebindAll() {
-        viewBinder.bindAll(renderer, gamePanel, hudPanel);
+        viewBinder.bindAll(renderer, gamePanel, hudPanel,
+                turnIndicatorPanel, scoreboard);
         if (Context.gameLogic instanceof Observable) {
             ((Observable) Context.gameLogic).addObserver(this);
         }
@@ -297,6 +390,11 @@ public class MainWindow extends JFrame implements IObserver {
             }
         }
         hudPanel.refresh();
+        // Streamlined: az uj jatek inditasakor azonnal kivalasztjuk
+        // a kovetkezo "tovabb-mozdithato" jarmuvet MOVE modban.
+        if (input != null) {
+            input.autoSelectNextVehicle();
+        }
     }
 
     /**
@@ -316,19 +414,33 @@ public class MainWindow extends JFrame implements IObserver {
      * epulet, 1 hokotro + 1 busz + 2 NPC auto.
      */
     public void newDefaultGame() {
-        // Modell-allapot torlese
-        Context.objectManager.clearAll();
-        if (Context.gameLogic instanceof model.GameLogic) {
-            model.GameLogic gl = (model.GameLogic) Context.gameLogic;
-            gl.players.clear();
-            gl.vehicles.clear();
-            gl.gameMap = new model.Map();
-            gl.turnCount = 0;
-        }
-        // Layout torlese, hogy a manualis beallitas friss legyen
+        newGame(MapType.EASY);
+    }
+
+    /**
+     * Uj jatekot indit egy adott pálya-tipussal (EASY = DefaultDemo,
+     * MEDIUM = MediumDemo, HARD = BigDemo). Teljes modell + determinism
+     * reset, layout torles, majd az adott Demo.apply hivasa, vegul
+     * rebindAll a nezetek osszerendelesere es az auto-select-re.
+     *
+     * @param type A választott pálya-tipus.
+     */
+    public void newGame(MapType type) {
+        resetGameState();
         renderer.getLayout().clear();
-        // CLI parancsok + manualis layout pozíciók egyutt
-        DefaultDemo.apply(bridge.getParser(), renderer.getLayout());
+        switch (type) {
+            case EASY:
+                DefaultDemo.apply(bridge.getParser(), renderer.getLayout());
+                break;
+            case MEDIUM:
+                MediumDemo.apply(bridge.getParser(), renderer.getLayout());
+                break;
+            case HARD:
+                BigDemo.apply(bridge.getParser(), renderer.getLayout());
+                break;
+            default:
+                DefaultDemo.apply(bridge.getParser(), renderer.getLayout());
+        }
         rebindAll();
     }
 
@@ -372,7 +484,11 @@ public class MainWindow extends JFrame implements IObserver {
                 }
             }
         }
+        // 13. heti: a HUD es a turn-indikator csak a GameLogic
+        // jelenlegi aktualis vehicle/player parosabol szamol --
+        // refresh-eljuk mindkettot.
         hudPanel.refresh();
+        turnIndicatorPanel.refresh();
     }
 
     /**

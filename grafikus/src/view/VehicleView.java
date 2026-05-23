@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import cli.Context;
 import model.IObserver;
+import model.Lane;
 import model.Observable;
 import model.Vehicle;
 
@@ -72,11 +73,13 @@ public abstract class VehicleView implements IObserver {
 
     /**
      * Lekerdezi a jarmu kepernyo-pozicio kozepet az aktualis
-     * currentField bounds-ja alapjan. Ha a mezo egy hosszu sav
-     * (a hossza nagyobb mint W*3), a jarmu a sav elso negyedere
-     * kerul, igy NEM a kereszteződésbe esik (ami a sav kozepen
-     * van a 4-utas kereszt elrendezesnel). Egyebkent (epulet,
-     * rovid mezo) a kozeppontra.
+     * currentField bounds-ja alapjan. A sav-bounds mar a sarki
+     * keresztezodes nelkul van (lasd MapLayout.shrinkLanesAtInter-
+     * sections), igy a jarmu a sav KOZEPERE kerul.
+     *
+     * Ha tobb jarmu all ugyanazon a savon, az index alapjan a
+     * sav fo-tengelye menten elosztva jelennek meg -- igy
+     * egymas mellett, nem egymas tetejen.
      *
      * @return A kozep-pont a kepernyon, vagy null ha nincs hely.
      */
@@ -92,16 +95,31 @@ public abstract class VehicleView implements IObserver {
         if (r == null) {
             return null;
         }
-        // Hosszu sav: a jarmu a sav elejen, hogy ne ulekedjen a
-        // kereszteződésbe (ami a sav kozepen van)
-        if (r.width > W * 3 || r.height > H * 3) {
-            if (r.width >= r.height) {
-                return new Point(r.x + r.width / 4, r.y + r.height / 2);
-            } else {
-                return new Point(r.x + r.width / 2, r.y + r.height / 4);
+        int cx = r.x + r.width / 2;
+        int cy = r.y + r.height / 2;
+        // Tobb-jarmu offset: ha Lane-en allunk es tobb jarmu is van
+        // a savon, a fo-tengely menten elosztva helyezzuk el oket.
+        if (vehicle.currentField instanceof Lane) {
+            Lane lane = (Lane) vehicle.currentField;
+            int total = lane.vehicles.size();
+            int idx = lane.vehicles.indexOf(vehicle);
+            if (total > 1 && idx >= 0) {
+                int spacing = W + 4;
+                int offset = (idx - (total - 1) / 2) * spacing;
+                // Paratlan szamnal a kozepso pontosan a kozepen,
+                // paroatlan szamnal egy fel-spacing offset:
+                if (total % 2 == 0) {
+                    offset += spacing / 2;
+                }
+                boolean horiz = r.width >= r.height;
+                if (horiz) {
+                    cx += offset;
+                } else {
+                    cy += offset;
+                }
             }
         }
-        return new Point(r.x + r.width / 2, r.y + r.height / 2);
+        return new Point(cx, cy);
     }
 
     /**
