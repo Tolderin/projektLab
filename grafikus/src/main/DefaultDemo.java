@@ -232,8 +232,10 @@ public final class DefaultDemo {
      * @param layout Az aktiv MapLayout.
      */
     private static void addCosmetics(view.MapLayout layout) {
-        // Fak a kozepre eso ures teruleten (a 4 road altal kepzett
-        // negyzet belseje), elkerulve a road-aszfalt 280-500 x 240-540 reszet.
+        // 13. heti utolso revisio: minden dekoraciot ~40 px-szel jobbra
+        // toltunk a vizualis centralasert.
+        int xShift = 40;
+        // Fak a kozepre eso ures teruleten
         int[][] treePositions = {
                 { 270, 310 }, { 340, 280 }, { 410, 340 },
                 { 470, 290 }, { 350, 420 }, { 290, 460 },
@@ -241,13 +243,13 @@ public final class DefaultDemo {
         };
         for (int[] p : treePositions) {
             layout.addDecoration(new view.Decoration(view.Decoration.Type.TREE,
-                    new java.awt.Rectangle(p[0], p[1], 18, 24)));
+                    new java.awt.Rectangle(p[0] + xShift, p[1], 18, 24)));
         }
         // Sziklak
         layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
-                new java.awt.Rectangle(310, 380, 14, 8)));
+                new java.awt.Rectangle(310 + xShift, 380, 14, 8)));
         layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
-                new java.awt.Rectangle(450, 380, 12, 7)));
+                new java.awt.Rectangle(450 + xShift, 380, 12, 7)));
         // Hopelyhek (szorvanyosan a palya korul)
         int[][] snowPositions = {
                 { 50, 380 }, { 690, 380 }, { 380, 30 }, { 380, 730 },
@@ -255,11 +257,54 @@ public final class DefaultDemo {
         };
         for (int[] p : snowPositions) {
             layout.addDecoration(new view.Decoration(view.Decoration.Type.SNOWFLAKE,
-                    new java.awt.Rectangle(p[0], p[1], 12, 12)));
+                    new java.awt.Rectangle(p[0] + xShift, p[1], 12, 12)));
         }
         // Egy hegy az also road (rBot) felett -- alagut-szeru illuzio.
-        // rBot: x=85..619, y=540..624. A kozepere helyezzuk.
+        // PONTOSAN a rBot szegmens kozeppontjara; bottom-edge a road
+        // also szelevel egyezo (igy az "alagut-ivu" pontosan a road-on van).
+        addMountainCenteredOn(layout, "rBot", 140, 140);
+    }
+
+    /**
+     * Egy hegyet (MOUNTAIN tipus) elhelyez a megadott road szegmens
+     * vizszintes kozepere, a hegy alsó szegelye a road alsó szegelyevel
+     * egyenlo. Igy a tunnel-arch (a hegy aljan rajzolt sotetebb iv)
+     * pontosan a road-on lesz.
+     *
+     * @param layout MapLayout (must have road bounds already set).
+     * @param roadId Road ID.
+     * @param mw     Mountain width.
+     * @param mh     Mountain height.
+     */
+    static void addMountainCenteredOn(view.MapLayout layout, String roadId,
+                                      int mw, int mh) {
+        java.awt.Rectangle rb = layout.getRoadBounds(roadId);
+        if (rb == null) {
+            return;
+        }
+        int mx = rb.x + (rb.width - mw) / 2;
+        int my = rb.y + rb.height - mh;
         layout.addDecoration(new view.Decoration(view.Decoration.Type.MOUNTAIN,
-                new java.awt.Rectangle(280, 510, 140, 110)));
+                new java.awt.Rectangle(mx, my, mw, mh)));
+    }
+
+    /**
+     * Egy hidat (BRIDGE tipus) elhelyez a megadott road szegmens
+     * vizszintes kozeppontjara, a hid magassaga = road magassaga.
+     * Igy a pillarok pontosan a road ket vegen helyezkednek el.
+     *
+     * @param layout MapLayout (road bounds already set).
+     * @param roadId Road ID.
+     * @param bw     Bridge width (jellemzoen 220).
+     */
+    static void addBridgeCenteredOn(view.MapLayout layout, String roadId, int bw) {
+        java.awt.Rectangle rb = layout.getRoadBounds(roadId);
+        if (rb == null) {
+            return;
+        }
+        int bx = rb.x + (rb.width - bw) / 2;
+        int by = rb.y;
+        layout.addDecoration(new view.Decoration(view.Decoration.Type.BRIDGE,
+                new java.awt.Rectangle(bx, by, bw, rb.height)));
     }
 }

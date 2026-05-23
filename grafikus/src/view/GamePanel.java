@@ -435,11 +435,13 @@ public class GamePanel extends JPanel implements IObserver {
     }
 
     /**
-     * Hid: ko-szinu iv a road folott, ket pillarrel a vegein.
+     * Hid: ko-szinu iv a road folott, ket FIX-szelessegu pillarrel a
+     * vegein. A pillarW most fix (12), igy nagyobb hid-bounds eseten
+     * sem nonek tul a pillarok.
      */
     private void drawBridge(Graphics2D g2, Rectangle b) {
+        int pillarW = 12;
         // Ko-szinu pillar bal
-        int pillarW = Math.max(8, b.width / 8);
         g2.setColor(new Color(150, 145, 130));
         g2.fillRect(b.x, b.y, pillarW, b.height);
         g2.setColor(new Color(95, 90, 80));
@@ -449,21 +451,20 @@ public class GamePanel extends JPanel implements IObserver {
         g2.fillRect(b.x + b.width - pillarW, b.y, pillarW, b.height);
         g2.setColor(new Color(95, 90, 80));
         g2.drawRect(b.x + b.width - pillarW, b.y, pillarW, b.height);
-        // Iv (felso resz)
-        int archH = Math.max(8, b.height / 3);
+        // Iv (felso resz): fix magassagu (24), elnyulik a teljes b.width-en
+        int archH = 24;
         Stroke prev = g2.getStroke();
         g2.setStroke(new BasicStroke(3.5f));
         g2.setColor(new Color(170, 165, 150));
-        g2.drawArc(b.x, b.y - archH / 2,
-                b.width, archH, 0, 180);
+        g2.drawArc(b.x, b.y - archH, b.width, archH * 2, 0, 180);
         g2.setStroke(prev);
-        // "BRIDGE" felirat halvanyan
-        g2.setColor(new Color(245, 240, 220, 210));
+        // "BRIDGE" felirat az iv folott
+        g2.setColor(new Color(245, 240, 220, 220));
         g2.setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 9));
         java.awt.FontMetrics fm = g2.getFontMetrics();
         String txt = "BRIDGE";
         g2.drawString(txt,
                 b.x + b.width / 2 - fm.stringWidth(txt) / 2,
-                b.y - archH / 2 - 4);
+                b.y - archH - 2);
     }
 }

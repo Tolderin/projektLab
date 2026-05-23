@@ -124,6 +124,8 @@ public final class MediumDemo {
      * @param layout MapLayout.
      */
     private static void addCosmetics(view.MapLayout layout) {
+        // 13. heti utolso revisio: shift +40 a jobbb-vizualis centralasert
+        int xShift = 40;
         // Fak a 2 racs-cella belsejeben
         int[][] treePositions = {
                 { 270, 320 }, { 340, 290 }, { 410, 350 },
@@ -133,15 +135,15 @@ public final class MediumDemo {
         };
         for (int[] p : treePositions) {
             layout.addDecoration(new view.Decoration(view.Decoration.Type.TREE,
-                    new java.awt.Rectangle(p[0], p[1], 18, 24)));
+                    new java.awt.Rectangle(p[0] + xShift, p[1], 18, 24)));
         }
         // Sziklak
         layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
-                new java.awt.Rectangle(310, 390, 14, 8)));
+                new java.awt.Rectangle(310 + xShift, 390, 14, 8)));
         layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
-                new java.awt.Rectangle(650, 400, 16, 9)));
+                new java.awt.Rectangle(650 + xShift, 400, 16, 9)));
         layout.addDecoration(new view.Decoration(view.Decoration.Type.ROCK,
-                new java.awt.Rectangle(840, 470, 14, 8)));
+                new java.awt.Rectangle(840 + xShift, 470, 14, 8)));
         // Hopelyhek a palya szelein
         int[][] snowPositions = {
                 { 50, 380 }, { 1080, 380 }, { 470, 30 }, { 470, 740 },
@@ -149,13 +151,11 @@ public final class MediumDemo {
         };
         for (int[] p : snowPositions) {
             layout.addDecoration(new view.Decoration(view.Decoration.Type.SNOWFLAKE,
-                    new java.awt.Rectangle(p[0], p[1], 12, 12)));
+                    new java.awt.Rectangle(p[0] + xShift, p[1], 12, 12)));
         }
-        // Egy hegy az also road kozeppontjan (BM kozepso szegmens) -- alagut
-        layout.addDecoration(new view.Decoration(view.Decoration.Type.MOUNTAIN,
-                new java.awt.Rectangle(620, 510, 130, 110)));
-        // Egy hid (BRIDGE) a felso road (TR szegmens) felett
-        layout.addDecoration(new view.Decoration(view.Decoration.Type.BRIDGE,
-                new java.awt.Rectangle(680, 165, 200, 80)));
+        // Egy hegy a bot-row jobb szegmens (rH11) pontos kozeppontjan -- alagut
+        DefaultDemo.addMountainCenteredOn(layout, "rH11", 140, 140);
+        // Egy hid (BRIDGE) a felso road TR szegmens (rH01) pontos kozeppontjan
+        DefaultDemo.addBridgeCenteredOn(layout, "rH01", 220);
     }
 }
